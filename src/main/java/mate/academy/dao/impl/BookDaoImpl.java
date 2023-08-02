@@ -20,7 +20,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String request = "INSERT INTO books (title, price) Values (?,?);";
+        String request = "INSERT INTO books (title, price) VALUES (?,?);";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
                         connection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS)) {
