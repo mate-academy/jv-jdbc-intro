@@ -3,10 +3,7 @@ package mate.academy;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import mate.academy.util.ConnectionUtil;
-
 import java.math.BigDecimal;
-import java.sql.Connection;
 
 public class Main {
     final static Injector injector = Injector.getInstance("mate");
@@ -28,7 +25,5 @@ public class Main {
         System.out.println(bookDao.findAll());
 
         System.out.println(bookDao.deleteById(book.getId()));
-
-
     }
 }
