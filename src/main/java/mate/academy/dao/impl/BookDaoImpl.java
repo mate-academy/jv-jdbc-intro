@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String findByIdRequest = "SELECT * FROM books WHERE id = ?";
+        String findByIdRequest = "SELECT * FROM books WHERE id = ? AND is_deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement findByIdStatement =
                         connection.prepareStatement(findByIdRequest)) {
@@ -62,7 +62,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String findAllRequest = "SELECT * FROM books";
+        String findAllRequest = "SELECT * FROM books WHERE is_deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement findAllStatement = connection.prepareStatement(findAllRequest)) {
             ResultSet resultSet = findAllStatement.executeQuery();
@@ -81,7 +81,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ? AND is_deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
             updateStatement.setString(1, book.getTitle());
