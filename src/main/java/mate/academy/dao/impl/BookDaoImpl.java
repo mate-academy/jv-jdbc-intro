@@ -1,6 +1,7 @@
 package mate.academy.dao.impl;
 
 import mate.academy.dao.BookDao;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -26,14 +27,14 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add book to db ", e);
+            throw new DataProcessingException("Can't add book to db ", e);
         }
         return book;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String query = "SELECT id, title, price " + "FROM books WHERE id = ?;";
+        String query = "SELECT id, title, price FROM books WHERE id = ?;";
         Book book = null;
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -43,7 +44,7 @@ public class BookDaoImpl implements BookDao {
                 book = getBookFromResultSet(resultSet);
             }
             } catch(SQLException e){
-                throw new RuntimeException("Couldn't find book by id " + id, e);
+                throw new DataProcessingException("Couldn't find book by id " + id, e);
             }
             return Optional.ofNullable(book);
         }
@@ -59,12 +60,12 @@ public class BookDaoImpl implements BookDao {
                 bookList.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Couldn't get all books", e);
+            throw new DataProcessingException("Couldn't get all books", e);
         }
         return bookList;
     }
 
-        @Override
+    @Override
     public Book update (Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -74,12 +75,12 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Couldn't update book by id " + book.getId(), e);
+            throw new DataProcessingException("Couldn't update book by id " + book.getId(), e);
         }
         return book;
     }
 
-            @Override
+    @Override
     public boolean deleteById (Long id) {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -88,7 +89,7 @@ public class BookDaoImpl implements BookDao {
             int deletedRows = statement.executeUpdate();
             return deletedRows > 0;
         } catch (SQLException e) {
-        throw new RuntimeException("Couldn't delete book by id " + id, e);
+        throw new DataProcessingException("Couldn't delete book by id " + id, e);
         }
     }
 
