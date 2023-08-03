@@ -21,7 +21,9 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(Query.INSERT.getQuery(), Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement =
+                     connection.prepareStatement(Query.INSERT.getQuery(),
+                             Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.execute();
@@ -71,7 +73,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(Query.UPDATE.getQuery())) {
+             PreparedStatement statement = connection.
+                     prepareStatement(Query.UPDATE.getQuery())) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -85,7 +88,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(Query.DELETE.getQuery())) {
+             PreparedStatement statement = connection.
+                     prepareStatement(Query.DELETE.getQuery())) {
             statement.setLong(1, id);
             return statement.executeUpdate() >= 1;
         } catch (SQLException e) {
@@ -104,7 +108,8 @@ public class BookDaoImpl implements BookDao {
     private enum Query {
         INSERT("INSERT INTO books (title, price) VALUES (?, ?)"),
         SELECT("SELECT * FROM books WHERE is_deleted = FALSE"),
-        UPDATE("UPDATE books SET title = ?, price = ? WHERE id = ? AND is_deleted = FALSE"),
+        UPDATE("UPDATE books SET title = ?, price = ? WHERE id = ? "
+                + "AND is_deleted = FALSE"),
         DELETE("UPDATE books SET is_deleted = TRUE WHERE id = ?");
 
         private final String query;
