@@ -1,6 +1,7 @@
 package mate.academy.dao.impl;
 
 import mate.academy.dao.BookDao;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -27,7 +28,8 @@ public class BookDaoImpl implements BookDao {
             createBookStatement.setBigDecimal(2, book.getPrice());
             int insertedRows = createBookStatement.executeUpdate();
             if (insertedRows < 1) {
-                throw new RuntimeException("Expected to insert at least 1 row, but nothing was inserted");
+                throw new DataProcessingException("Expected to insert at least 1 row," +
+                        " but nothing was inserted by adding book: " + book);
             }
             ResultSet generatedKeys = createBookStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -36,7 +38,7 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Can t insert the book in db: " + book, e);
+            throw new DataProcessingException("Can t insert the book in db: " + book, e);
         }
     }
 
@@ -54,7 +56,7 @@ public class BookDaoImpl implements BookDao {
             }
             return Optional.ofNullable(book);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't find book by id: " + id, e);
         }
     }
 
@@ -71,13 +73,13 @@ public class BookDaoImpl implements BookDao {
             }
             return booksList;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get all books from db", e);
+            throw new DataProcessingException("Can't get all books from db", e);
         }
     }
 
     @Override
     public Book update(Book book) {
-        String updateBookQuery = "UPDATE books SET title = ?, price = ?;";
+        String updateBookQuery = "UPDATE books SET title = ?, price = ? WHERE is_deleted = FALSE;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement updateBookStatement =
                         connection.prepareStatement(updateBookQuery)) {
@@ -85,25 +87,25 @@ public class BookDaoImpl implements BookDao {
             updateBookStatement.setBigDecimal(2, book.getPrice());
             int updatedRows = updateBookStatement.executeUpdate();
             if (updatedRows < 1) {
-                throw new RuntimeException("Rows were not updated");
+                throw new DataProcessingException("Rows were not updated for book" + book);
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't update book: " + book, e);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String deleteByIdQuery = "UPDATE books SET is_deleted = true WHERE id = ?;";
+        String deleteByIdQuery = "UPDATE books SET is_deleted = TRUE WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement deleteByIdStatement =
                         connection.prepareStatement(deleteByIdQuery)) {
                 deleteByIdStatement.setLong(1, id);
                 int deletedRows = deleteByIdStatement.executeUpdate();
-                return deletedRows != 0;
+                return deletedRows > 0;
             } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book by id: " + id, e);
+            throw new DataProcessingException("Can't delete book by id: " + id, e);
         }
     }
 
