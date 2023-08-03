@@ -22,13 +22,13 @@ public class BookDaoImpl implements BookDao {
         String createRequest = "INSERT INTO books "
                 + "(title, price) values(?, ?);";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement createManufacturerStatements =
+             PreparedStatement statement =
                      connection.prepareStatement(createRequest,
                              Statement.RETURN_GENERATED_KEYS)) {
-            createManufacturerStatements.setString(1, book.getTitle());
-            createManufacturerStatements.setBigDecimal(2, book.getPrice());
-            createManufacturerStatements.executeUpdate();
-            ResultSet generatedKeys = createManufacturerStatements.getGeneratedKeys();
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.executeUpdate();
+            ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 book.setId(generatedKeys.getObject(1, Long.class));
             }
@@ -40,18 +40,18 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String selectRequest = "SELECT title, price "
+        String selectRequest = "SELECT id, title, price "
                 + "FROM books "
                 + "WHERE is_deleted = 0 AND id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement getManufacturerStatements =
+             PreparedStatement statement =
                      connection.prepareStatement(selectRequest)) {
-            getManufacturerStatements.setLong(1, id);
-            ResultSet resultSet = getManufacturerStatements.executeQuery();
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
-                return Optional.of(getBook(id, title, price));
+                return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book by id: " + id, e);
@@ -66,15 +66,12 @@ public class BookDaoImpl implements BookDao {
                 + "FROM books "
                 + "WHERE is_deleted = 0;";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement getManufacturerStatements =
+             PreparedStatement statement =
                      connection.prepareStatement(selectRequest)) {
-            ResultSet resultSet = getManufacturerStatements.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
             List<Book> bookList = new ArrayList<>();
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                bookList.add(getBook(id, title, price));
+                bookList.add(getBook(resultSet));
             }
             return bookList;
         } catch (SQLException e) {
@@ -88,12 +85,12 @@ public class BookDaoImpl implements BookDao {
                 + "SET title = ?, price = ? "
                 + "WHERE id = ? AND is_deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement updateManufacturerStatements =
+             PreparedStatement statement =
                      connection.prepareStatement(updateRequest)) {
-            updateManufacturerStatements.setString(1, book.getTitle());
-            updateManufacturerStatements.setBigDecimal(2, book.getPrice());
-            updateManufacturerStatements.setLong(3, book.getId());
-            int rows = updateManufacturerStatements.executeUpdate();
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
+            int rows = statement.executeUpdate();
             if (rows != 1) {
                 throw new DataProcessingException("Can't update book "
                         + book, new SQLException());
@@ -111,25 +108,25 @@ public class BookDaoImpl implements BookDao {
                 + "SET is_deleted = 1 "
                 + "WHERE id = ? AND is_deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement updateManufacturerStatements =
+             PreparedStatement statement =
                      connection.prepareStatement(updateRequest)) {
-            updateManufacturerStatements.setLong(1, id);
-            int rows = updateManufacturerStatements.executeUpdate();
-            if (rows == 1) {
-                return true;
-            }
+            statement.setLong(1, id);
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with ID "
                     + id, e);
         }
-        return false;
     }
 
-    private Book getBook(Long id, String title, BigDecimal price) {
-        Book book = new Book();
-        book.setId(id);
-        book.setTitle(title);
-        book.setPrice(price);
-        return  book;
+    private Book getBook(ResultSet resultSet) {
+        try {
+            Book book = new Book();
+            book.setId(resultSet.getLong("id"));
+            book.setTitle(resultSet.getString("title"));
+            book.setPrice(resultSet.getBigDecimal("price"));
+            return  book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get fields from result set", e);
+        }
     }
 }
