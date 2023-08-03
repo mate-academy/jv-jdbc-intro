@@ -2,7 +2,6 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
-import mate.academy.dao.impl.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
