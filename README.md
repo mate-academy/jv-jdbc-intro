@@ -13,15 +13,15 @@ Here are the steps you need to do in this HW:
 - In the `main` method call all CRUD methods. It may look like:
 ```java
 public class Main {
-    private static final Injector injector = Injector.getInstance("YOUR_PACKAGE");
+  private static final Injector injector = Injector.getInstance("YOUR_PACKAGE");
 
-    public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book();
-        // initialize field values using setters or constructor
-        BookDao.create(book);
-        // test other methods from BookDao
-    }
+  public static void main(String[] args) {
+    BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+    Book book = new Book();
+    // initialize field values using setters or constructor
+    BookDao.create(book);
+    // test other methods from BookDao
+  }
 }
 ```
 **WARNING!!!** Path to your project must contain only english letters. Also, it mustn't contain spaces. In other case `Injector` won't work correctly.
@@ -45,13 +45,13 @@ public class Book {
     - List<Book> findAll();
     - Book update(Book book);
     - boolean deleteById(Long id);
-    
+
 ### Create custom exception
 `e.printStackTrace()` - is a bad practice! Let's create custom exception `DataProcessingException`
 and constructor with two parameters: `String message` and `Throwable ex`.  
 It should be extended from `RuntimeException`. You should rethrow this exception in `catch` block on dao layer.
-    
-#### DB connection error: 
+
+#### DB connection error:
 If you can't connect to your db because of this error: <br>
 `The server time zone value ‘EEST’ is unrecognized or represents more than one time zone`. <br>
 Try to set timezone explicitly in your connection URL. <br>
