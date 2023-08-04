@@ -16,27 +16,24 @@ import java.util.List;
 import java.util.Optional;
 
 @Dao
-public class CarDaoImpl implements CarDao {
-    private static final int FIRST_INDEX = 1;
-    private static final int SECOND_INDEX = 2;
-    private static final int THIRD_INDEX = 3;
+public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String createStatement = "INSERT INTO books (title, price) VALUES (?, ?)";
         try(Connection connection = ConnectionUtil.getConnection();
             PreparedStatement statement
                     = connection.prepareStatement(createStatement, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(FIRST_INDEX, book.getTitle());
-            statement.setBigDecimal(SECOND_INDEX, book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at leas one row, but inserted 0 rows.");
+                throw new DataProcessingException("Expected to insert at leas one row, but inserted 0 rows.");
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(FIRST_INDEX, Long.class);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -47,10 +44,10 @@ public class CarDaoImpl implements CarDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String findByIdQuery = "SELECT * FROM books WHERE id = ?";
+        String findByIdQuery = "SELECT * FROM books WHERE id = ? AND is_deleted = FALSE";
         try(Connection connection = ConnectionUtil.getConnection();
             PreparedStatement statement = connection.prepareStatement(findByIdQuery)) {
-            statement.setLong(FIRST_INDEX, id);
+            statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(getBookFromResultSet(resultSet));
@@ -86,9 +83,9 @@ public class CarDaoImpl implements CarDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection
                      .prepareStatement(updateBookQuery)) {
-            statement.setString(FIRST_INDEX, book.getTitle());
-            statement.setBigDecimal(SECOND_INDEX, book.getPrice());
-            statement.setLong(THIRD_INDEX, book.getId());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book, e);
         }
@@ -101,25 +98,21 @@ public class CarDaoImpl implements CarDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection
                      .prepareStatement(deleteBookQuery)) {
-            statement.setLong(FIRST_INDEX, id);
+            statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id " + id, e);
         }
     }
 
-    private Book getBookFromResultSet(ResultSet resultSet) {
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        try {
-            Long id = resultSet.getObject(FIRST_INDEX, Long.class);
-            String title = resultSet.getObject("title", String.class);
-            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-            book.setId(id);
-            book.setTitle(title);
-            book.setPrice(price);
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't get book from result set " + resultSet, e);
-        }
+        Long id = resultSet.getObject(1, Long.class);
+        String title = resultSet.getObject("title", String.class);
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
         return book;
     }
 }
