@@ -19,8 +19,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String createQuery = "INSERT INTO books (title, price) VALUES (?, ?)";
-        try {
-            Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection
                     .prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, book.getTitle());
@@ -43,8 +42,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String findByIdQuery = "SELECT * FROM books WHERE id = ? AND is_deleted = FALSE";
-        try {
-            Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(findByIdQuery);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -62,7 +60,7 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String findAllQuery = "SELECT * FROM books WHERE is_deleted = FALSE";
         List<Book> books = new ArrayList<>();
-        try {Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(findAllQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -77,8 +75,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ? AND is_deleted = FALSE";
-        try {
-            Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
@@ -86,17 +83,17 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Cannot update book " + book, e);
         }
     }
 
-        @Override
+    @Override
     public boolean deleteById(Long id) {
         String deleteQuery = "UPDATE books SET is_deleted = TRUE WHERE id = ?";
-        try {Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery);
             preparedStatement.setLong(1, id);
-             return preparedStatement.executeUpdate() > 0;
+            return preparedStatement.executeUpdate() > 0;
         } catch (Exception e) {
             throw new DataProcessingException("Can't delete book by id " + id, e);
         }
