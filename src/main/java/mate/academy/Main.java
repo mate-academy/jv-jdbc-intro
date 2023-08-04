@@ -13,16 +13,16 @@ public class Main {
         book.setPrice(BigDecimal.valueOf(225));
 
         Book updatedBook = new Book();
-        updatedBook.setId(4L);
+        updatedBook.setId(2L);
         updatedBook.setTitle("Updated-book");
         updatedBook.setPrice(BigDecimal.valueOf(225));
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         System.out.println(bookDao.create(book) + " book created");
-        System.out.println(bookDao.findById(4L).get() + " found book by id" );
+        System.out.println(bookDao.findById(2L).get() + " found book by id" );
         System.out.println(bookDao.findAll() + " found all books");
         System.out.println(bookDao.update(updatedBook) + " updated book by id");
         System.out.println(bookDao.create(book) + " book created");
-        System.out.println(bookDao.deleteById(4L) + " deleted book by id");
+        System.out.println(bookDao.deleteById(2L) + " deleted book by id");
     }
 }
