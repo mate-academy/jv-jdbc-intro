@@ -19,7 +19,6 @@ import java.util.Optional;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(Query.INSERT.getQuery(),
@@ -33,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add book to DB", e);
+            throw new DataProcessingException("Can't add book to DB: " + book, e);
         }
     }
 
