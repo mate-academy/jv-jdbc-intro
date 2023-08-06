@@ -19,7 +19,7 @@ public class BookDaoImpl implements BookDao {
         String createQuery = "INSERT INTO books(title, price) "
                             + "VALUES(?, ?);";
 
-        try(Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement createStatement =
                     connection.prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS)) {
             createStatement.setString(1, book.getTitle());
@@ -42,7 +42,7 @@ public class BookDaoImpl implements BookDao {
                 + "FROM books "
                 + "WHERE id = ? AND is_deleted = FALSE;";
 
-        try(Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement findStatement = connection.prepareStatement(findQuery)) {
             findStatement.setLong(1, id);
             ResultSet resultSet = findStatement.executeQuery();
@@ -63,7 +63,7 @@ public class BookDaoImpl implements BookDao {
                 + "FROM books "
                 + "WHERE is_deleted = FALSE;";
 
-        try(Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement findAllStatement = connection.prepareStatement(findAllQuery)) {
             ResultSet resultSet = findAllStatement.executeQuery();
             List<Book> books = new ArrayList<>();
@@ -84,16 +84,12 @@ public class BookDaoImpl implements BookDao {
                 + "SET title = ?, price = ? "
                 + "WHERE id = ?;";
 
-        try(Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
             updateStatement.setString(1, book.getTitle());
             updateStatement.setBigDecimal(2, book.getPrice());
             updateStatement.setLong(3, book.getId());
-            int affectedRows = updateStatement.executeUpdate();
-
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected it update at leas one row, but update 0 rows");
-            }
+            updateStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book by id: " + book.getId(), e);
@@ -106,7 +102,7 @@ public class BookDaoImpl implements BookDao {
                 + "SET is_deleted = TRUE " 
                 + "WHERE id = ?;";
         
-        try(Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
             deleteStatement.setLong(1, id);
             return deleteStatement.executeUpdate() > 0;

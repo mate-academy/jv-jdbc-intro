@@ -20,11 +20,14 @@ public class Main {
         Book book2 = new Book();
         book2.setTitle("Book2");
         book2.setPrice(BigDecimal.valueOf(300));
+        bookDao.create(book1);
+        bookDao.create(book2);
 
-        //bookDao.create(book2);
+        bookDao.delete(2L);
 
-        //bookDao.delete(2L);
-        //bookDao.delete(3L);
+        bookDao.create(book1);
+        bookDao.create(book2);
+        bookDao.create(book2);
 
         Book book3 = new Book(4L, "New Book", BigDecimal.valueOf(150));
         bookDao.update(book3);
