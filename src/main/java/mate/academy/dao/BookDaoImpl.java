@@ -18,7 +18,7 @@ import mate.academy.util.ConnectionUtil;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        String insertBookQuery = "INSERT INTO books(title, price) values(?, ?);";
+        String insertBookQuery = "INSERT INTO books(title, price) VALUES(?, ?);";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement insertStatement = connection.prepareStatement(
                         insertBookQuery, Statement.RETURN_GENERATED_KEYS)) {
@@ -98,7 +98,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book parseBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
+        Long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");
         Book bookFromResultSet = new Book();
