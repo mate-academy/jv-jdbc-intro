@@ -68,7 +68,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ? " +
+                "AND is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
