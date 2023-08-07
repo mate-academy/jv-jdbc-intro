@@ -27,7 +27,7 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataProcessingException("Can't create a book in DB", e);
         }
     }
@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ? AND is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet set = statement.executeQuery();
             Book book = null;
@@ -51,14 +51,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String sql = "SELECT * FROM books WHERE is_deleted = false";
+        String sql = "SELECT * FROM books WHERE is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet set = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while(set.next()) {
-                Book book = getBookFromResultSet(set);
-                books.add(book);
+                books.add(getBookFromResultSet(set));
             }
             return books;
 
