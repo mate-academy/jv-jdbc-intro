@@ -41,7 +41,8 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(createBook(resultSet));
+                Book createdBook = createBook(resultSet);
+                return Optional.of(createdBook);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id. ID = " + id, e);
