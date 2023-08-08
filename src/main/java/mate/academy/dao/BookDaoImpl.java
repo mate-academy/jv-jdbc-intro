@@ -114,5 +114,4 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't get book from ResultSet", e);
         }
     }
-
 }
