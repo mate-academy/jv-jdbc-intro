@@ -107,7 +107,8 @@ public class BookDaoImpl implements BookDao {
         try {
             book.setId(resultSet.getObject("id", Long.class));
             book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
+            book.setPrice(resultSet.getBigDecimal("price") != null ?
+                    resultSet.getBigDecimal("price") : BigDecimal.valueOf(0));
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book from ResultSet", e);
