@@ -25,6 +25,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
+        Book createdBook = new Book();
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query,
                      Statement.RETURN_GENERATED_KEYS)) {
@@ -36,12 +37,14 @@ public class BookDaoImpl implements BookDao {
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if(generatedKeys.next()) {
                 Long id = generatedKeys.getLong(FIRST_INDEX_PARAMETER);
-                book.setId(id);
+                createdBook.setId(id);
+                createdBook.setTitle(book.getTitle());
+                createdBook.setPrice(book.getPrice());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create new book: " + book, e);
         }
-        return book;
+        return createdBook;
     }
 
     @Override
@@ -116,13 +119,7 @@ public class BookDaoImpl implements BookDao {
         Book book = new Book();
         book.setId(resultSet.getObject("id", Long.class));
         book.setTitle(resultSet.getString("title"));
-        book.setPrice(getBookPrice(resultSet));
+        book.setPrice(resultSet.getObject("price", BigDecimal.class));
         return book;
-    }
-
-    private BigDecimal getBookPrice(ResultSet resultSet) throws SQLException {
-        return resultSet.getBigDecimal("price") != null
-                ? resultSet.getBigDecimal("price")
-                : new BigDecimal(0);
     }
 }
