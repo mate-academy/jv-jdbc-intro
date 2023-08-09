@@ -18,17 +18,18 @@ public class BookDaoImpl implements BookDao {
     private final static String UPDATE = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private final static String SELECT_BY_ID = "SELECT * FROM books WHERE id = ?";
     private final static String DELETE_BY_ID = "DELETE FROM books WHERE id = ?";
-    public static final int ID_INDEX = 1;
-    public static final int TITLE_POSITION = 1;
-    public static final int PRICE_POSITION = 2;
-    public static final int MINIMUM_AFFECTED_ROWS = 1;
-    public static final int ID_POSITION = 3;
+    private static final int ID_INDEX = 1;
+    private static final int TITLE_POSITION = 1;
+    private static final int PRICE_POSITION = 2;
+    private static final int MINIMUM_AFFECTED_ROWS = 1;
+    private static final int ID_POSITION = 3;
 
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT,
                      Statement.RETURN_GENERATED_KEYS)) {
+            Book createdBook = null;
             statement.setString(TITLE_POSITION, book.getTitle());
             statement.setBigDecimal(PRICE_POSITION, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -38,9 +39,10 @@ public class BookDaoImpl implements BookDao {
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(ID_INDEX, Long.class);
-                book.setId(id);
+                createdBook = findById(id).orElseThrow(() ->
+                                new DataProcessingException("Can't insert book: "  + book));
             }
-            return book;
+            return createdBook;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't insert book: " + book);
         }
@@ -97,8 +99,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID);
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
             statement.setLong(ID_INDEX, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;

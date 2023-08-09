@@ -12,11 +12,11 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         Book book = new Book("GOT", BigDecimal.valueOf(140L));
-        System.out.println(bookDao.create(book));
+        Book createdBook = bookDao.create(book);
         bookDao.findAll();
-        System.out.println(bookDao.findById(1L));
-        Book updatedBook = new Book(1L, "Harry potter", BigDecimal.valueOf(300L));
+        bookDao.findById(createdBook.getId());
+        Book updatedBook = new Book(createdBook.getId(), "Harry potter", BigDecimal.valueOf(300L));
         bookDao.update(updatedBook);
-        bookDao.deleteById(1L);
+        bookDao.deleteById(createdBook.getId());
     }
 }
