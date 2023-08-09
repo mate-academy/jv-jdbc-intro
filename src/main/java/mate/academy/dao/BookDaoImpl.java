@@ -45,7 +45,7 @@ public class BookDaoImpl implements  BookDao {
             if (resultSet.next()) {
                 book = getBookFormResult(resultSet);
             }
-            return Optional.of(book);
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find a book: " + book, e);
         }
