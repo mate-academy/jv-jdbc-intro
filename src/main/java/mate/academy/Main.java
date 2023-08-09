@@ -1,27 +1,26 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
-import java.math.BigDecimal;
-
 public class Main {
-    private static final Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
-        Book EffectiveJava = new Book();
-        Book CleanCode = new Book();
-        EffectiveJava.setTitle("Java: Effective programming 3th ed");
-        EffectiveJava.setPrice(new BigDecimal(15));
-        CleanCode.setTitle("Clean code: A Handbook of Agile Software Craftsmanship");
-        CleanCode.setPrice(new BigDecimal(10));
+        Book effectiveJava = new Book();
+        Book cleanCode = new Book();
+        effectiveJava.setTitle("Java: Effective programming 3th ed");
+        effectiveJava.setPrice(new BigDecimal(15));
+        cleanCode.setTitle("Clean code: A Handbook of Agile Software Craftsmanship");
+        cleanCode.setPrice(new BigDecimal(10));
 
-        Book createdEffectiveJavaBook = bookDao.create(EffectiveJava);
-        Book createdCleanCodeBook = bookDao.create(CleanCode);
+        Book createdEffectiveJavaBook = bookDao.create(effectiveJava);
+        Book createdCleanCodeBook = bookDao.create(cleanCode);
         System.out.println("-----CREATING-----");
         System.out.println(createdEffectiveJavaBook);
         System.out.println(createdCleanCodeBook);

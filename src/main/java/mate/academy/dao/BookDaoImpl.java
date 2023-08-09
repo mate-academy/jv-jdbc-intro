@@ -1,34 +1,45 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.services.ConnectionUtil;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int FIRST_INDEX_PARAMETER = 1;
+    private static final int SECOND_INDEX_PARAMETER = 2;
+    private static final int THIRD_INDEX_PARAMETER = 3;
+    private static final int ZERO_ROWS = 0;
+    private static final int ONE_ROW = 1;
+
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query,
                      Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(FIRST_INDEX_PARAMETER, book.getTitle());
+            statement.setBigDecimal(SECOND_INDEX_PARAMETER, book.getPrice());
             int affectedRows = statement.executeUpdate();
             checkInsertedRowsAmount(affectedRows);
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if(generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getLong(FIRST_INDEX_PARAMETER);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add new book: " + book, e);
+            throw new DataProcessingException("Can't create new book: " + book, e);
         }
         return book;
     }
@@ -38,7 +49,7 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(FIRST_INDEX_PARAMETER, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Book createdBook = createBook(resultSet);
@@ -71,9 +82,9 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setString(FIRST_INDEX_PARAMETER, book.getTitle());
+            statement.setBigDecimal(SECOND_INDEX_PARAMETER, book.getPrice());
+            statement.setLong(THIRD_INDEX_PARAMETER, book.getId());
             int affectedRows = statement.executeUpdate();
             checkInsertedRowsAmount(affectedRows);
         } catch (SQLException e) {
@@ -87,11 +98,17 @@ public class BookDaoImpl implements BookDao {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(FIRST_INDEX_PARAMETER, id);
             int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return affectedRows > ZERO_ROWS;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id. ID = " + id, e);
+        }
+    }
+
+    private void checkInsertedRowsAmount(int affectedRows) {
+        if (affectedRows < ONE_ROW) {
+            throw new RuntimeException("Expected to insert at least 1 row, but inserted 0 rows.");
         }
     }
 
@@ -99,13 +116,13 @@ public class BookDaoImpl implements BookDao {
         Book book = new Book();
         book.setId(resultSet.getObject("id", Long.class));
         book.setTitle(resultSet.getString("title"));
-        book.setPrice(resultSet.getBigDecimal("price"));
+        book.setPrice(getBookPrice(resultSet));
         return book;
     }
 
-    private void checkInsertedRowsAmount(int affectedRows) {
-        if (affectedRows < 1) {
-            throw new RuntimeException("Expected to insert at least 1 row, but inserted 0 rows.");
-        }
+    private BigDecimal getBookPrice(ResultSet resultSet) throws SQLException {
+        return resultSet.getBigDecimal("price") != null
+                ? resultSet.getBigDecimal("price")
+                : new BigDecimal(0);
     }
 }
