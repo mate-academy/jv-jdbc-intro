@@ -13,35 +13,43 @@ import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private final static String INSERT = "INSERT INTO books (title,price) VALUES (?, ?)";
+    private final static String SELECT_ALL = "SELECT * FROM books";
+    private final static String UPDATE = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private final static String SELECT_BY_ID = "SELECT * FROM books WHERE id = ?";
+    private final static String DELETE_BY_ID = "DELETE FROM books WHERE id = ?";
+    public static final int ID_INDEX = 1;
+    public static final int TITLE_POSITION = 1;
+    public static final int PRICE_POSITION = 2;
+    public static final int MINIMUM_AFFECTED_ROWS = 1;
+    public static final int ID_POSITION = 3;
+
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title,price) VALUES (?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(sql,
-                    Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT,
+                     Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(TITLE_POSITION, book.getTitle());
+            statement.setBigDecimal(PRICE_POSITION, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Can't execute Insert statement with id:"
-                + book.getId());
+            if (affectedRows < MINIMUM_AFFECTED_ROWS) {
+                throw new DataProcessingException("Can't insert less than one row");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(ID_INDEX, Long.class);
                 book.setId(id);
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't open connection", e);
+            throw new DataProcessingException("Can't insert book: " + book);
         }
     }
 
     @Override
     public List<Book> findAll() {
-        String sql = "SELECT * FROM books";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -50,56 +58,52 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't open connection", e);
+            throw new DataProcessingException("Can't get all books");
         }
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM books WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setLong(1, id);
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+            statement.setLong(ID_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Book book = getBookFromResultSet(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't open connection", e);
+            throw new DataProcessingException("Can't get by id: " + id, e);
         }
         return Optional.empty();
     }
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            statement.setString(TITLE_POSITION, book.getTitle());
+            statement.setBigDecimal(PRICE_POSITION, book.getPrice());
+            statement.setLong(ID_POSITION, book.getId());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Can't execute Update statement with id:"
-                        + book.getId());
+            if (affectedRows < MINIMUM_AFFECTED_ROWS) {
+                throw new DataProcessingException("Can't update less than one row");
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't open connection", e);
+            throw new DataProcessingException("Can't update a book " + book);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setLong(1, id);
+            PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID);
+            statement.setLong(ID_INDEX, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't open connection", e);
+            throw new DataProcessingException("Can't delete book with id: " + id , e);
         }
     }
 
