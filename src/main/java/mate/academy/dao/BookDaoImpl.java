@@ -47,7 +47,7 @@ public class BookDaoImpl implements  BookDao {
             }
             return Optional.ofNullable(book);
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find a book: " + book, e);
+            throw new DataProcessingException("Can't find a book with id : " + id, e);
         }
     }
 
