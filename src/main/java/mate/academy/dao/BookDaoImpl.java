@@ -37,11 +37,11 @@ public class BookDaoImpl implements  BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ? AND is_deleted = FALSE";
-        Book book = new Book();
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
+            Book book = null;
             if (resultSet.next()) {
                 book = getBookFormResult(resultSet);
             }
