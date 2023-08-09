@@ -6,9 +6,9 @@ import mate.academy.model.Book;
 import java.math.BigDecimal;
 
 public class Main {
-    private static final Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         Book firstBook = new Book();
         firstBook.setTitle("firstBook");
         firstBook.setPrice(BigDecimal.valueOf(10));

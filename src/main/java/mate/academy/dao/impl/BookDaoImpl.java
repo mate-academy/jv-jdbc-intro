@@ -5,6 +5,7 @@ import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -110,9 +111,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book returnItitalizedBook(ResultSet resultSet) throws SQLException {
-        return new Book(resultSet.getObject("id", Long.class),
-                resultSet.getString("title"),
-                BigDecimal.valueOf(resultSet.getObject("price", Long.class)));
-
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        return new Book(id, title, price);
     }
 }
