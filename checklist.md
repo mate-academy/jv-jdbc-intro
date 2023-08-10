@@ -58,8 +58,8 @@ Good: `books.title`
     - Bad practice:
         ```java
             public List<Book> findAll() {
-                try (Connection connection = ConnectionUtil.getConnection()
-                    PreparedStatement preparedStatement = connection
+                try (Connection mate.academy.connection = ConnectionUtil.getConnection()
+                    PreparedStatement preparedStatement = mate.academy.connection
                         .prepareStatement("SELECT * FROM books")) { // it's bad
                     ...
                 } catch (SQLException ex) {
@@ -71,8 +71,8 @@ Good: `books.title`
         ```java
             public List<Book> findAll() {
                 String query = "SELECT * FROM books"; // it's good
-                try (Connection connection = ConnectionUtil.getConnection();
-                    PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                try (Connection mate.academy.connection = ConnectionUtil.getConnection();
+                    PreparedStatement preparedStatement = mate.academy.connection.prepareStatement(query)) {
                     ...
                 } catch (SQLException ex) {
                     ...
@@ -81,12 +81,12 @@ Good: `books.title`
         ```
 
 * Best practices with closing Connections and/or PreparedStatements
-    - You have to close the PreparedStatement after you're done with it and before you create a new one on the same connection.
-    - Generally, when you close the connection it automatically closes the statement.
-      But, for example, if for some reason you are using a connection pool (we are not using it now),
-      and you call `connection.close()`, the connection will be returned to the pool,
+    - You have to close the PreparedStatement after you're done with it and before you create a new one on the same mate.academy.connection.
+    - Generally, when you close the mate.academy.connection it automatically closes the statement.
+      But, for example, if for some reason you are using a mate.academy.connection pool (we are not using it now),
+      and you call `mate.academy.connection.close()`, the mate.academy.connection will be returned to the pool,
       and the Statement will never be closed. Then you will run into many new problems!
-      In any case, it's a good practice to always close and Statement explicitly and not to rely on `connection.close()`.
+      In any case, it's a good practice to always close and Statement explicitly and not to rely on `mate.academy.connection.close()`.
     - So let's close PreparedStatement as well as Connection (use try with resources for that).
 
 
@@ -101,7 +101,7 @@ Good: `books.title`
             throw new DataProcessingException("Can't save a book " + book, e);
         ``` 
 
-* Don't use schema's name in your queries, because you are configuring it while establishing a connection with DB.
+* Don't use schema's name in your queries, because you are configuring it while establishing a mate.academy.connection with DB.
 
     - Bad practice:
         ```sql  
