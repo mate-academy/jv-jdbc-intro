@@ -5,19 +5,18 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    private static final Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         //creating books
         Book book = new Book("The clean code", BigDecimal.valueOf(250));
         Book createdBook = bookDao.create(book);
         //getting books by id
-        long id = 1L;
+        long id = book.getId();
         Book foundBookById = bookDao.findById(id).orElseThrow(() -> new RuntimeException("Can't find a book by id: " + id));
         System.out.println(foundBookById);
         //getting all books
