@@ -59,4 +59,4 @@ Example: <br>
 `...localhost:3306/your_schema?serverTimezone=UTC` <br>
 Or you can set a timezone in MySql directly by running command: `SET GLOBAL time_zone = '+3:00'`;
 
-__You can check yourself using this__ [checklist](checklist.md)
+__You can check yourself using this__ [checklist](checklist.md)x
