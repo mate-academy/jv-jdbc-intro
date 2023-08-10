@@ -1,6 +1,6 @@
 package mate.academy;
 
-import mate.academy.connection.ConnectionUtil;
+import mate.academy.util.ConnectionUtil;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;

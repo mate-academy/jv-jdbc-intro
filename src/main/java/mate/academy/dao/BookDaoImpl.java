@@ -1,6 +1,6 @@
 package mate.academy.dao;
 
-import mate.academy.connection.ConnectionUtil;
+import mate.academy.util.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
@@ -35,8 +35,8 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert at least 1 row, " +
-                        "but inserted 0 rows", new RuntimeException());
+                throw new DataProcessingException("Expected to insert at least one row: "
+                                + book + ", but inserted 0 rows", new RuntimeException());
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -99,9 +99,8 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(3, book.getId());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
-                throw new DataProcessingException(
-                        "Expected to insert at least one row, but inserted 0 rows",
-                        new RuntimeException());
+                throw new DataProcessingException("Expected to update at least one row: "
+                                + book + ", but updated 0 rows", new RuntimeException());
             }
         } catch (SQLException ex) {
             throw new DataProcessingException("Can't update a book with id " + book.getId(), ex);
