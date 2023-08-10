@@ -1,6 +1,6 @@
 package mate.academy.dao.implementation;
 
-import mate.academy.ConnectionUtil;
+import mate.academy.util.ConnectionUtil;
 import mate.academy.lib.Dao;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
@@ -22,8 +22,10 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("Expected to insert at least one row,"
-                        + " but inserted 0 rows");
+                throw new RuntimeException("Expected to insert at least one row "
+                        + "(title: " + book.getTitle()
+                        + ", price: " + book.getPrice()
+                        + ") but inserted 0 rows");
             }
             ResultSet resultSet = statement.getGeneratedKeys();
             if(resultSet.next()) {
@@ -78,8 +80,9 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(2, book.getPrice());
             statement.setObject(3, book.getId());
             if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("Expected to insert at least one row,"
-                        + " but inserted 0 rows");
+                throw new RuntimeException("Expected to update at least one row with id: "
+                        + book.getId()
+                        + " but updated 0 rows");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book: " + book.getTitle(), e);
