@@ -1,0 +1,8 @@
+CREATE SCHEMA `library_db` DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE `books` (
+  `id` BIGINT(10) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(45) NOT NULL,
+  `price` DECIMAL NOT NULL,
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`));
