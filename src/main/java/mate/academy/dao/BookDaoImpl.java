@@ -19,7 +19,6 @@ public class BookDaoImpl implements BookDao {
     private static final int MIN_NUMBER_OF_UPDATED_ROWS = 1;
     private static final int MIN_NUMBER_OF_DELETED_ROWS = 1;
 
-
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
