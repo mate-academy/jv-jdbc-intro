@@ -1,4 +1,4 @@
-package mate.model;
+package mate.academy.model;
 
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
