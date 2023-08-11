@@ -15,15 +15,25 @@ import mate.academy.model.Book;
 
 @Dao
 public class MySqlBookDao implements BookDao {
+    private static final int ID_PARAMETER_INDEX = 1;
+    private static final int TITLE_PARAMETER_INDEX = 1;
+    private static final int PRICE_PARAMETER_INDEX = 2;
+    private static final int UPDATE_ID_PARAMETER_INDEX = 3;
+    private static final int ZERO_AFFECTED_ROW = 0;
+    private static final int ONE_AFFECTED_ROW = 1;
+    private static final String ID_ROW_LABEL = "id";
+    private static final String TITLE_ROW_LABEL = "title";
+    private static final String PRICE_ROW_LABEL = "price";
+
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO book(title, price) VALUES(?, ?)";
         try (Connection connection = MySqlConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query,
                      Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            if (statement.executeUpdate() < 1) {
+            statement.setString(TITLE_PARAMETER_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_PARAMETER_INDEX, book.getPrice());
+            if (statement.executeUpdate() < ONE_AFFECTED_ROW) {
                 throw new DataProcessingException("Book was not created: " + book);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -32,9 +42,9 @@ public class MySqlBookDao implements BookDao {
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Cannot create new book, something gone wrong: "+ book, e);
+                    "Cannot create new book, something gone wrong: " + book, e);
         }
-        return  book;
+        return book;
     }
 
     @Override
@@ -42,7 +52,7 @@ public class MySqlBookDao implements BookDao {
         String query = "SELECT * FROM book WHERE id = ?";
         try (Connection connection = MySqlConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_PARAMETER_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Book book = parseToObject(resultSet);
@@ -73,19 +83,12 @@ public class MySqlBookDao implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String query = """
-                UPDATE book
-                SET title= ?, price= ?
-                WHERE id = ?
-                """;
+        String query = "UPDATE book SET title= ?, price= ? WHERE id = ?";
         try (Connection connection = MySqlConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
-            if (statement.executeUpdate() < 1) {
-                throw new DataProcessingException("Book was not updated: " + book);
-            }
+            statement.setString(TITLE_PARAMETER_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_PARAMETER_INDEX, book.getPrice());
+            statement.setLong(UPDATE_ID_PARAMETER_INDEX, book.getId());
         } catch (SQLException e) {
             throw new DataProcessingException("Book was not updated: " + book, e);
         }
@@ -97,17 +100,17 @@ public class MySqlBookDao implements BookDao {
         String query = "DELETE FROM book WHERE id =?";
         try (Connection connection = MySqlConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
-            return statement.executeUpdate() > 0;
+            statement.setLong(ID_PARAMETER_INDEX, id);
+            return statement.executeUpdate() > ZERO_AFFECTED_ROW;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book by id " + id, e);
         }
     }
 
     private Book parseToObject(ResultSet resultSet) throws SQLException {
-        long id = resultSet.getObject("id", Long.class);
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getBigDecimal("price");
+        long id = resultSet.getObject(ID_ROW_LABEL, Long.class);
+        String title = resultSet.getString(TITLE_ROW_LABEL);
+        BigDecimal price = resultSet.getBigDecimal(PRICE_ROW_LABEL);
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);

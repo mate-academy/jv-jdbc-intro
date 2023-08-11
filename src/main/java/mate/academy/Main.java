@@ -7,7 +7,7 @@ import mate.academy.model.Book;
 import mate.academy.repository.BookDao;
 
 public class Main {
-    public static final Injector INJECTOR = Injector.getInstance("mate.academy");
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
     public static final List<Book> library;
 
     static {
@@ -37,16 +37,11 @@ public class Main {
         List<Book> booksFromDB = bookDao.findAll();
         System.out.println("Books from database:");
         booksFromDB.forEach(System.out::println);
-        System.out.println();
-        System.out.println("Books in library equal books from db? "
-                + library.equals(booksFromDB) + System.lineSeparator());
 
         //Find by id
         Book bookFromLib = library.get(0);
         Book bookFromDb = bookDao.findById(bookFromLib.getId()).orElseThrow();
         System.out.println("Book from db: " + bookFromDb + System.lineSeparator());
-        System.out.println("Book from library is equal book from db? "
-                + bookFromDb.equals(bookFromLib) + System.lineSeparator());
 
         //Update
         bookFromLib.setTitle("Updated title");
@@ -57,9 +52,6 @@ public class Main {
 
         //Delete by id
         bookDao.deleteById(bookFromLib.getId());
-        booksFromDB = bookDao.findAll();
-        System.out.println("List from database doesn't contain deleted book? "
-                + !booksFromDB.contains(bookFromLib));
 
         //Delete all books in the database
         library.forEach(book -> bookDao.deleteById(book.getId()));
