@@ -30,7 +30,7 @@ public class BookDaoImpl implements BookDao{
             statement.setObject(INDEX_OF_SECOND_PARAM, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
+            if (affectedRows < 1) {
                 throw new RuntimeException("Inserting failure");
             }
 
@@ -105,7 +105,7 @@ public class BookDaoImpl implements BookDao{
             statement.setLong(INDEX_OF_THIRD_PARAM, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
+            if (affectedRows < 1) {
                 throw new RuntimeException("Updating failure, expect");
             }
 
