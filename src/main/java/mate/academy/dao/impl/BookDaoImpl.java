@@ -16,6 +16,9 @@ import java.sql.Statement;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int TITLE_INDEX = 1;
+    private static final int PRICE_INDEX = 2;
+    private static final int ID_INDEX = 3;
     private static final String INSERT_REQUEST = "INSERT INTO books(title, price) VALUES(?, ?)";
     private static final String REQUEST_BOOK_FROM_DB = "SELECT * FROM books WHERE id = ?";
     private static final String GET_ALL_REQUEST_BOOK = "SELECT * FROM books";
@@ -76,9 +79,9 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement updateStatement = connection.prepareStatement(UPDATE_REQUEST)) {
-            updateStatement.setLong(3, book.getId());
-            updateStatement.setString(1, book.getTitle());
-            updateStatement.setBigDecimal(2, book.getPrice());
+            updateStatement.setLong(ID_INDEX, book.getId());
+            updateStatement.setString(TITLE_INDEX, book.getTitle());
+            updateStatement.setBigDecimal(PRICE_INDEX, book.getPrice());
             updateStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book on DB. Book: " + book, e);
