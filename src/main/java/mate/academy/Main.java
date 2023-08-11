@@ -1,16 +1,12 @@
 package mate.academy;
 
 import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 import java.math.BigDecimal;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
