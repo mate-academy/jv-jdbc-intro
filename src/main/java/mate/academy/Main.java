@@ -11,21 +11,22 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
+        Book book1 = new Book();
+        Book book2 = new Book();
         book.setTitle("The Lord Of The Rings");
+        book1.setTitle("Harry Potter");
+        book2.setTitle("The Lord Of the Rings Two Towels");
         book.setPrice(BigDecimal.valueOf(200));
-
+        book1.setPrice(BigDecimal.valueOf(300));
+        book2.setPrice(BigDecimal.valueOf(700));
+        bookDao.create(book2);
+        bookDao.create(book1);
         bookDao.create(book);
-
         System.out.println(book);
-
         book.setPrice(BigDecimal.valueOf(500));
         System.out.println(bookDao.update(book));
-
         System.out.println(bookDao.findById(book.getId()));
-
         System.out.println(bookDao.findAll());
-
         System.out.println(bookDao.deleteById(book.getId()));
-
     }
 }
