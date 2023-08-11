@@ -62,7 +62,7 @@ public class BookDaoImpl implements BookDao {
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery(query);
             List<Book> books = new ArrayList<>();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 books.add(getBook(resultSet));
             }
             return books;
