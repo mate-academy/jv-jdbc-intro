@@ -4,3 +4,4 @@ CREATE TABLE `books` (
     `price` INT,
     PRIMARY KEY (`id`)
     );
+
