@@ -7,6 +7,7 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
+    private static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final Properties DB_PROPERTIES;
 
     static {
@@ -14,7 +15,7 @@ public class ConnectionUtil {
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "Born_to_sql1");
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(MYSQL_DRIVER);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Can't read JDBC driver", e);
         }
