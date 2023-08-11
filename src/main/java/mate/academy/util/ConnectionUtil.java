@@ -17,11 +17,15 @@ public class ConnectionUtil {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot load JDBC Driver!");
+            throw new RuntimeException("Cannot load JDBC Driver for MySQL!");
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new RuntimeException("Cannot connect to the DataBase " + DB_URL);
+        }
     }
 }
