@@ -24,7 +24,6 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         request = "INSERT INTO books (title, price) VALUES(?, ?)";
-        Book savedBook = null;
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      request, PreparedStatement.RETURN_GENERATED_KEYS
@@ -39,12 +38,12 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 Long id = resultSet.getObject(FIRST_PARAMETER_INDEX, Long.class);
-                savedBook = findById(id).orElseThrow();
+                book.setId(id);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't save a book " + book, e);
         }
-        return savedBook;
+        return book;
     }
 
     @Override
