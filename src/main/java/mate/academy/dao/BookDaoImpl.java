@@ -85,13 +85,10 @@ public class BookDaoImpl implements BookDao {
                         connection.prepareStatement(deleteRowByIdQuery)) {
             preparedStatement.setLong(FIRST_PARAMETER,id);
             int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                return false;
-            }
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Error deleting book by id: " + id, e);
         }
-        return true;
     }
 
     @Override
