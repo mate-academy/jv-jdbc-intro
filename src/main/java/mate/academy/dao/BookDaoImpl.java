@@ -95,7 +95,6 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String findRowByIdQuery = "SELECT * FROM books WHERE id = ?";
-        Optional<Book> value = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(findRowByIdQuery)) {
@@ -103,12 +102,12 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Book aquiredBook = extractBookFromResultSet(resultSet);
-                value = Optional.of(aquiredBook);
+                return Optional.of(aquiredBook);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error during finding book by id: " + id, e);
         }
-        return value;
+        return Optional.empty();
     }
 
     private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
