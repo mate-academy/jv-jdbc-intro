@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
     private static final int PRICE_COLUMN_INDEX = 3;
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
-    private static final int THIRD_PARAMETER = 2;
+    private static final int THIRD_PARAMETER = 3;
     private static final String TITLE_COLUMN_LABEL = "title";
     private static final String PRICE_COLUMN_LABEL = "price";
 
