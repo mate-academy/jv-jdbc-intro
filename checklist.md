@@ -81,7 +81,7 @@ Good: `books.title`
         ```
 
 * Best practices with closing Connections and/or PreparedStatements
-    - You have to close the PreparedStatement after you're done with it and before you create a new one on the connection.
+    - You have to close the PreparedStatement after you're done with it and before you create a new one on the same connection.
     - Generally, when you close the connection it automatically closes the statement.
       But, for example, if for some reason you are using a connection pool (we are not using it now),
       and you call `connection.close()`, the connection will be returned to the pool,
