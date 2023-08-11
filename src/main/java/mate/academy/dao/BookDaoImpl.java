@@ -14,25 +14,12 @@ import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
 
-/**
- * You should rethrow DataProcessingException in catch block on dao layer
- * If you can't connect to your db because of this error:
- * The server time zone value ‘EEST’ is unrecognized or represents more than one time zone.
- * Try to set timezone explicitly in your connection URL.
- * Example:
- * ...localhost:3306/your_schema?serverTimezone=UTC
- * Or you can set a timezone in MySql directly by running command: SET GLOBAL time_zone = '+3:00';
- * throw new DataProcessingException("Can't get a book by id " + id, e);
- *     throw new DataProcessingException("Can't save a book " + book, e);
- */
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final int ID_COLUMN_INDEX = 1;
-    private static final int TITLE_COLUMN_INDEX = 2;
-    private static final int PRICE_COLUMN_INDEX = 3;
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
     private static final int THIRD_PARAMETER = 3;
+    private static final String ID_COLUMN_LABEL = "id";
     private static final String TITLE_COLUMN_LABEL = "title";
     private static final String PRICE_COLUMN_LABEL = "price";
 
@@ -50,7 +37,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                book.setId(generatedKeys.getLong(ID_COLUMN_INDEX));
+                book.setId(generatedKeys.getLong(ID_COLUMN_LABEL));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error during inserting book: " + book, e);
@@ -65,10 +52,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery(selectAllQuery);
             List<Book> acquiredBooks = new ArrayList<>();
             while (resultSet.next()) {
-                Long id = resultSet.getLong(ID_COLUMN_INDEX);
-                String title = resultSet.getString(TITLE_COLUMN_INDEX);
-                BigDecimal price = resultSet.getObject(PRICE_COLUMN_INDEX, BigDecimal.class);
-                Book nextBook = new Book(id, title, price);
+                Book nextBook = extractBookFromResultSet(resultSet);
                 acquiredBooks.add(nextBook);
             }
             return acquiredBooks;
@@ -121,15 +105,35 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(FIRST_PARAMETER,id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(TITLE_COLUMN_LABEL);
-                BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL,
-                        BigDecimal.class);
-                Book aquiredBook = new Book(id, title, price);
+                Book aquiredBook = extractBookFromResultSet(resultSet, id);
                 value = Optional.of(aquiredBook);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error during finding book by id: " + id, e);
         }
         return value;
+    }
+
+    private Book extractBookFromResultSet(ResultSet resultSet, Long id) {
+        try {
+            String title = resultSet.getString(TITLE_COLUMN_LABEL);
+            BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class);
+            Book aquiredBook = new Book(id, title, price);
+            return aquiredBook;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Book extractBookFromResultSet(ResultSet resultSet) {
+        try {
+            Long id = resultSet.getLong(ID_COLUMN_LABEL);
+            String title = resultSet.getString(TITLE_COLUMN_LABEL);
+            BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class);
+            Book aquiredBook = new Book(id, title, price);
+            return aquiredBook;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
