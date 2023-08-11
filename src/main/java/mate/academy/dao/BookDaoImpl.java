@@ -4,7 +4,6 @@ import mate.academy.connection.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
