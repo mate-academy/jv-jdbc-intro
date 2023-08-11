@@ -29,7 +29,6 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT,
                      Statement.RETURN_GENERATED_KEYS)) {
-            Book createdBook = null;
             statement.setString(TITLE_POSITION, book.getTitle());
             statement.setBigDecimal(PRICE_POSITION, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -39,10 +38,9 @@ public class BookDaoImpl implements BookDao {
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(ID_INDEX, Long.class);
-                createdBook = findById(id).orElseThrow(() ->
-                                new DataProcessingException("Can't insert book: "  + book));
+                book.setId(id);
             }
-            return createdBook;
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't insert book: " + book);
         }
