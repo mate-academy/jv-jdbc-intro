@@ -16,6 +16,7 @@ public class BookDaoImpl implements BookDao {
     private static final int TITLE_INDEX = 1;
     private static final int PRICE_INDEX = 2;
     private static final int ID_INDEX_TO_UPDATE = 3;
+    private static final int MIN_NUMBER_OF_CREATED_ROWS = 1;
     private static final int MIN_NUMBER_OF_UPDATED_ROWS = 1;
     private static final int MIN_NUMBER_OF_DELETED_ROWS = 1;
 
@@ -29,7 +30,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(PRICE_INDEX, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < MIN_NUMBER_OF_UPDATED_ROWS) {
+            if (affectedRows < MIN_NUMBER_OF_CREATED_ROWS) {
                 throw new RuntimeException("The book: " + book + " wasn't created!");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();

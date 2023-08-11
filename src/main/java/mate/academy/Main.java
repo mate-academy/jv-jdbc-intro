@@ -15,7 +15,7 @@ public class Main {
         Book book = new Book("The clean code", BigDecimal.valueOf(250));
         Book createdBook = bookDao.create(book);
         //getting books by id
-        long id = book.getId();
+        long id = createdBook.getId();
         Book foundBookById = bookDao.findById(id).orElseThrow(() -> new RuntimeException("Can't find a book by id: " + id));
         System.out.println(foundBookById);
         //getting all books
