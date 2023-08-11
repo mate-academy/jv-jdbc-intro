@@ -19,13 +19,12 @@ import java.util.Optional;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        int k = 0;
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query,
                      Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(++k, book.getTitle());
-            statement.setBigDecimal(++k, book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to insert at least one row, but inserted 0 rows");
@@ -44,19 +43,18 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
-        Optional<Book> optionalBook = Optional.empty();
+        Book book = null;
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Book book = createBook(resultSet);
-                optionalBook = Optional.ofNullable(book);
+                book = createBook(resultSet);
             }
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can not to find the book by id = " + id, e);
         }
-        return optionalBook;
     }
 
     @Override
@@ -78,13 +76,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        int k = 0;
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(++k, book.getTitle());
-            statement.setObject(++k, book.getPrice());
-            statement.setLong(++k, book.getId());
+            statement.setObject(1, book.getTitle());
+            statement.setObject(2, book.getPrice());
+            statement.setLong(3, book.getId());
             int affectedRow = statement.executeUpdate();
             if (affectedRow != 0) {
                 return book;
@@ -99,22 +96,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        boolean isDeleted = false;
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            int deletedRow = statement.executeUpdate();
-            if (deletedRow != 0) {
-                isDeleted = true;
-            } else {
-                throw new DataProcessingException("Expected delete the book by id = "
-                        + id + " But it's not happened");
-            }
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not to delete the book by id = " + id, e);
         }
-        return isDeleted;
     }
 
     private Book createBook(ResultSet resultSet) throws SQLException {
