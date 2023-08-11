@@ -101,11 +101,7 @@ public class MySqlBookDao implements BookDao {
             statement.setString(titleIndex, book.getTitle());
             statement.setBigDecimal(priceIndex, book.getPrice());
             statement.setLong(idIndex, book.getId());
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
-                throw new DataProcessingException("Expected to update at least 1 row,"
-                        + " but updated 0 rows, with id = " + book.getId());
-            }
+            statement.executeUpdate();
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book with id = " + book.getId(), e);
