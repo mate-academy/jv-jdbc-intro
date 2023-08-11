@@ -66,7 +66,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement getAllStatement = connection.prepareStatement(GET_ALL_REQUEST_BOOK)) {
             ResultSet resultSet = getAllStatement.executeQuery();
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 books.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
