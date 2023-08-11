@@ -118,8 +118,7 @@ public class BookDaoImpl implements BookDao {
         try {
             String title = resultSet.getString(TITLE_COLUMN_LABEL);
             BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class);
-            Book aquiredBook = new Book(id, title, price);
-            return aquiredBook;
+            return new Book(id, title, price);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
