@@ -100,7 +100,7 @@ public class BookDaoImpl implements BookDao {
             if (affectedRow < 1) {
                 throw new RuntimeException("Expected to delete at least 1 row but was 0.");
             }
-            return affectedRow == 1;
+            return affectedRow > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Can not delete row by the id: " + id, e);
         }
