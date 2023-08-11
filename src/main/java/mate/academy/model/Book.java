@@ -33,24 +33,6 @@ public class Book {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Book book = (Book) o;
-        return Objects.equals(id, book.id) && Objects.equals(title, book.title)
-                && Objects.equals(price, book.price);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, price);
-    }
-
-    @Override
     public String toString() {
         return "Book{"
                 + "id=" + id
