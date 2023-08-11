@@ -7,10 +7,10 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DRIVER_MYSQL = "com.mysql.cj.jdbc.Driver";
-    private static final String URL = "Jdbc:mysql://localhost:3306/books";
+    private static final String URL = "Jdbc:mysql://localhost:3306/books_db";
     private static final String USER = "root";
     private static final String PASSWORD = "password";
-    private static final Properties properties;
+    private static final Properties PROPERTIES;
 
     static {
         try {
@@ -19,12 +19,12 @@ public class ConnectionUtil {
             throw new RuntimeException( "Cannot get driver for DB", e );
         }
 
-        properties = new Properties();
-        properties.setProperty( "user", USER );
-        properties.setProperty( "password", PASSWORD);
+        PROPERTIES = new Properties();
+        PROPERTIES.setProperty( "user", USER );
+        PROPERTIES.setProperty( "password", PASSWORD);
     }
 
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection( URL, properties );
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection( URL, PROPERTIES );
     }
 }
