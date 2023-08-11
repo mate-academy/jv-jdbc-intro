@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -30,7 +31,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can`t get a new Book: " + book, e);
+            throw new DataProcessingException("Can`t get a new Book: " + book, e);
         }
         return book;
     }
@@ -48,7 +49,7 @@ public class BookDaoImpl implements BookDao {
                 bookFromDb = parseResultSetInBook(resultSet);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can not find Book with id: " + id, e);
+            throw new DataProcessingException("Can not find Book with id: " + id, e);
         }
         return Optional.ofNullable(bookFromDb);
     }
@@ -64,7 +65,7 @@ public class BookDaoImpl implements BookDao {
                 allBooksFromDb.add(parseResultSetInBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can`t get all elements from DB.", e);
+            throw new DataProcessingException("Can`t get all elements from DB.", e);
         }
         return allBooksFromDb;
     }
@@ -84,7 +85,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Can not update row by the book with id: " + book.getId(), e);
+            throw new DataProcessingException("Can not update row by the book with id: " + book.getId(), e);
         }
         return book;
     }
@@ -94,7 +95,7 @@ public class BookDaoImpl implements BookDao {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, 4L);
+            statement.setLong(1, 6L);
 
             int affectedRow = statement.executeUpdate();
             if (affectedRow < 1) {
@@ -102,7 +103,7 @@ public class BookDaoImpl implements BookDao {
             }
             return affectedRow > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Can not delete row by the id: " + id, e);
+            throw new DataProcessingException("Can not delete row by the id: " + id, e);
         }
     }
 
