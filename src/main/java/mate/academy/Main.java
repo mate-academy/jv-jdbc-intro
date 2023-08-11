@@ -13,10 +13,10 @@ public class Main {
     private static final BigDecimal SECOND_TEST_BOOK_PRICE = BigDecimal.valueOf(1200);
     private static final BigDecimal THIRD_TEST_BOOK_PRICE = BigDecimal.valueOf(700);
     private static final Long TEST_BOOK_ID = 13L;
-    private static final Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         Book firstBook = new Book(FIRST_BOOK_NAME, FIRST_TEST_BOOK_PRICE);
         bookDao.create(firstBook);
         Book secondBook = new Book(SECOND_BOOK_NAME, SECOND_TEST_BOOK_PRICE);

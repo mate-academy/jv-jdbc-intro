@@ -19,12 +19,13 @@ public class BookDaoImpl implements BookDao {
     private static final int FIRST_PARAMETER = 1;
     private static final int SECOND_PARAMETER = 2;
     private static final int THIRD_PARAMETER = 3;
+    private static final int ID_COLUMN_INDEX = 1;
     private static final String ID_COLUMN_LABEL = "id";
     private static final String TITLE_COLUMN_LABEL = "title";
     private static final String PRICE_COLUMN_LABEL = "price";
 
     @Override
-    public void create(Book book) {
+    public Book create(Book book) {
         String insertQuery = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
@@ -32,16 +33,17 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(FIRST_PARAMETER, book.getTitle());
             preparedStatement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
+            if (affectedRows < 1) {
                 throw new RuntimeException("No inserted data! Something wrong with book: " + book);
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                book.setId(generatedKeys.getLong(ID_COLUMN_LABEL));
+                book.setId(generatedKeys.getLong(ID_COLUMN_INDEX));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error during inserting book: " + book, e);
         }
+        return book;
     }
 
     @Override
@@ -83,11 +85,6 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(FIRST_PARAMETER, book.getTitle());
             preparedStatement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
             preparedStatement.setLong(THIRD_PARAMETER, book.getId());
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("No updated data! Data should to update:"
-                        + book);
-            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Error during updating books database with book: "
@@ -97,15 +94,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String deleteRowByIdQuery = "SELECT * FROM books WHERE id = ?";
+        String findRowByIdQuery = "SELECT * FROM books WHERE id = ?";
         Optional<Book> value = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
-                        connection.prepareStatement(deleteRowByIdQuery)) {
-            preparedStatement.setLong(FIRST_PARAMETER,id);
+                        connection.prepareStatement(findRowByIdQuery)) {
+            preparedStatement.setLong(FIRST_PARAMETER, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Book aquiredBook = extractBookFromResultSet(resultSet, id);
+                Book aquiredBook = extractBookFromResultSet(resultSet);
                 value = Optional.of(aquiredBook);
             }
         } catch (SQLException e) {
@@ -114,24 +111,10 @@ public class BookDaoImpl implements BookDao {
         return value;
     }
 
-    private Book extractBookFromResultSet(ResultSet resultSet, Long id) {
-        try {
-            String title = resultSet.getString(TITLE_COLUMN_LABEL);
-            BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class);
-            return new Book(id, title, price);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Book extractBookFromResultSet(ResultSet resultSet) {
-        try {
-            Long id = resultSet.getLong(ID_COLUMN_LABEL);
-            String title = resultSet.getString(TITLE_COLUMN_LABEL);
-            BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class);
-            return new Book(id, title, price);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject(ID_COLUMN_LABEL, Long.class);
+        String title = resultSet.getString(TITLE_COLUMN_LABEL);
+        BigDecimal price = resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class);
+        return new Book(id, title, price);
     }
 }

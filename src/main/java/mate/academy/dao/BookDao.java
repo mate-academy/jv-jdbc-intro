@@ -6,7 +6,7 @@ import mate.academy.model.Book;
 
 public interface BookDao {
 
-    void create(Book book);
+    Book create(Book book);
 
     List<Book> findAll();
 
