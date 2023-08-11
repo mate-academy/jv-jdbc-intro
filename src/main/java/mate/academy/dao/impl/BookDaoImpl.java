@@ -17,21 +17,26 @@ import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int FIRST_INDEX_PARAMETER = 1;
+    private static final int SECOND_INDEX_PARAMETER = 2;
+    private static final int THIRD_INDEX_PARAMETER = 3;
+    private static final int ZERO_ROWS = 0;
+    private static final int ONE_ROW = 1;
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query,
                      Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(FIRST_INDEX_PARAMETER, book.getTitle());
+            statement.setBigDecimal(SECOND_INDEX_PARAMETER, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows < ONE_ROW) {
                 throw new DataProcessingException("Expected to insert at least one row, but inserted 0 rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(FIRST_INDEX_PARAMETER, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -45,7 +50,7 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(FIRST_INDEX_PARAMETER, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return Optional.ofNullable(parseDataToBook(resultSet));
@@ -78,11 +83,11 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(1, book.getTitle());
-            statement.setObject(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setObject(FIRST_INDEX_PARAMETER, book.getTitle());
+            statement.setObject(SECOND_INDEX_PARAMETER, book.getPrice());
+            statement.setLong(THIRD_INDEX_PARAMETER, book.getId());
             int affectedRow = statement.executeUpdate();
-            if (affectedRow == 0) {
+            if (affectedRow < ZERO_ROWS) {
                 throw new DataProcessingException("Expected updated book"
                         + book + " But it's not happened");
             }
@@ -97,8 +102,8 @@ public class BookDaoImpl implements BookDao {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
-            return statement.executeUpdate() > 0;
+            statement.setLong(FIRST_INDEX_PARAMETER, id);
+            return statement.executeUpdate() > ZERO_ROWS;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not to delete the book by id = " + id, e);
         }
@@ -107,7 +112,7 @@ public class BookDaoImpl implements BookDao {
     private Book parseDataToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setId(resultSet.getObject("id", Long.class));
-        book.setTitle(resultSet.getObject("title", String.class));
+        book.setTitle(resultSet.getString("title"));
         book.setPrice(resultSet.getObject("price", BigDecimal.class));
         return book;
     }

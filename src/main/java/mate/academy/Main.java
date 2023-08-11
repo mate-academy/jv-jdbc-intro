@@ -9,23 +9,28 @@ import java.util.Optional;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
-    private static final String BOOK_NAME = "Harry Potter";
-    private static final String BOOK_NAME_TO_UPDATE = "The Lord of The Rings";
-    private static final BigDecimal BOOK_PRICE = new BigDecimal(500);
-    private static final BigDecimal BOOK_PRICE_TO_UPDATE = new BigDecimal(1000);
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
+        // Create object of Harry Potter Book
+        Book hpBook = new Book();
+        hpBook.setTitle("Harry Potter");
+        hpBook.setPrice(new BigDecimal(500));
+
+        // Create object of The Lord of The Rings Book
+        Book loTrBook = new Book();
+        loTrBook.setTitle("The Lord of The Rings Book");
+        loTrBook.setPrice(new BigDecimal(1000));
+
         // Create (add to DB) new book
-        Book book = new Book();
-        book.setTitle(BOOK_NAME);
-        book.setPrice(BOOK_PRICE);
-        Book newBook = bookDao.create(book);
-        System.out.println(newBook);
+        Book newHpBook = bookDao.create(hpBook);
+        System.out.println(newHpBook);
+        Book newLoTrBook = bookDao.create(hpBook);
+        System.out.println(newLoTrBook);
 
         // Find book by id
-        Optional<Book> bookById = bookDao.findById(1L);
+        Optional<Book> bookById = bookDao.findById(newLoTrBook.getId());
         if (bookById.isPresent()) {
             Book book1 = bookById.get();
             System.out.println(book1);
@@ -36,15 +41,12 @@ public class Main {
         System.out.println(findAllBooks);
 
         // Update book
-        Book bookToUpdate = new Book();
-        bookToUpdate.setId(2L);
-        bookToUpdate.setTitle(BOOK_NAME_TO_UPDATE);
-        bookToUpdate.setPrice(BOOK_PRICE_TO_UPDATE);
-        Book updatedBook = bookDao.update(bookToUpdate);
+        loTrBook.setId(hpBook.getId());
+        Book updatedBook = bookDao.update(newLoTrBook);
         System.out.println(updatedBook);
 
         // Delete book by id
-        boolean isBookDeleted = bookDao.deleteById(6L);
+        boolean isBookDeleted = bookDao.deleteById(loTrBook.getId());
         System.out.println(isBookDeleted);
     }
 }
