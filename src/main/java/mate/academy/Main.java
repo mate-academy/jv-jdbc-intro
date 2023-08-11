@@ -7,7 +7,7 @@ import mate.academy.model.Book;
 import mate.academy.repository.BookDao;
 
 public class Main {
-    public static final Injector injector = Injector.getInstance("mate.academy");
+    public static final Injector INJECTOR = Injector.getInstance("mate.academy");
     public static final List<Book> library;
 
     static {
@@ -28,7 +28,7 @@ public class Main {
 
     public static void main(String[] args) {
         //Get BookDao instance using Injector
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
         //Create new books in the database
         library.forEach(bookDao::create);

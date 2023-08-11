@@ -21,11 +21,7 @@ public class MySqlConnectionManager {
         }
     }
 
-    public static Connection getConnection() {
-        try {
-            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
-        } catch (SQLException e) {
-            throw new RuntimeException("Cannot get connection", e);
-        }
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 }
