@@ -19,11 +19,14 @@ public class MySqlBookDao implements BookDao {
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO book (title, price) VALUES (?,?)";
+        int idIndex = 1;
+        int titleIndex = 1;
+        int priceIndex = 2;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
                         Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(titleIndex, book.getTitle());
+            statement.setBigDecimal(priceIndex, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to insert at least 1 row, "
@@ -31,7 +34,7 @@ public class MySqlBookDao implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(idIndex, Long.class);
                 book.setId(id);
             }
 
@@ -44,9 +47,10 @@ public class MySqlBookDao implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM book WHERE id = ?";
+        int idIndex = 1;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setLong(idIndex, id);
             ResultSet resultSet = statement.executeQuery();
             Book book = null;
             if (resultSet.next()) {
@@ -89,11 +93,14 @@ public class MySqlBookDao implements BookDao {
     @Override
     public Book update(Book book) {
         String sql = "UPDATE book SET title = ?, price = ? WHERE id = ?";
+        int titleIndex = 1;
+        int priceIndex = 2;
+        int idIndex = 3;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setString(titleIndex, book.getTitle());
+            statement.setBigDecimal(priceIndex, book.getPrice());
+            statement.setLong(idIndex, book.getId());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
                 throw new DataProcessingException("Expected to update at least 1 row,"
@@ -108,9 +115,10 @@ public class MySqlBookDao implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM book WHERE id = ?";
+        int idIndex = 1;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setLong(idIndex, id);
             return statement.executeUpdate() >= 1;
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t delete book by id = " + id, e);
