@@ -52,10 +52,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                Integer price = resultSet.getObject("price", Integer.class);
-
-                return Optional.of(new Book(id, title, BigDecimal.valueOf(price)));
+                return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create connection to the BD", e);
@@ -74,11 +71,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                Integer price = resultSet.getObject("price", Integer.class);
-
-                result.add(new Book(id, title, BigDecimal.valueOf(price)));
+                result.add(getBook(resultSet));
             }
 
             return result;
@@ -125,5 +118,13 @@ public class BookDaoImpl implements BookDao {
         }
 
         return true;
+    }
+
+    private Book getBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        Integer price = resultSet.getObject("price", Integer.class);
+
+        return new Book(id, title, BigDecimal.valueOf(price));
     }
 }
