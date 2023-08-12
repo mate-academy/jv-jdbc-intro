@@ -16,6 +16,13 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int ZERO_UPDATES = 0;
+    private static final int ID_INDEX = 1;
+    private static final int TITLE_INDEX = 2;
+    private static final int PRICE_INDEX = 3;
+    private static final int TITLE_INDEX_FOR_UPDATE = 1;
+    private static final int PRICE_INDEX_FOR_UPDATE = 2;
+    private static final int ID_INDEX_FOR_UPDATE = 3;
     private static final String CREATE_QUERY = "INSERT INTO books (id, title, price) VALUES (?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
@@ -24,27 +31,32 @@ public class BookDaoImpl implements BookDao {
     private static final String ID_COLUMN = "books.id";
     private static final String TITLE_COLUMN = "books.title";
     private static final String PRICE_COLUMN = "books.price";
-
+    private static final String NO_UPDATES_EXCEPTION_TEXT = "Expected to insert at least 1 row, but inserted 0 rows.";
+    private static final String CREATING_BOOK_EXCEPTION_TEXT = "Can't save a book ";
+    private static final String FINDING_BOOK_BY_ID_EXCEPTION_TEXT = "Can't get a book by id = ";
+    private static final String GETTING_LIST_OF_ALL_BOOKS_EXCEPTION_TEXT = "Can't get a book list from db";
+    private static final String UPDATING_BOOK_EXCEPTION_TEXT = "Can't update book ";
+    private static final String DELETING_BOOK_BY_ID_EXCEPTION_TEXT = "Can't delete a book by id = ";
 
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setLong(1, book.getId());
-            statement.setString(2, book.getTitle());
-            statement.setBigDecimal(3, book.getPrice());
+            statement.setLong(ID_INDEX, book.getId());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
 
-            if (statement.executeUpdate() == 0) {
-                throw new RuntimeException("Expected to insert at least 1 row, but inserted 0 rows.");
+            if (statement.executeUpdate() == ZERO_UPDATES) {
+                throw new RuntimeException(NO_UPDATES_EXCEPTION_TEXT);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Integer id = generatedKeys.getObject(1, Integer.class);
+                Integer id = generatedKeys.getObject(ID_INDEX, Integer.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't save a book " + book, e);
+            throw new DataProcessingException(CREATING_BOOK_EXCEPTION_TEXT + book, e);
         }
         return book;
     }
@@ -54,14 +66,14 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
 
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(formBookFromQuery(resultSet));
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get a book by id " + id, e);
+            throw new DataProcessingException(FINDING_BOOK_BY_ID_EXCEPTION_TEXT + id, e);
         }
     }
 
@@ -77,7 +89,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get a book list from db", e);
+            throw new DataProcessingException(GETTING_LIST_OF_ALL_BOOKS_EXCEPTION_TEXT, e);
         }
     }
 
@@ -86,15 +98,15 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setString(TITLE_INDEX_FOR_UPDATE, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX_FOR_UPDATE, book.getPrice());
+            statement.setLong(ID_INDEX_FOR_UPDATE, book.getId());
 
-            if (statement.executeUpdate() == 0) {
-                throw new RuntimeException("Expected to insert at least 1 row, but inserted 0 rows.");
+            if (statement.executeUpdate() == ZERO_UPDATES) {
+                throw new RuntimeException(NO_UPDATES_EXCEPTION_TEXT);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find a book " + book, e);
+            throw new DataProcessingException(UPDATING_BOOK_EXCEPTION_TEXT + book, e);
         }
         return null;
     }
@@ -104,11 +116,11 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
 
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX, id);
 
-            return statement.executeUpdate() > 0;
+            return statement.executeUpdate() > ZERO_UPDATES;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete a book by id = " + id, e);
+            throw new DataProcessingException(DELETING_BOOK_BY_ID_EXCEPTION_TEXT + id, e);
         }
     }
 
