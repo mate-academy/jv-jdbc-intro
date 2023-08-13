@@ -24,9 +24,9 @@ public class BookDaoImpl implements BookDao {
     private static final String TABLE_NAME = "books";
     private static final String TITLE_NAME = "title";
     private static final String PRICE_NAME = "price";
-    private static final int FIRST_INDEX = 1;
-    private static final int SECOND_INDEX = 2;
-    private static final int THIRD_INDEX = 3;
+    private static final int FIRST_INDEX_SQL_DATA = 1;
+    private static final int SECOND_INDEX_SQL_DATA = 2;
+    private static final int THIRD_INDEX_SQL_DATA = 3;
     private static final int ROW_EXIST_NUM = 1;
 
     @Override
@@ -35,15 +35,15 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             validateTableConnection(connection, TABLE_NAME);
-            statement.setString(FIRST_INDEX, book.getTitle());
-            statement.setBigDecimal(SECOND_INDEX, book.getPrice());
+            statement.setString(FIRST_INDEX_SQL_DATA, book.getTitle());
+            statement.setBigDecimal(SECOND_INDEX_SQL_DATA, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < ROW_EXIST_NUM) {
                 throw new DataProcessingException("Expected to insert at leas one row, but inserted 0 row.");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(FIRST_INDEX, Long.class);
+                Long id = generatedKeys.getObject(FIRST_INDEX_SQL_DATA, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -58,7 +58,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             validateTableConnection(connection, TABLE_NAME);
-            statement.setLong(FIRST_INDEX, id);
+            statement.setLong(FIRST_INDEX_SQL_DATA, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String title = resultSet.getString(TITLE_NAME);
@@ -83,7 +83,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery(sql);
             List<Book> allBooks = new ArrayList<>();
             while (resultSet.next()) {
-                Long id = resultSet.getObject(FIRST_INDEX, Long.class);
+                Long id = resultSet.getObject(FIRST_INDEX_SQL_DATA, Long.class);
                 String title = resultSet.getString(TITLE_NAME);
                 BigDecimal price = resultSet.getObject(PRICE_NAME, BigDecimal.class);
                 Book book = new Book();
@@ -104,9 +104,9 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             validateTableConnection(connection, TABLE_NAME);
-            statement.setString(FIRST_INDEX, book.getTitle());
-            statement.setBigDecimal(SECOND_INDEX, book.getPrice());
-            statement.setLong(THIRD_INDEX, book.getId());
+            statement.setString(FIRST_INDEX_SQL_DATA, book.getTitle());
+            statement.setBigDecimal(SECOND_INDEX_SQL_DATA, book.getPrice());
+            statement.setLong(THIRD_INDEX_SQL_DATA, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < ROW_EXIST_NUM) {
                 throw new DataProcessingException("Expected to insert at leas one row, but inserted 0 row.");
@@ -123,7 +123,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             validateTableConnection(connection, TABLE_NAME);
-            statement.setLong(FIRST_INDEX, id);
+            statement.setLong(FIRST_INDEX_SQL_DATA, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < ROW_EXIST_NUM) {
                 throw new DataProcessingException("Expected to insert at leas one row, but inserted 0 row.");
