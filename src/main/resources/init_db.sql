@@ -1,8 +1,12 @@
-CREATE DATABASE library
+CREATE DATABASE library;
 
-create table library.books
-(
-    id    bigint auto_increment primary key,
-    title text,
-    price decimal
+USE library;
+
+CREATE TABLE books (
+        id BIGINT NOT NULL AUTO_INCREMENT,
+        title TEXT,
+        price DECIMAL,
+        PRIMARY KEY (id)
 );
+
+SHOW DATABASES;
