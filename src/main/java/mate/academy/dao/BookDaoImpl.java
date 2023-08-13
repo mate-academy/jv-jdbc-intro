@@ -12,19 +12,25 @@ import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int ID_INDEX = 1;
+    private static final int ID_POSITION = 3;
+    private static final int PRICE_POSITION = 2;
+    private static final int TITLE_POSITION = 1;
+    private static final int VALID_MINIMUM_ROWS = 1;
+    
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setBigDecimal(2, book.getPrice());
-            if (preparedStatement.executeUpdate() < 1) {
+            preparedStatement.setString(TITLE_POSITION, book.getTitle());
+            preparedStatement.setBigDecimal(PRICE_POSITION, book.getPrice());
+            if (preparedStatement.executeUpdate() < VALID_MINIMUM_ROWS) {
                 throw new RuntimeException("Method should add at least 1 book to DB");
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(ID_INDEX, Long.class);
                 book.setId(id);
             }
             return book;
@@ -38,7 +44,7 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             Book foundBook = null;
             if (resultSet.next()) {
@@ -72,10 +78,10 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, book.getTitle());
-            statement.setObject(2, book.getPrice());
-            statement.setObject(3, book.getId());
-            if (statement.executeUpdate() < 1) {
+            statement.setString(TITLE_POSITION, book.getTitle());
+            statement.setObject(PRICE_POSITION, book.getPrice());
+            statement.setObject(ID_POSITION, book.getId());
+            if (statement.executeUpdate() < VALID_MINIMUM_ROWS) {
                 throw new RuntimeException("Method should update at least 1 book in DB");
             }
             return book;
@@ -89,7 +95,7 @@ public class BookDaoImpl implements BookDao {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id: " + id, e);
