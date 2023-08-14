@@ -3,7 +3,6 @@ package mate.academy;
 import mate.academy.lib.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;

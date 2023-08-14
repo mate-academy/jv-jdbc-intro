@@ -3,8 +3,6 @@ package mate.academy.lib;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
-
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +45,7 @@ public class BookDaoImpl implements BookDao {
             if (resultSet.next()) {
                 book = parseBook(resultSet);
             }
-            return Optional.of(book);
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id " + id, e);
         }
@@ -93,7 +91,7 @@ public class BookDaoImpl implements BookDao {
             statement.executeUpdate();
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete data from DB"+ id, e);
+            throw new DataProcessingException("Can't delete data from DB" + id, e);
         }
     }
 
@@ -101,7 +99,7 @@ public class BookDaoImpl implements BookDao {
         Book book = new Book();
         book.setId(resultSet.getObject("id",Long.class));
         book.setTitle(resultSet.getString("title"));
-        book.setPrice(resultSet.getObject("price", BigDecimal.class));
+        book.setPrice(resultSet.getBigDecimal("price"));
         return book;
     }
 }
