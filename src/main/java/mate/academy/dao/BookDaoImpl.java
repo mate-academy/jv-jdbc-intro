@@ -24,6 +24,7 @@ public class BookDaoImpl implements BookDao {
              PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(TITLE_POSITION, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_POSITION, book.getPrice());
+            preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(ID_INDEX, Long.class);
@@ -77,6 +78,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(TITLE_POSITION, book.getTitle());
             statement.setObject(PRICE_POSITION, book.getPrice());
             statement.setObject(ID_POSITION, book.getId());
+            statement.executeUpdate();
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update such book: " + book, e);
