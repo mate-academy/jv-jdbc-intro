@@ -8,5 +8,3 @@ CREATE TABLE books (
         price DECIMAL,
         PRIMARY KEY (id)
 );
-
-SHOW DATABASES;
