@@ -28,7 +28,6 @@ public class BookDaoImpl implements BookDao{
                      connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(INDEX_OF_FIRST_PARAM, book.getTitle());
             statement.setObject(INDEX_OF_SECOND_PARAM, book.getPrice());
-
             statement.executeUpdate();
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -91,7 +90,6 @@ public class BookDaoImpl implements BookDao{
             statement.setString(INDEX_OF_FIRST_PARAM, book.getTitle());
             statement.setObject(INDEX_OF_SECOND_PARAM, book.getPrice());
             statement.setLong(INDEX_OF_THIRD_PARAM, book.getId());
-
             statement.executeUpdate();
 
             return book;
@@ -107,7 +105,6 @@ public class BookDaoImpl implements BookDao{
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setLong(1, id);
-
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
