@@ -1,10 +1,10 @@
 package mate.academy.lib;
 
-import mate.academy.exception.DataProcessingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/library";
@@ -18,7 +18,8 @@ public class ConnectionUtil {
         try {
             Class.forName(DRIVER_NAME);
         } catch (ClassNotFoundException e) {
-            throw new DataProcessingException("Can't load JDBC driver with driver name " + DRIVER_NAME, e);
+            throw new DataProcessingException("Can't load JDBC driver "
+                   + "with driver name " + DRIVER_NAME, e);
         }
     }
 
