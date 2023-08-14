@@ -16,7 +16,6 @@ public class BookDaoImpl implements BookDao {
     private static final int ID_POSITION = 3;
     private static final int PRICE_POSITION = 2;
     private static final int TITLE_POSITION = 1;
-    private static final int VALID_MINIMUM_ROWS = 1;
     
     @Override
     public Book create(Book book) {
@@ -25,9 +24,6 @@ public class BookDaoImpl implements BookDao {
              PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(TITLE_POSITION, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_POSITION, book.getPrice());
-            if (preparedStatement.executeUpdate() < VALID_MINIMUM_ROWS) {
-                throw new RuntimeException("Method should add at least 1 book to DB");
-            }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(ID_INDEX, Long.class);
@@ -59,15 +55,15 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         String query = "SELECT * FROM books";
-        List<Book> allBooks = new ArrayList<>();
+        List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book recievedBook = processResultSet(resultSet);
-                allBooks.add(recievedBook);
+                books.add(recievedBook);
             }
-            return allBooks;
+            return books;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all data from DB", e);
         }
@@ -81,9 +77,6 @@ public class BookDaoImpl implements BookDao {
             statement.setString(TITLE_POSITION, book.getTitle());
             statement.setObject(PRICE_POSITION, book.getPrice());
             statement.setObject(ID_POSITION, book.getId());
-            if (statement.executeUpdate() < VALID_MINIMUM_ROWS) {
-                throw new RuntimeException("Method should update at least 1 book in DB");
-            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update such book: " + book, e);
