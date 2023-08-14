@@ -1,4 +1,4 @@
-package mate.academy.Dao;
+package mate.academy.dao;
 
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;

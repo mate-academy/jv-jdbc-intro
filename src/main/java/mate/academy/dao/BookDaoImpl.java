@@ -1,23 +1,18 @@
-package mate.academy.Dao;
+package mate.academy.dao;
 
 import mate.academy.exception.DataException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Dao
-public class BookDaoImpl implements BookDao{
-    private static final int ID_INDEX = 3;
+public class BookDaoImpl implements BookDao {
+    private static final int ID_PART = 3;
     private static final int TITLE_PART = 1;
     private static final int PRICE_PART = 2;
     private static final int MINIMUM_CHANGES = 1;
@@ -35,9 +30,6 @@ public class BookDaoImpl implements BookDao{
                      Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_PART, book.getTitle());
             statement.setBigDecimal(PRICE_PART, book.getPrice());
-            if (statement.executeUpdate() < MINIMUM_CHANGES) {
-                throw new RuntimeException("Can't insert less than one row");
-            }
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 Long id = resultSet.getObject(INDEX_ID, Long.class);
@@ -67,15 +59,15 @@ public class BookDaoImpl implements BookDao{
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL)) {
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<Book> books = new ArrayList<>();
+             PreparedStatement statement = connection.prepareStatement(SELECT_ALL)) {
+            ResultSet resultSet = statement.executeQuery();
+            List<Book> result = new ArrayList<>();
             while (resultSet.next()) {
-                books.add(getBook(resultSet));
+                result.add(getBook(resultSet));
             }
-            return books;
+            return result;
         } catch (SQLException e) {
-            throw new DataException("Unable to retrieve all books", e);
+            throw new DataException("Can't retrieve all books", e);
         }
     }
 
@@ -85,7 +77,10 @@ public class BookDaoImpl implements BookDao{
              PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setString(TITLE_PART, book.getTitle());
             statement.setObject(PRICE_PART, book.getPrice());
-            statement.setLong(ID_INDEX, book.getId());
+            statement.setLong(ID_PART, book.getId());
+            if (statement.executeUpdate() < MINIMUM_CHANGES) {
+                throw new RuntimeException("Can't insert less than one row");
+            }
         } catch (SQLException e) {
             throw new DataException("Can't update the book = " + book, e);
         }
@@ -107,9 +102,8 @@ public class BookDaoImpl implements BookDao{
         Book book = new Book();
         try {
             book.setId(resultSet.getObject("id", Long.class));
-            book.setTitle(resultSet.getString("title"));
-            BigDecimal price = resultSet.getBigDecimal("price");
-            book.setPrice(price != null ? price : BigDecimal.ZERO);
+            book.setTitle(resultSet.getObject("title", String.class));
+            book.setPrice(resultSet.getObject("price", BigDecimal.class));
             return book;
         } catch (SQLException e) {
             throw new DataException("Can't get book from ResultSet", e);
