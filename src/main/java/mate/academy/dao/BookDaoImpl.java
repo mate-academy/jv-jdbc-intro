@@ -28,7 +28,10 @@ public class BookDaoImpl implements BookDao {
              PreparedStatement statement = connection.prepareStatement(CREATE_QUERY,
                      PreparedStatement.RETURN_GENERATED_KEYS)) {
             setBookParameters(statement, book);
-            statement.executeUpdate();
+            int updatedRows = statement.executeUpdate();
+            if (updatedRows < 1) {
+                throw new DataProcessingException("Failed to create book: no rows were updated.");
+            }
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     book.setId(generatedKeys.getLong(1));
@@ -81,7 +84,10 @@ public class BookDaoImpl implements BookDao {
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             setBookParameters(statement, book);
             statement.setLong(3, book.getId());
-            statement.executeUpdate();
+            int updatedRows = statement.executeUpdate();
+            if (updatedRows < 1) {
+                throw new DataProcessingException("Failed to create book: no rows were updated.");
+            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to update book" + book, e);

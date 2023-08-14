@@ -15,11 +15,10 @@ public class Main {
         book.setTitle("Sample");
         book.setPrice(BigDecimal.valueOf(5.99));
         bookDao.create(book);
-        Long bookId = 1L;
-        Optional<Book> foundBook = bookDao.findById(bookId);
+        Optional<Book> foundBook = bookDao.findById(book.getId());
         bookDao.findAll();
         Book updatedBook = foundBook.orElseThrow();
         bookDao.update(updatedBook);
-        bookDao.deleteById(bookId);
+        bookDao.deleteById(book.getId());
     }
 }
