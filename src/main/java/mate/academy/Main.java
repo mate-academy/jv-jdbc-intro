@@ -14,12 +14,8 @@ public class Main {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
         List<Book> all = bookDao.findAll();
-        book.setId(2L);
-        book.setTitle("MERS");
-        book.setPrice(BigDecimal.valueOf(245.32));
-        bookDao.update(book);
         all.forEach(System.out::println);
-        bookDao.deleteById(2L);
+        bookDao.deleteById(6L);
         all = bookDao.findAll();
         all.forEach(System.out::println);
     }
