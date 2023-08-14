@@ -17,6 +17,7 @@
             https://raw.githubusercontent.com/mate-academy/style-guides/master/java/checkstyle.xml
         </maven.checkstyle.plugin.configLocation>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>mysql</groupId>
@@ -24,6 +25,7 @@
             <version>8.0.33</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -32,7 +34,7 @@
                 <version>3.1.1</version>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
