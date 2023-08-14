@@ -66,14 +66,14 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
-            List<Book> allBooks = new ArrayList<>();
+            List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
                 Book book = createBook(resultSet);
-                allBooks.add(book);
+                books.add(book);
             }
-            return allBooks;
+            return books;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create a connection to the DB" ,e);
+            throw new DataProcessingException("Can't get all data from DB" ,e);
         }
     }
 
