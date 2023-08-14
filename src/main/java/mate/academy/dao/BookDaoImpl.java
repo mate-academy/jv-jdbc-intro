@@ -12,20 +12,25 @@ import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+
+    private static final int FIRST_PARAMETER = 1;
+    private static final int SECOND_PARAMETER = 2;
+    private static final int THIRD_PARAMETER = 3;
+    private static final int ID_INDEX = 1;
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(FIRST_PARAMETER, book.getTitle());
+            statement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to insert at leas one row, but inserted 0 rows.");
             }
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) {
-                Long id = resultSet.getObject(1, Long.class);
+            ResultSet keyResultSet = statement.getGeneratedKeys();
+            if (keyResultSet.next()) {
+                Long id = keyResultSet.getObject(ID_INDEX, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -39,7 +44,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setLong(FIRST_PARAMETER, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(getBook(resultSet));
@@ -70,9 +75,9 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setString(FIRST_PARAMETER, book.getTitle());
+            statement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
+            statement.setLong(THIRD_PARAMETER, book.getId());
             int changes = statement.executeUpdate();
             if (changes < 1) {
                 throw new RuntimeException("Expected to update at leas one row, but updated 0 rows.");
@@ -88,7 +93,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setLong(FIRST_PARAMETER, id);
             int changes = statement.executeUpdate();
             return changes > 0;
         } catch (SQLException e) {

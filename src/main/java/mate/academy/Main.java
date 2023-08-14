@@ -8,10 +8,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Main {
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
+    private static final BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
     public static void main(String[] args) {
-        Injector injector = Injector.getInstance("mate.academy");
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-
         Book threeComradesBook = new Book();
         threeComradesBook.setTitle("Three Comrades");
         threeComradesBook.setPrice(BigDecimal.valueOf(100));
