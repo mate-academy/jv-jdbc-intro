@@ -30,7 +30,6 @@ public class Main {
         //update
         book.setTitle("JDBC for wood people, Part2");
         book.setPrice(BigDecimal.valueOf(500));
-        book.setId(3L);
         Book updatedBook = bookDao.update(book);
 
         //delete

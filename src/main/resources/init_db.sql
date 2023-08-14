@@ -1,5 +1,3 @@
-SHOW DATABASES;
-
 CREATE database books_db;
 
 USE books_db;
@@ -11,4 +9,3 @@ CREATE TABLE books (
       PRIMARY KEY (id)
 );
 
-SHOW TABLES;
