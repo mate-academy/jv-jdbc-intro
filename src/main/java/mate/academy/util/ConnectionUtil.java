@@ -9,13 +9,13 @@ public class ConnectionUtil {
     private static final String PASSWORD = "anton7570857";
     private static final String JDBC_URL_CONNECTION = "jdbc:mysql://localhost:3306/test";
 
-   static {
-       try {
-           Class.forName("com.mysql.cj.jdbc.Driver");
-       } catch (ClassNotFoundException e) {
-           throw new RuntimeException("Can not load JDBC driver", e);
-       }
-   }
+    static {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Can not load JDBC driver", e);
+        }
+    }
 
     public static Connection getConnection() {
         try {
