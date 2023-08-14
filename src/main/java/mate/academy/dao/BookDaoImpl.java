@@ -26,7 +26,7 @@ public class BookDaoImpl implements BookDao {
     private static final String SELECT_BY_ID = "SELECT * FROM books WHERE id = ?";
     private static final String UPDATE = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM books WHERE id = ?";
-    private static final int VALID_MINIMUM_ROWS = 1;
+    private static final int VALID_MINIMUM_ROWS = 0;
 
 
     @Override
@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
             checkInsertedRows(changedRows);
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
-                Long id = resultSet.getLong(ID_INDEX);
+                Long id = resultSet.getObject(ID_INDEX, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {

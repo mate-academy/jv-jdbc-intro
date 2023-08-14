@@ -17,7 +17,7 @@ public class ConnectionDB {
         try {
             Class.forName(JDBC_DRIVER);
         } catch (ClassNotFoundException e) {
-            throw new DataProcessingException("Can't load driver ", e);
+            throw new DataProcessingException("Can't load mysql driver ", e);
         }
     }
 
