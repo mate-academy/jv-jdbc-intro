@@ -16,3 +16,4 @@ public interface BookDao {
 
     boolean deleteById(Long id);
 }
+
