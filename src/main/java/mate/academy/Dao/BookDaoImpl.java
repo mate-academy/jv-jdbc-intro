@@ -86,9 +86,6 @@ public class BookDaoImpl implements BookDao{
             statement.setString(TITLE_PART, book.getTitle());
             statement.setObject(PRICE_PART, book.getPrice());
             statement.setLong(ID_INDEX, book.getId());
-            if (statement.executeUpdate() < MINIMUM_CHANGES) {
-                throw new RuntimeException("Can't insert less than one row");
-            }
         } catch (SQLException e) {
             throw new DataException("Can't update the book = " + book, e);
         }
@@ -111,8 +108,8 @@ public class BookDaoImpl implements BookDao{
         try {
             book.setId(resultSet.getObject("id", Long.class));
             book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price") != null ?
-                    resultSet.getBigDecimal("price") : BigDecimal.ZERO);
+            BigDecimal price = resultSet.getBigDecimal("price");
+            book.setPrice(price != null ? price : BigDecimal.ZERO);
             return book;
         } catch (SQLException e) {
             throw new DataException("Can't get book from ResultSet", e);
