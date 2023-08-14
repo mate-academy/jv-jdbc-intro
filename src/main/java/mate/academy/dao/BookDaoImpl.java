@@ -28,11 +28,7 @@ public class BookDaoImpl implements BookDao {
                     .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(FIRST_PARAMETER, book.getTitle());
             statement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < AFFECTED_ROW) {
-                throw new RuntimeException("Expected to insert at least one row, "
-                        + "but inserted zero rows ");
-            }
+            statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -86,11 +82,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(FIRST_PARAMETER, book.getTitle());
             statement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
             statement.setLong(THIRD_PARAMETER, book.getId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < AFFECTED_ROW) {
-                throw new RuntimeException("Expected to update at least one row,"
-                        + " but updated zero rows ");
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update DB with book " + book, e);
         }
@@ -105,6 +97,10 @@ public class BookDaoImpl implements BookDao {
         PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(FIRST_PARAMETER, id);
             affectedRows = statement.executeUpdate();
+            if (affectedRows < AFFECTED_ROW) {
+                throw new RuntimeException("Expected to delete one row"
+                        + "but no row was deleted");
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book from DB by " + id, e);
         }
