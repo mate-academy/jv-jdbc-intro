@@ -4,7 +4,6 @@ import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +19,10 @@ public class BookDaoImpl implements BookDao{
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
              statement.setString(1, book.getTitle());
              statement.setBigDecimal(2, book.getPrice());
+            // Check if at least one row was changed in the database.
              if (statement.executeUpdate() < 1) {
+                 // If no changes were made, throw a RuntimeException
+                 // with a custom message indicating that at least one row was expected to be inserted, but 0 rows were inserted.
                  throw new RuntimeException("Expected to insert at least one row, but inserted 0 rows.");
              }
              ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -45,7 +47,7 @@ public class BookDaoImpl implements BookDao{
                  return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t create a connection to the DB", e);
+            throw new DataProcessingException("Can`t find book by id: " + id, e);
         }
         return Optional.empty();
     }
@@ -62,7 +64,7 @@ public class BookDaoImpl implements BookDao{
              }
              return bookList;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t create a connection to the DB", e);
+            throw new DataProcessingException("Can`t get boooks from db", e);
         }
     }
 
@@ -78,6 +80,8 @@ public class BookDaoImpl implements BookDao{
                 throw new RuntimeException("Expected to update at least one row, but update 0 rows.");
             }
         } catch (SQLException e) {
+            // If no rows were updated, throw a RuntimeException
+            // with a custom message indicating the expectation to update at least one row, but 0 rows were updated.
             throw new DataProcessingException("Can`t update book: " + book, e);
         }
         return book;
