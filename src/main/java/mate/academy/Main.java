@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class Main {
-    private static final Injector injector = Injector.getInstance("YOUR_PACKAGE");
+    private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
