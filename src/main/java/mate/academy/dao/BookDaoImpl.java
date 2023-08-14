@@ -29,10 +29,7 @@ public class BookDaoImpl implements BookDao{
             statement.setString(INDEX_OF_FIRST_PARAM, book.getTitle());
             statement.setObject(INDEX_OF_SECOND_PARAM, book.getPrice());
 
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("Inserting failure");
-            }
+            statement.executeUpdate();
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -95,10 +92,7 @@ public class BookDaoImpl implements BookDao{
             statement.setObject(INDEX_OF_SECOND_PARAM, book.getPrice());
             statement.setLong(INDEX_OF_THIRD_PARAM, book.getId());
 
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("Updating failure, expect");
-            }
+            statement.executeUpdate();
 
             return book;
         } catch (SQLException e) {
