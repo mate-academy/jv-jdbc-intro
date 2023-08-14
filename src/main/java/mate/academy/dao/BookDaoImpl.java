@@ -18,7 +18,6 @@ public class BookDaoImpl implements BookDao {
     private final static int FIRST_PARAMETER = 1;
     private final static int SECOND_PARAMETER = 2;
     private final static int THIRD_PARAMETER = 3;
-    private final static int AFFECTED_ROW = 1;
 
     @Override
     public Book create(Book book) {
@@ -97,10 +96,6 @@ public class BookDaoImpl implements BookDao {
         PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(FIRST_PARAMETER, id);
             affectedRows = statement.executeUpdate();
-            if (affectedRows < AFFECTED_ROW) {
-                throw new RuntimeException("Expected to delete one row"
-                        + "but no row was deleted");
-            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book from DB by " + id, e);
         }
