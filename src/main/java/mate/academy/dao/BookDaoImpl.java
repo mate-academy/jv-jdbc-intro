@@ -16,25 +16,18 @@ import java.util.Properties;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final String CREATE_QUERY = "INSERT INTO books (title, price) VALUES (?, ?)";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT * FROM books";
-    private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-    private static final String DELETE_BY_ID_QUERY = "DELETE FROM books WHERE id = ?";
-
     @Override
     public Book create(Book book) {
+        String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(CREATE_QUERY,
+             PreparedStatement statement = connection.prepareStatement(query,
                      PreparedStatement.RETURN_GENERATED_KEYS)) {
             setBookParameters(statement, book);
-            int updatedRows = statement.executeUpdate();
-            if (updatedRows < 1) {
-                throw new DataProcessingException("Failed to create book: no rows were updated.");
-            }
+            statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    book.setId(generatedKeys.getLong(1));
+                    Long id = generatedKeys.getObject(1, Long.class);
+                    book.setId(id);
                 } else {
                     throw new SQLException("Creating book " + book + " failed, no ID obtained.");
                 }
@@ -47,8 +40,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
+        String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -64,8 +58,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
+        String query = "SELECT * FROM books";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(FIND_ALL_QUERY);
+             PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
             List<Book> books = new ArrayList<>();
@@ -80,14 +75,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
+        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
             setBookParameters(statement, book);
             statement.setLong(3, book.getId());
-            int updatedRows = statement.executeUpdate();
-            if (updatedRows < 1) {
-                throw new DataProcessingException("Failed to create book: no rows were updated.");
-            }
+            statement.executeUpdate();
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to update book" + book, e);
@@ -96,8 +89,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
+        String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
