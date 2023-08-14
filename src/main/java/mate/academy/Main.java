@@ -21,9 +21,10 @@ public class Main {
         bookForUpdating.setTitle("Tripiṭaka");
         bookForUpdating.setPrice(new BigDecimal("435"));
         bookDao.update(bookForUpdating);
-        Optional<Book> optionalBook = bookDao.findById(10L);
+        //Optional<Book> optionalBook = bookDao.findById(10L);
+        Optional<Book> optionalBook = bookDao.findById(bookForUpdating.getId());
         optionalBook.ifPresent(System.out::println);
-        bookDao.deleteById(10L);
+        bookDao.deleteById(bookForUpdating.getId());
         List<Book> booksSecondShelf = bookDao.findAll();
         booksSecondShelf.forEach(System.out::println);
     }

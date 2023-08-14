@@ -11,6 +11,14 @@ public class Book {
         return id;
     }
 
+    public Book() {
+    }
+
+    public Book(String title, BigDecimal price) {
+        this.title = title;
+        this.price = price;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -28,14 +36,6 @@ public class Book {
     }
 
     public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Book() {
-    }
-
-    public Book(String title, BigDecimal price) {
-        this.title = title;
         this.price = price;
     }
 
