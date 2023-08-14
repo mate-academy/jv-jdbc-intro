@@ -9,7 +9,7 @@ public class ConnectionUtil {
     private static final String DB_URL =  "jdbc:mysql://localhost:3306/my_first_library_db";
     private static final String MY_SQL_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String USER_VALUE = "root";
-    private static final String PASSWORD_VALUE = "1234";
+    private static final String PASSWORD_VALUE = "123";
     private static final Properties DB_PROPERTIES;
 
     static {

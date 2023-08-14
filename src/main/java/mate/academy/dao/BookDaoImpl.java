@@ -30,7 +30,7 @@ public class BookDaoImpl implements BookDao{
             statement.setObject(INDEX_OF_SECOND_PARAM, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows == 0) {
                 throw new RuntimeException("Inserting failure");
             }
 
@@ -57,12 +57,8 @@ public class BookDaoImpl implements BookDao{
             Book book = null;
 
             while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                book = new Book(id, title, price);
+                book = convertToBook(resultSet);
             }
-
             return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new RuntimeException("Can't create connection to the DB", e);
@@ -79,12 +75,7 @@ public class BookDaoImpl implements BookDao{
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book(id, title, price);
-                books.add(book);
+                books.add(convertToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error while finding all books", e);
@@ -105,7 +96,7 @@ public class BookDaoImpl implements BookDao{
             statement.setLong(INDEX_OF_THIRD_PARAM, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows == 0) {
                 throw new RuntimeException("Updating failure, expect");
             }
 
@@ -124,12 +115,16 @@ public class BookDaoImpl implements BookDao{
             statement.setLong(1, id);
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                return  false;
-            }
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with ID: " + id, e);
         }
-        return true;
+    }
+
+    private Book convertToBook(ResultSet resultSet) throws SQLException {
+        long id = resultSet.getLong("id");
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Book(id, title, price);
     }
 }

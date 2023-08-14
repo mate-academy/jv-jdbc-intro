@@ -1,6 +1,7 @@
 package mate.academy;
 
 import mate.academy.dao.BookDao;
+import mate.academy.dao.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 import java.math.BigDecimal;
@@ -9,7 +10,9 @@ import java.util.Optional;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
+        Injector.getInstance("mate.academy").getInstance(BookDao.class);
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
@@ -30,13 +33,13 @@ public class Main {
 
         List<Book> books = bookDao.findAll();
         System.out.println("All book in DB:");
-        books.forEach(book -> System.out.println("Book from DB before deleting: " + book));
+        books.forEach(book -> System.out.println("Books from DB before deleting: " + book));
 
         System.out.println("Book by id 1 was deleted? - " + bookDao.deleteById(1L));
         System.out.println("Book by id 999 was deleted? - " + bookDao.deleteById(999L));
 
         System.out.println("Book by id 1: " + bookDao.findById(1L));
 
-        books.forEach(book -> System.out.println("Book from DB after deleting: " + book));
+        books.forEach(book -> System.out.println("Books from DB after deleting: " + book));
     }
 }
