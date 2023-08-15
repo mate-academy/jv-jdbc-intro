@@ -28,10 +28,11 @@ public class MySqlBookDao implements BookDao {
     public Book create(Book book) {
         String query = "INSERT INTO book(title, price) VALUES(?, ?)";
         try (Connection connection = MySqlConnectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_PARAMETER_INDEX, book.getTitle());
             statement.setBigDecimal(PRICE_PARAMETER_INDEX, book.getPrice());
+            statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 book.setId(generatedKeys.getLong(1));
@@ -47,7 +48,7 @@ public class MySqlBookDao implements BookDao {
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM book WHERE id = ?";
         try (Connection connection = MySqlConnectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(ID_PARAMETER_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -55,7 +56,8 @@ public class MySqlBookDao implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get Book from database by id " + id, e);
+            throw new DataProcessingException(
+                    "Can't get Book from database by id " + id, e);
         }
         return Optional.empty();
     }
@@ -65,7 +67,7 @@ public class MySqlBookDao implements BookDao {
         String query = "SELECT * FROM book";
         List<Book> resultList = new ArrayList<>();
         try (Connection connection = MySqlConnectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book book = parseToObject(resultSet);
@@ -81,7 +83,7 @@ public class MySqlBookDao implements BookDao {
     public Book update(Book book) {
         String query = "UPDATE book SET title= ?, price= ? WHERE id = ?";
         try (Connection connection = MySqlConnectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(TITLE_PARAMETER_INDEX, book.getTitle());
             statement.setBigDecimal(PRICE_PARAMETER_INDEX, book.getPrice());
             statement.setLong(UPDATE_ID_PARAMETER_INDEX, book.getId());
@@ -96,7 +98,7 @@ public class MySqlBookDao implements BookDao {
     public boolean deleteById(Long id) {
         String query = "DELETE FROM book WHERE id =?";
         try (Connection connection = MySqlConnectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(ID_PARAMETER_INDEX, id);
             return statement.executeUpdate() > ZERO_AFFECTED_ROW;
         } catch (SQLException e) {

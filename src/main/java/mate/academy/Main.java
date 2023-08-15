@@ -8,7 +8,7 @@ import mate.academy.repository.BookDao;
 
 public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
-    public static final List<Book> library;
+    private static final List<Book> LIBRARY;
 
     static {
         Book book1 = new Book();
@@ -23,7 +23,7 @@ public class Main {
         book3.setTitle("\"Fight Club\" Chuck Palahniuk");
         book3.setPrice(BigDecimal.valueOf(20));
 
-        library = List.of(book1, book2, book3);
+        LIBRARY = List.of(book1, book2, book3);
     }
 
     public static void main(String[] args) {
@@ -31,7 +31,7 @@ public class Main {
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
         //Create new books in the database
-        library.forEach(bookDao::create);
+        LIBRARY.forEach(bookDao::create);
 
         //Read all books from the database and compare it with library list
         List<Book> booksFromDB = bookDao.findAll();
@@ -39,7 +39,7 @@ public class Main {
         booksFromDB.forEach(System.out::println);
 
         //Find by id
-        Book bookFromLib = library.get(0);
+        Book bookFromLib = LIBRARY.get(0);
         Book bookFromDb = bookDao.findById(bookFromLib.getId()).orElseThrow();
         System.out.println("Book from db: " + bookFromDb + System.lineSeparator());
 
@@ -54,6 +54,6 @@ public class Main {
         bookDao.deleteById(bookFromLib.getId());
 
         //Delete all books in the database
-        library.forEach(book -> bookDao.deleteById(book.getId()));
+        LIBRARY.forEach(book -> bookDao.deleteById(book.getId()));
     }
 }
