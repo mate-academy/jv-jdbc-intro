@@ -38,7 +38,8 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while creating book", e);
+            throw new DataProcessingException("An error occurred while creating the book: "
+                    + e.getMessage(), e);
         }
     }
 
@@ -49,7 +50,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(INDEX_ID, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(getBook(resultSet));
+                return Optional.of( mapResultSetToBook(resultSet));
             } else {
                 return Optional.empty();
             }
@@ -65,7 +66,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             List<Book> result = new ArrayList<>();
             while (resultSet.next()) {
-                result.add(getBook(resultSet));
+                result.add( mapResultSetToBook(resultSet));
             }
             return result;
         } catch (SQLException e) {
@@ -100,7 +101,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book getBook(ResultSet resultSet) {
+    private Book  mapResultSetToBook(ResultSet resultSet) {
         try {
             return new Book(
                     resultSet.getLong("id"),

@@ -3,14 +3,9 @@ package mate.academy;
 import mate.academy.bookdao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-
 import java.math.BigDecimal;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
 
 public class Main {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/books";
 
     public static void main(String[] args) {
         Injector injector = Injector.getInstance("mate.academy");
