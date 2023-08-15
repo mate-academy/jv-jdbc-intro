@@ -28,11 +28,7 @@ public class BookDaoImpl implements BookDao {
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(FIRST_PARAMETER, book.getTitle());
             statement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at leas one row, "
-                        + "but inserted 0 rows.");
-            }
+            statement.executeUpdate();
             ResultSet keyResultSet = statement.getGeneratedKeys();
             if (keyResultSet.next()) {
                 Long id = keyResultSet.getObject(ID_INDEX, Long.class);
@@ -83,11 +79,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(FIRST_PARAMETER, book.getTitle());
             statement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
             statement.setLong(THIRD_PARAMETER, book.getId());
-            int changes = statement.executeUpdate();
-            if (changes < 1) {
-                throw new RuntimeException("Expected to update at leas one row,"
-                        + " but updated 0 rows.");
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update the book: " + book, e);
         }
