@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t create book" + book, e);
         }
-        return null;
+        return book;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
-                Book book = dataTreatment(result);
+                Book book = parse(result);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -62,7 +62,7 @@ public class BookDaoImpl implements BookDao {
              PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = dataTreatment(resultSet);
+                Book book = parse(resultSet);
                 books.add(book);
             }
             return books;
@@ -103,18 +103,14 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book dataTreatment(ResultSet resultSet) {
-        try {
-            Long id = resultSet.getObject("id", Long.class);
-            String title = resultSet.getString("title");
-            BigDecimal price = resultSet.getBigDecimal("price");
-            Book book = new Book();
-            book.setId(id);
-            book.setPrice(price);
-            book.setTitle(title);
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't get data from resultSet", e);
-        }
+    private Book parse(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        Book book = new Book();
+        book.setId(id);
+        book.setPrice(price);
+        book.setTitle(title);
+        return book;
     }
 }
