@@ -20,9 +20,9 @@ public class BookDaoImpl implements BookDao {
         String createRequest =
                 "INSERT INTO books (title, price) VALUES(?, ?);";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement createBookStatement
-                     = connection.prepareStatement(
-                     createRequest, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement createBookStatement
+                        = connection.prepareStatement(
+                        createRequest, Statement.RETURN_GENERATED_KEYS)) {
             createBookStatement.setString(1, book.getTitle());
             createBookStatement.setString(2, book.getPrice().toString());
             createBookStatement.executeUpdate();
@@ -42,8 +42,8 @@ public class BookDaoImpl implements BookDao {
         String getRequest =
                 "SELECT * FROM books WHERE id = " + id;
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement getBookStatement =
-                     connection.prepareStatement(getRequest)) {
+                PreparedStatement getBookStatement =
+                        connection.prepareStatement(getRequest)) {
             ResultSet resultSet = getBookStatement.executeQuery();
             if (resultSet.next()) {
                 Book book = getBook(resultSet);
@@ -60,7 +60,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> allBooksList = new ArrayList<>();
         String getAllRequest = "SELECT id, title, price FROM books;";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(getAllRequest)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(getAllRequest)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Book book = getBook(resultSet);
@@ -78,7 +78,7 @@ public class BookDaoImpl implements BookDao {
                 + book.getTitle() + "', price = '" + book.getPrice()
                 + "' WHERE id = " + book.getId();
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement updateStatement = connection.prepareStatement(updateRequest)) {
+                PreparedStatement updateStatement = connection.prepareStatement(updateRequest)) {
             int updated = updateStatement.executeUpdate();
             if (updated > 0) {
                 return book;
@@ -95,8 +95,8 @@ public class BookDaoImpl implements BookDao {
         String deleteRequest =
                 "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement deleteBookStatement
-                     = connection.prepareStatement(deleteRequest)) {
+                PreparedStatement deleteBookStatement
+                        = connection.prepareStatement(deleteRequest)) {
             deleteBookStatement.setLong(1, id);
             return deleteBookStatement.executeUpdate() > 0;
         } catch (SQLException e) {

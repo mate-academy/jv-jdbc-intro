@@ -23,30 +23,29 @@ public class Main {
 
         //get all books
         List<Book> allBooks = bookDao.findAll();
-        for (Book b: allBooks) {
+        for (Book b : allBooks) {
             System.out.println(b);
         }
 
         //find by id
-//        long id = 15;
-//        Optional<Book> bookById = bookDao.findById(id);
-//        bookById.ifPresent(book -> {
-//            System.out.println("Знайдена за id книга: " + id + " " + book);
-//        });
-
+        long id = 15;
+        Optional<Book> bookById = bookDao.findById(id);
+        bookById.ifPresent(book1 -> {
+            System.out.println("Знайдена за id книга: " + id + " " + book1);
+        });
 
         //delete book by id
-//        long id = 13;
-//        System.out.println(bookDao.deleteById(id));
+        long id2 = 13;
+        System.out.println(bookDao.deleteById(id2));
 
         //update book by id
-//        Book book = new Book();
-//        book.setTitle("Astronomy");
-//        book.setPrice(new BigDecimal(1000));
-//        long id = 14;
-//        book.setId(id);
-//        Book updatedBook = bookDao.update(book);
-//        System.out.println(updatedBook);
+        Book book2 = new Book();
+        book.setTitle("Astronomy");
+        book.setPrice(new BigDecimal(1000));
+        long id1 = 14;
+        book.setId(id1);
+        Book updatedBook = bookDao.update(book2);
+        System.out.println(updatedBook);
 
     }
 }
