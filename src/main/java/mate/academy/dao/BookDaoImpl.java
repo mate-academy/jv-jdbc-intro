@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t get a new Book: " + book, e);
+            throw new DataProcessingException("Can`t create a new book: " + book, e);
         }
         return book;
     }
@@ -46,7 +46,6 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(FIRST_PARAM, id);
-
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 bookFromDb = parseResultSetInBook(resultSet);
@@ -81,12 +80,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(FIRST_PARAM, book.getTitle());
             statement.setBigDecimal(SECOND_PARAM, book.getPrice());
             statement.setLong(THIRD_PARAM, THIRD_ID);
-
-            int affectedRow = statement.executeUpdate();
-            if (affectedRow < 1) {
-                throw new RuntimeException("Expected to update at least 1 row but was 0.");
-            }
-
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can not update book with id: " + book.getId(), e);
         }
@@ -107,7 +101,7 @@ public class BookDaoImpl implements BookDao {
 
     private Book parseResultSetInBook(ResultSet resultSet) throws SQLException {
         Book dbBook = new Book();
-        dbBook.setId(resultSet.getLong("id"));
+        dbBook.setId(resultSet.getObject("id", Long.class));
         dbBook.setTitle(resultSet.getString("title"));
         dbBook.setPrice(resultSet.getBigDecimal("price"));
         return dbBook;
