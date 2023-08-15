@@ -26,8 +26,6 @@ public class BookDaoImpl implements BookDao {
     private static final String SELECT_BY_ID = "SELECT * FROM books WHERE id = ?";
     private static final String UPDATE = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM books WHERE id = ?";
-    private static final int VALID_MINIMUM_ROWS = 0;
-
 
     @Override
     public Book create(Book book) {
@@ -36,8 +34,6 @@ public class BookDaoImpl implements BookDao {
                      Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_POSITION, book.getTitle());
             statement.setBigDecimal(PRICE_POSITION, book.getPrice());
-            int changedRows = statement.executeUpdate();
-            checkInsertedRows(changedRows);
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 Long id = resultSet.getObject(ID_INDEX, Long.class);
@@ -86,9 +82,6 @@ public class BookDaoImpl implements BookDao {
             statement.setString(TITLE_POSITION, book.getTitle());
             statement.setObject(PRICE_POSITION, book.getPrice());
             statement.setLong(ID_POSITION, book.getId());
-            if (statement.executeUpdate() < VALID_MINIMUM_ROWS) {
-                throw new RuntimeException("Changed rows must be more than " + VALID_MINIMUM_ROWS);
-            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book: " + book, e);
         }
@@ -106,11 +99,6 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private void checkInsertedRows(int changedRows) {
-        if (changedRows < VALID_MINIMUM_ROWS) {
-            throw new RuntimeException("Changed rows must be more than " + VALID_MINIMUM_ROWS);
-        }
-    }
     private Book createBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setId(resultSet.getObject("id", Long.class));

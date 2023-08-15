@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Dao
 public interface BookDao {
+
     Book create(Book book);
     Optional<Book> findById(Long id);
     List<Book> findAll();
