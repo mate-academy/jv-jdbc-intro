@@ -20,7 +20,6 @@ public class MySqlBookDao implements BookDao {
     private static final int PRICE_PARAMETER_INDEX = 2;
     private static final int UPDATE_ID_PARAMETER_INDEX = 3;
     private static final int ZERO_AFFECTED_ROW = 0;
-    private static final int ONE_AFFECTED_ROW = 1;
     private static final String ID_ROW_LABEL = "id";
     private static final String TITLE_ROW_LABEL = "title";
     private static final String PRICE_ROW_LABEL = "price";
@@ -33,9 +32,6 @@ public class MySqlBookDao implements BookDao {
                      Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_PARAMETER_INDEX, book.getTitle());
             statement.setBigDecimal(PRICE_PARAMETER_INDEX, book.getPrice());
-            if (statement.executeUpdate() < ONE_AFFECTED_ROW) {
-                throw new DataProcessingException("Book was not created: " + book);
-            }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 book.setId(generatedKeys.getLong(1));
@@ -89,6 +85,7 @@ public class MySqlBookDao implements BookDao {
             statement.setString(TITLE_PARAMETER_INDEX, book.getTitle());
             statement.setBigDecimal(PRICE_PARAMETER_INDEX, book.getPrice());
             statement.setLong(UPDATE_ID_PARAMETER_INDEX, book.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Book was not updated: " + book, e);
         }
@@ -108,7 +105,7 @@ public class MySqlBookDao implements BookDao {
     }
 
     private Book parseToObject(ResultSet resultSet) throws SQLException {
-        long id = resultSet.getObject(ID_ROW_LABEL, Long.class);
+        Long id = resultSet.getObject(ID_ROW_LABEL, Long.class);
         String title = resultSet.getString(TITLE_ROW_LABEL);
         BigDecimal price = resultSet.getBigDecimal(PRICE_ROW_LABEL);
         Book book = new Book();
