@@ -79,6 +79,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(TITLE_INDEX, book.getTitle());
             statement.setBigDecimal(PRICE_INDEX, book.getPrice());
             statement.setObject(ID_INDEX_TO_UPDATE, book.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book in DB " + book, e);
         }
@@ -99,7 +100,7 @@ public class BookDaoImpl implements BookDao {
 
     private Book getBookFromDB(ResultSet resultSet) {
         try {
-            Long id = resultSet.getLong("id");
+            Long id = resultSet.getObject("id", Long.class);
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getBigDecimal("price");
             return new Book(id, title, price);
