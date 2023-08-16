@@ -1,15 +1,15 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import mate.academy.bookdao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import java.math.BigDecimal;
 
 public class Main {
 
     public static void main(String[] args) {
         Injector injector = Injector.getInstance("mate.academy");
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        final BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         Book onePiece = new Book();
         onePiece.setTitle("One Piece");

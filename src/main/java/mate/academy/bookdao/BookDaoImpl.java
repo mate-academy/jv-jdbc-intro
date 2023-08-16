@@ -1,13 +1,17 @@
 package mate.academy.bookdao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.connection.ConnectionConfig;
 import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -24,8 +28,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionConfig.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(TITLE_PART, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_PART, book.getPrice());
             if (preparedStatement.executeUpdate() == 0) {
@@ -46,11 +50,11 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionConfig.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOK_BY_ID)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOK_BY_ID)) {
             preparedStatement.setLong(INDEX_ID, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of( mapResultSetToBook(resultSet));
+                return Optional.of(mapResultSetToBook(resultSet));
             } else {
                 return Optional.empty();
             }
@@ -62,11 +66,11 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_BOOKS)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_ALL_BOOKS)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> result = new ArrayList<>();
             while (resultSet.next()) {
-                result.add( mapResultSetToBook(resultSet));
+                result.add(mapResultSetToBook(resultSet));
             }
             return result;
         } catch (SQLException e) {
@@ -77,7 +81,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (Connection connection = ConnectionConfig.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BOOK)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BOOK)) {
             preparedStatement.setString(TITLE_PART, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_PART, book.getPrice());
             preparedStatement.setLong(ID_PART, book.getId());
@@ -93,7 +97,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionConfig.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_BOOK)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_BOOK)) {
             statement.setLong(INDEX_ID, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -101,7 +105,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book  mapResultSetToBook(ResultSet resultSet) {
+    private Book mapResultSetToBook(ResultSet resultSet) {
         try {
             return new Book(
                     resultSet.getLong("id"),
