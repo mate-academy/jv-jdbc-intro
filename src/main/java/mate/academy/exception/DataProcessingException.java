@@ -1,7 +1,7 @@
 package mate.academy.exception;
 
 public class DataProcessingException extends RuntimeException {
-    public DataProcessingException(String message, Exception e) {
+    public DataProcessingException(String message, Throwable ex) {
         super(message);
     }
 }
