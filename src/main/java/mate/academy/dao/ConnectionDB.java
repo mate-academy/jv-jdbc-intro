@@ -1,11 +1,11 @@
 package mate.academy.dao;
 
-import mate.academy.exception.DataProcessingException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.exception.DataProcessingException;
+
 public class ConnectionDB {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
