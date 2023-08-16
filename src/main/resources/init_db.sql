@@ -1,0 +1,6 @@
+CREATE TABLE books (
+    id BIGINT(100) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(300) NOT NULL,
+    price DECIMAL(65),
+    PRIMARY KEY (id)
+);
