@@ -40,12 +40,11 @@ public class Main {
 
         //update book by id
         Book book2 = new Book();
-        book.setTitle("Astronomy");
-        book.setPrice(new BigDecimal(1000));
-        long id1 = 14;
-        book.setId(id1);
+        book2.setTitle("Kobzar");
+        book2.setPrice(new BigDecimal(1000));
+        long id1 = 15;
+        book2.setId(id1);
         Book updatedBook = bookDao.update(book2);
         System.out.println(updatedBook);
-
     }
 }

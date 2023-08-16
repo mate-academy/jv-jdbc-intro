@@ -74,11 +74,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String updateRequest = "UPDATE books SET title = '"
-                + book.getTitle() + "', price = '" + book.getPrice()
-                + "' WHERE id = " + book.getId();
+        String updateRequest = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement updateStatement = connection.prepareStatement(updateRequest)) {
+            updateStatement.setString(1, book.getTitle());
+            updateStatement.setBigDecimal(2, book.getPrice());
+            updateStatement.setLong(3, book.getId());
             int updated = updateStatement.executeUpdate();
             if (updated > 0) {
                 return book;
