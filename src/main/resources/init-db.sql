@@ -1,6 +1,6 @@
 CREATE TABLE books (
    PRIMARY KEY (id),
    id BIGINT(10) NOT NULL AUTO_INCREMENT,
-   title VARCHAR(50) NOT NULL,
+   title VARCHAR() NOT NULL,
    price BIGINT(10)
 );

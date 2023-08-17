@@ -53,9 +53,8 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(mapResultSetToBook(resultSet));
-            } else {
-                return Optional.empty();
             }
+            return Optional.empty();
         } catch (SQLException e) {
             throw new DataProcessingException("Error can't get book by ID: "
                     + id, e);
@@ -87,9 +86,6 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(TITLE_PART, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_PART, book.getPrice());
             preparedStatement.setLong(ID_PART, book.getId());
-            if (preparedStatement.executeUpdate() == 0) {
-                throw new RuntimeException("Updating book failed, no rows affected.");
-            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Error while updating book: "
