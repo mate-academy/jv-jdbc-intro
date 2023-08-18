@@ -28,9 +28,7 @@ public class BookDaoImpl implements BookDao {
                         addBookQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(TITLE_PART, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_PART, book.getPrice());
-            if (preparedStatement.executeUpdate() == 0) {
-                throw new RuntimeException("Creating book failed, no rows affected.");
-            }
+            preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
                 Long id = resultSet.getObject(INDEX_ID, Long.class);
@@ -86,6 +84,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(TITLE_PART, book.getTitle());
             preparedStatement.setBigDecimal(PRICE_PART, book.getPrice());
             preparedStatement.setLong(ID_PART, book.getId());
+            preparedStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Error while updating book: "
