@@ -19,7 +19,7 @@ public class Main {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
         // initialize field values using setters or constructor
-        BookDao.create(book);
+        bookDao.create(book);
         // test other methods from BookDao
     }
 }
