@@ -25,4 +25,3 @@ public class ConnectionUtil {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 }
-

@@ -16,7 +16,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -25,13 +24,6 @@ public class BookDaoImpl implements BookDao {
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-
-            if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("Expected to insert at least one row"
-                        +
-                        ", but inserted 0 rows.");
-            }
-
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -83,12 +75,6 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-
-            if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("Expected to update at least one row"
-                        +
-                        ", but updated 0 rows.");
-            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book: "
                     +

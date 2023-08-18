@@ -5,4 +5,3 @@ public class DataProcessingException extends RuntimeException {
         super(message);
     }
 }
-
