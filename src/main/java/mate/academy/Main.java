@@ -1,6 +1,5 @@
 package mate.academy;
 
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -13,15 +12,14 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book bookOne = new Book(0L, "Harry Potter and the Philosopher's Stone"
-                , BigDecimal.valueOf(500));
-        Book bookTwo = new Book(0L, "Harry Potter and the Chamber of Secrets"
-                , BigDecimal.valueOf(1200));
-        Book bookThree = new Book(0L, "Harry Potter and the Prisoner of Azkaban"
-                , BigDecimal.valueOf(300));
-        Book bookFour = new Book(0L, "Harry Potter and the Goblet of Fire"
-                , BigDecimal.valueOf(2500));
-
+        Book bookOne = new Book(0L, "Harry Potter and the Philosopher's Stone",
+                BigDecimal.valueOf(500));
+        Book bookTwo = new Book(0L, "Harry Potter and the Chamber of Secrets",
+                BigDecimal.valueOf(1200));
+        Book bookThree = new Book(0L, "Harry Potter and the Prisoner of Azkaban",
+                BigDecimal.valueOf(300));
+        Book bookFour = new Book(0L, "Harry Potter and the Goblet of Fire",
+                BigDecimal.valueOf(2500));
         bookDao.create(bookOne);
         bookDao.create(bookTwo);
         bookDao.create(bookThree);
