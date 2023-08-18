@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.List;
 import mate.academy.model.Book;
 
-
 public interface BookDao {
     Book create(Book book);
 

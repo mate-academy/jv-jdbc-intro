@@ -27,7 +27,8 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
 
             if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("Expected to insert at least one row" +
+                throw new RuntimeException("Expected to insert at least one row"
+                        +
                         ", but inserted 0 rows.");
             }
 
@@ -89,7 +90,9 @@ public class BookDaoImpl implements BookDao {
                         ", but updated 0 rows.");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book: " + book, e);
+            throw new DataProcessingException("Can't update book: "
+                    +
+                    book, e);
         }
         return book;
     }
