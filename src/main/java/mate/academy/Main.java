@@ -20,4 +20,5 @@ public class Main {
         System.out.println("The book is updated: " + bookDao.update(updBook));
         System.out.println(bookDao.deleteById(10L));
     }
+
 }
