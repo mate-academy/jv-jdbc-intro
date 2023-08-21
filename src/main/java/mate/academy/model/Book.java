@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Book {
     private Long id;
-    private String title;
+    private final String title;
     private BigDecimal price;
 
     public Book(Long id, String title, BigDecimal price) {
@@ -40,10 +40,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }

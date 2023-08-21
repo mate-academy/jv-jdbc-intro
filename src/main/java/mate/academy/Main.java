@@ -1,10 +1,10 @@
 package mate.academy;
 
+import java.math.BigDecimal;
+import java.util.List;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import java.math.BigDecimal;
-import java.util.List;
 
 public class Main {
     private static final Book book = new Book("book", BigDecimal.valueOf(100));
@@ -25,9 +25,9 @@ public class Main {
         Book updatedBook = bookDao.update(createdBook);
         System.out.println("updated book: " + updatedBook);
 
-        System.out.println("add "+ book1);
+        System.out.println("add " + book1);
         bookDao.create(book1);
-        System.out.println("add "+ book2);
+        System.out.println("add " + book2);
         bookDao.create(book2);
         List<Book> booksInTable = bookDao.findAll();
         System.out.println("List of books in table = " + booksInTable);
