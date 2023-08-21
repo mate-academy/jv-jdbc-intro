@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-            if (preparedStatement.executeUpdate() >= 1) {
+            if (preparedStatement.executeUpdate() > 0) {
                 return book;
             }
         } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class BookDaoImpl implements BookDao {
                  PreparedStatement preparedStatement =
                          connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
-            return preparedStatement.executeUpdate() >= 1;
+            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id " + id, e);
         }
