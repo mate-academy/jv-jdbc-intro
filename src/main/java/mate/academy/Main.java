@@ -15,14 +15,14 @@ public class Main {
         Book book = new Book();
         book.setPrice(BigDecimal.valueOf(10));
         book.setTitle("Testing");
-        bookDao.create(book);
+        Book savedBook = bookDao.create(book);
         List<Book> all = bookDao.findAll();
-        Optional<Book> bookOptional = bookDao.findById(1L);
+        Optional<Book> bookOptional = bookDao.findById(savedBook.getId());
         System.out.println(bookOptional.get().getTitle());
         Book toUpdateBook = new Book();
         toUpdateBook.setPrice(BigDecimal.valueOf(15));
         toUpdateBook.setTitle("Testing2");
         bookDao.update(book);
-        bookDao.deleteById(1L);
+        bookDao.deleteById(savedBook.getId());
     }
 }

@@ -53,23 +53,6 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private static Book parseResultSet(ResultSet set) {
-        Book book = new Book();
-        try {
-            if (set.next()) {
-                Long id = set.getLong("id");
-                String title = set.getString("title");
-                BigDecimal price = set.getBigDecimal("price");
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-            }
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't get book from set " + set, e);
-        }
-    }
-
     @Override
     public List<Book> findAll() {
         List<Book> allBooks = new ArrayList<>();
@@ -118,6 +101,23 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("can't delete book from DB with id: "
                     + id, e);
+        }
+    }
+
+    private static Book parseResultSet(ResultSet set) {
+        Book book = new Book();
+        try {
+            if (set.next()) {
+                Long id = set.getLong("id");
+                String title = set.getString("title");
+                BigDecimal price = set.getBigDecimal("price");
+                book.setId(id);
+                book.setTitle(title);
+                book.setPrice(price);
+            }
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get book from set " + set, e);
         }
     }
 }
