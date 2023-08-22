@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO books(name,title) values (?,?)";
+        String query = "INSERT INTO books(name,title) values (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement createBookStatement = connection.prepareStatement(query,
                         Statement.RETURN_GENERATED_KEYS)) {
@@ -54,7 +54,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean delete(Long id) {
-            String query = "UPDATE books SET is_deleted = true WHERE id = ?";
+        String query = "UPDATE books SET is_deleted = true WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement deleteBookStatement = connection.prepareStatement(query)) {
             deleteBookStatement.setLong(1, id);

@@ -9,4 +9,3 @@ CREATE TABLE `books`
     `is_deleted` tinyint      DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
