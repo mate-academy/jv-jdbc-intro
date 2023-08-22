@@ -24,9 +24,6 @@ public class BookDaoImpl implements BookDao {
                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            if (statement.executeUpdate() < 1) {
-                throw new SQLException();
-            }
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 book.setId(resultSet.getObject(1, Long.class));
