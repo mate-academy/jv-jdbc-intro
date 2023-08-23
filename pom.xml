@@ -18,7 +18,6 @@
         </maven.checkstyle.plugin.configLocation>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>mysql</groupId>
@@ -26,7 +25,6 @@
             <version>8.0.32</version>
         </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -66,8 +64,5 @@
             </plugins>
         </pluginManagement>
     </build>
-
-
-
 
 </project>
