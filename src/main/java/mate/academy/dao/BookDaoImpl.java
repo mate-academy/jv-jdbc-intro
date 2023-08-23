@@ -16,14 +16,14 @@ import mate.academy.util.ConnectionUtil;
 public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> getAll() {
-        String query = "SELECT * FROM books WHERE is_deleted = false";
+        String query = "SELECT * FROM books WHERE is_deleted = FALSE";
         List<Book> allBooks = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement getAllBooks = connection.prepareStatement(query)) {
             ResultSet resultSet = getAllBooks.executeQuery(query);
             Book book = null;
             while (resultSet.next()) {
-                book = createBookResultSet(resultSet);
+                book = createBookFromResultSet(resultSet);
                 allBooks.add(book);
             }
         } catch (SQLException e) {
@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO books(name,title) values (?, ?)";
+        String query = "INSERT INTO books(name,title) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement createBookStatement = connection.prepareStatement(query,
                         Statement.RETURN_GENERATED_KEYS)) {
@@ -54,7 +54,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean delete(Long id) {
-        String query = "UPDATE books SET is_deleted = true WHERE id = ?";
+        String query = "UPDATE books SET is_deleted = TRUE WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement deleteBookStatement = connection.prepareStatement(query)) {
             deleteBookStatement.setLong(1, id);
@@ -66,8 +66,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String query = "UPDATE SET name = ?, country = ? "
-                + "where id = ? AND is_deleted = false";
+        String query = "UPDATE library.books SET name = ?, title = ? "
+                + " WHERE id = ? AND is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement updateBookStatement =
                         connection.prepareStatement(query)) {
@@ -77,7 +77,7 @@ public class BookDaoImpl implements BookDao {
             updateBookStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update manufacturer to db"
+            throw new RuntimeException("Can't update book to db"
                     + book, e);
         }
     }
@@ -85,7 +85,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> get(Long id) {
         String query = "SELECT * FROM books WHERE id = ? AND"
-                + " is_deleted = false";
+                + " is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement updateBookStatement =
                         connection.prepareStatement(query)) {
@@ -93,16 +93,16 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = updateBookStatement.executeQuery();
             Book book = null;
             if (resultSet.next()) {
-                book = createBookResultSet(resultSet);
+                book = createBookFromResultSet(resultSet);
             }
             return Optional.ofNullable(book);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get manufacturer for id"
+            throw new RuntimeException("Can't get book for id"
                     + id, e);
         }
     }
 
-    private Book createBookResultSet(ResultSet resultSet) throws SQLException {
+    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
         String name = resultSet.getString("name");
         String title = resultSet.getString("title");
         Long id = resultSet.getObject("id", Long.class);

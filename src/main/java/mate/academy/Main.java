@@ -18,10 +18,19 @@ public class Main {
         bookDao.create(book1);
 
         List<Book> allBooks = bookDao.getAll();
-
         for (Book book : allBooks) {
             System.out.println(book);
         }
-    }
 
+        System.out.println(bookDao.get(1L));
+
+        Book book3 = bookDao.get(2L).get();
+        book3.setName("YYY");
+        book3.setTitle("yyyyyyyy");
+        bookDao.update(book3);
+
+        System.out.println(bookDao.get(2L));
+
+        bookDao.delete(1L);
+    }
 }
