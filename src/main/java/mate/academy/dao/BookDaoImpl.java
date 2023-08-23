@@ -1,14 +1,18 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.ConnectionUtil;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -19,11 +23,11 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String insertQuery = "INSERT INTO book(title, price)" +
-                " values(?,?)";
+        String insertQuery = "INSERT INTO book(title, price)"
+                + " values(?,?)";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement creationStatement = connection.prepareStatement(insertQuery,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement creationStatement = connection.prepareStatement(insertQuery,
+                        Statement.RETURN_GENERATED_KEYS)) {
             creationStatement.setString(TITLE_INDEX, book.getTitle());
             creationStatement.setBigDecimal(PRICE_INDEX, book.getPrice());
             creationStatement.executeUpdate();
@@ -42,8 +46,8 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String selectRequest = "SELECT * FROM book WHERE id = ? AND is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement selectStatement =
-                     connection.prepareStatement(selectRequest)) {
+                PreparedStatement selectStatement =
+                        connection.prepareStatement(selectRequest)) {
             selectStatement.setLong(ID_INDEX, id);
             selectStatement.executeQuery();
             ResultSet generatedKeys = selectStatement.executeQuery();
@@ -75,8 +79,8 @@ public class BookDaoImpl implements BookDao {
                 + " WHERE id = ? AND is_deleted = FALSE";
         int idPosition = 3;
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement updateStatement =
-                     connection.prepareStatement(updateRequest, Statement
+                PreparedStatement updateStatement =
+                        connection.prepareStatement(updateRequest, Statement
                              .RETURN_GENERATED_KEYS)) {
             updateStatement.setLong(idPosition, book.getId());
             updateStatement.setString(TITLE_INDEX, book.getTitle());
@@ -93,8 +97,8 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String deleteRequest = "UPDATE Book SET is_deleted = TRUE WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement deleteStatement =
-                     connection.prepareStatement(deleteRequest,
+                PreparedStatement deleteStatement =
+                        connection.prepareStatement(deleteRequest,
                              Statement.RETURN_GENERATED_KEYS)) {
             deleteStatement.setLong(ID_INDEX, id);
             return deleteStatement.executeUpdate() >= MINIMAL_OPERATION_AMOUNT;
