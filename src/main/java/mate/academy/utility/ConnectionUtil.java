@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import mate.academy.exception.DataProcessingException;
 
-public class Connector {
+public class ConnectionUtil {
     public static Connection getConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
