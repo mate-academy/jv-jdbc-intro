@@ -19,7 +19,7 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sqlInsert = "INSERT INTO books (title, price) VALUES (?,?);";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sqlInsert)) {
+                 PreparedStatement preparedStatement = connection.prepareStatement(sqlInsert)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();
@@ -32,35 +32,32 @@ public class BookDaoImpl implements BookDao {
 
     public Optional<Book> findById(Long id) {
         String sqlFindById = "SELECT id, title, price FROM books WHERE id = ?;";
-        Book book = new Book();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet == null) {
-                return Optional.empty();
-            }
-            while (resultSet.next()) {
-                book = extractBook(resultSet);
+            if (preparedStatement.execute()) {
+                ResultSet resultSet = preparedStatement.getResultSet();
+                if (resultSet.next()) {
+                    return Optional.of(extractBook(resultSet));
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
                     "There is a problem with connection to DB in findById method!!", e);
         }
-        return Optional.of(book);
+        return Optional.empty();
     }
 
     public List<Book> findAll() {
         String sqlGetAll = "SELECT * FROM books;";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(sqlGetAll)) {
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet == null) {
-                return books;
-            }
-            while (resultSet.next()) {
-                books.add(extractBook(resultSet));
+                PreparedStatement statement = connection.prepareStatement(sqlGetAll)) {
+            if (statement.execute()) {
+                ResultSet resultSet = statement.getResultSet();
+                while (resultSet.next()) {
+                    books.add(extractBook(resultSet));
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
@@ -98,17 +95,11 @@ public class BookDaoImpl implements BookDao {
         return executionResult > 0;
     }
 
-    private Book extractBook(ResultSet resultSet) {
-        try (resultSet) {
-            Book book = new Book();
-            book.setId(resultSet.getLong(1));
-            book.setTitle(resultSet.getString(2));
-            book.setPrice(resultSet.getBigDecimal(3));
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException(
-                    "There is a problem with get data "
-                            + "from DB in extractBook method!!", e);
-        }
+    private Book extractBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong(1));
+        book.setTitle(resultSet.getString(2));
+        book.setPrice(resultSet.getBigDecimal(3));
+        return book;
     }
 }

@@ -8,7 +8,8 @@ public class Main {
 
     public static void main(String[] args) {
         BookDaoImpl bookDao = new BookDaoImpl();
-        System.out.println(bookDao.findById(1L));
+        bookDao.deleteById(16L);
+        System.out.println(bookDao.findById(17L));
         System.out.println(bookDao.findAll().toString());
     }
 }
