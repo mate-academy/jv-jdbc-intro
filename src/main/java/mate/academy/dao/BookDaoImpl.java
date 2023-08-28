@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can not insert new value", e);
+                    "Can not insert new book " + book.getTitle(), e);
         }
         return book;
     }
@@ -76,7 +76,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can't update value in the DB", e);
+                    "Can't update value " + book.getTitle() + " in the DB", e);
         }
         return book;
     }
