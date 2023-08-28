@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "There is a problem with connection to DB in create method!!", e);
+                    "Can not insert new value", e);
         }
         return book;
     }
@@ -43,7 +43,7 @@ public class BookDaoImpl implements BookDao {
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "There is a problem with connection to DB in findById method!!", e);
+                    "Can not find book by id: " + id, e);
         }
         return Optional.empty();
     }
@@ -61,7 +61,7 @@ public class BookDaoImpl implements BookDao {
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "There is a problem with connection to DB in findAll method!!", e);
+                    "Can not get all values from DB", e);
         }
         return books;
     }
@@ -76,7 +76,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "There is a problem with connection to DB in update method!!", e);
+                    "Can't update value in the DB", e);
         }
         return book;
     }
@@ -89,8 +89,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             executionResult = preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataProcessingException("There is a problem"
-                    + " with connection to DB in delete method!!", e);
+            throw new DataProcessingException("Can not delete value by id: " + id, e);
         }
         return executionResult > 0;
     }
