@@ -20,7 +20,7 @@ public class Main {
         Book book = new Book();
         // initialize field values using setters or constructor
         bookDao.create(book);
-        // test other methods from BookDao
+        // test other methods from BookDaoImpl
     }
 }
 ```
