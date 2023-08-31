@@ -16,10 +16,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final int ID_INDEX = 1;
-    private static final int ID_POSITION = 3;
-    private static final int PRICE_POSITION = 2;
-    private static final int TITLE_POSITION = 1;
 
     @Override
     public Book create(Book book) {
@@ -27,8 +23,8 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(TITLE_POSITION, book.getTitle());
-            preparedStatement.setBigDecimal(PRICE_POSITION, book.getPrice());
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setBigDecimal(2, book.getPrice());
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -45,11 +41,11 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setLong(ID_INDEX, id);
+            preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Book foundBook = null;
             if (resultSet.next()) {
-                foundBook = resultSetFunction(resultSet);
+                foundBook = parseBook(resultSet);
             }
             return Optional.ofNullable(foundBook);
         } catch (SQLException e) {
@@ -65,7 +61,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Book recievedBook = resultSetFunction(resultSet);
+                Book recievedBook = parseBook(resultSet);
                 booksList.add(recievedBook);
             }
             return booksList;
@@ -79,9 +75,9 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(TITLE_POSITION, book.getTitle());
-            preparedStatement.setObject(PRICE_POSITION, book.getPrice());
-            preparedStatement.setObject(ID_POSITION, book.getId());
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setObject(2, book.getPrice());
+            preparedStatement.setObject(3, book.getId());
             preparedStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
@@ -95,7 +91,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
-            preparedStatement.setLong(ID_INDEX, id);
+            preparedStatement.setLong(1, id);
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -104,7 +100,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private static Book resultSetFunction(ResultSet resultSet) {
+    private static Book parseBook(ResultSet resultSet) {
         Book recievedBook = new Book();
         try {
             recievedBook.setId(resultSet.getObject("id", Long.class));
@@ -116,5 +112,3 @@ public class BookDaoImpl implements BookDao {
         return recievedBook;
     }
 }
-
-
