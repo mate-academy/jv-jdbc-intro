@@ -2,7 +2,6 @@ package mate.academy.service.impl;
 
 import java.util.List;
 import mate.academy.dao.BookDao;
-import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Inject;
 import mate.academy.lib.Service;
 import mate.academy.model.Book;
@@ -21,8 +20,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book findById(Long id) {
         return bookDao.findById(id).orElseThrow(() ->
-                new DataProcessingException("Couldn't get book by id " + id,
-                        new RuntimeException("Driver not found in DB.")));
+              new RuntimeException("Book not found in DB." + id));
     }
 
     @Override
