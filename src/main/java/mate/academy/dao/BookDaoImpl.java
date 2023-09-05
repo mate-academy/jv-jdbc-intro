@@ -16,7 +16,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -52,25 +51,25 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t get all books:", e);
         }
-        return null;
+        return books;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ? AND is_deleted = FALSE;";
+        Optional<Book> book = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                    PreparedStatement statement = connection
                            .prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            Book book = null;
             if (resultSet.next()) {
-                book = getBook(resultSet);
+                book = Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t get book by id:" + id, e);
         }
-        return Optional.empty();
+        return book;
     }
 
     @Override
