@@ -16,12 +16,19 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String TITLE_COLUMN_LABEL = "title";
+    private static final String PRICE_COLUMN_LABEL = "price";
+    private static final String CREATE_QUERY = "INSERT INTO books (title, price) VALUES(?, ?)";
+    private static final String FINDBYID_QUERY = "SELECT * FROM books WHERE id = ?";
+    private static final String FINDALL_QUERY = "SELECT * FROM books";
+    private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETEBYID_QUERY = "DELETE FROM books WHERE id = ?";
+
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title, price) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
-                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        .prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -29,7 +36,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows < 1) {
-                throw new RuntimeException(
+                throw new DataProcessingException(
                         "Expected to insert at least one row, but inserted 0 rows.");
             }
 
@@ -47,46 +54,28 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(FINDBYID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
+            Book foundBook = null;
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-
-                return Optional.of(book);
+                foundBook = parseBookFromResultSet(resultSet);
             }
+            return Optional.ofNullable(foundBook);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id " + id, e);
         }
-
-        return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
-        String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery(FINDALL_QUERY);
             while (resultSet.next()) {
-                Long id = resultSet.getObject(1, Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-
+                Book book = parseBookFromResultSet(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -97,9 +86,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -107,7 +95,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows < 1) {
-                throw new RuntimeException(
+                throw new DataProcessingException(
                         "Expected to update at least one row, but updated 0 rows.");
             }
         } catch (SQLException e) {
@@ -118,14 +106,25 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(DELETEBYID_QUERY)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not delete book by id " + id, e);
         }
+    }
+
+    private Book parseBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book receivedBook = new Book();
+        Long id = resultSet.getObject(1, Long.class);
+        String title = resultSet.getString(TITLE_COLUMN_LABEL);
+        BigDecimal price = resultSet.getBigDecimal(PRICE_COLUMN_LABEL);
+
+        receivedBook.setId(id);
+        receivedBook.setTitle(title);
+        receivedBook.setPrice(price);
+        return receivedBook;
     }
 }

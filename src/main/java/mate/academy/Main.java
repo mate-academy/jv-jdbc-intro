@@ -10,30 +10,48 @@ public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
+        // initialisation of books
+        Book firstBook = new Book();
+        firstBook.setTitle("FirstBook");
+        firstBook.setPrice(BigDecimal.valueOf(123.12));
+
+        Book secondBook = new Book();
+        secondBook.setTitle("SecondBook");
+        secondBook.setPrice(BigDecimal.valueOf(345.34));
+
+        Book thirdBook = new Book();
+        thirdBook.setTitle("ThirdBook");
+        thirdBook.setPrice(BigDecimal.valueOf(567.56));
+
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
-        Book bookColony = new Book();
-        bookColony.setTitle("SpaceColony");
-        bookColony.setPrice(BigDecimal.valueOf(777.77));
-        bookDao.create(bookColony);
+        // creating books
+        bookDao.create(firstBook);
+        bookDao.create(secondBook);
+        bookDao.create(thirdBook);
 
-        Long id = 2L;
-        Book bookById = bookDao.findById(id).orElseThrow(
-                () -> new RuntimeException("Can't find book by id " + id));
+        // finding book by id
+        Long idToFind = 1L;
+        Book bookById = bookDao.findById(idToFind).orElseThrow(
+                () -> new RuntimeException("Book not found by id " + idToFind));
         System.out.println(bookById);
 
+        // finding all books
         List<Book> books = bookDao.findAll();
         for (Book book : books) {
             System.out.println(book);
         }
 
+        // book update
         Book updatedBook = new Book();
-        updatedBook.setId(1L);
-        updatedBook.setTitle("Kobzar");
+        updatedBook.setId(2L);
+        updatedBook.setTitle("NextBook");
         updatedBook.setPrice(BigDecimal.valueOf(150.00));
         bookDao.update(updatedBook);
 
-        System.out.println(bookDao.deleteById(4L));
+        // book deleting
+        Long idToDelete = 2L;
+        System.out.println(bookDao.deleteById(idToDelete));
     }
 
 }
