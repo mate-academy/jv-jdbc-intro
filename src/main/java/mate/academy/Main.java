@@ -40,7 +40,7 @@ public class Main {
         if (bookOnId.isEmpty()) {
             System.out.println("Book with id = " + id + " is absent in DB");
         } else {
-            System.out.println("Book found with id = " + id + " is " + bookOnId.toString());
+            System.out.println("Book found with id = " + id + " is " + bookOnId);
         }
 
         id = 100L;
@@ -48,11 +48,11 @@ public class Main {
         if (bookOnId.isEmpty()) {
             System.out.println("Book with id = " + id + " is absent in DB");
         } else {
-            System.out.println("Book found with id = " + id + " is " + bookOnId.toString());
+            System.out.println("Book found with id = " + id + " is " + bookOnId);
         }
 
         Book bookForUpdate = new Book();
-        bookForUpdate.setId(1l);
+        bookForUpdate.setId(1L);
         bookForUpdate.setTitle("Harry Potter - 3");
         bookForUpdate.setPrice(BigDecimal.valueOf(99.99));
         bookDao.update(bookForUpdate);
@@ -62,7 +62,7 @@ public class Main {
         if (bookOnId.isEmpty()) {
             System.out.println("Book with id = " + id + " is absent in DB");
         } else {
-            System.out.println("Book found with id = " + id + " changed to " + bookOnId.toString());
+            System.out.println("Book found with id = " + id + " changed to " + bookOnId);
         }
 
         id = 100L;
