@@ -15,7 +15,6 @@ import mate.academy.service.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private Throwable ex = new Throwable();
 
     @Override
     public Book create(Book book) {
@@ -50,14 +49,18 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
                 book = resultSetToBook(resultSet);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book by id " + id, e);
         }
-        return Optional.of(book);
+
+        Optional<Book> optionalBook = Optional.of(book);
+        if (optionalBook.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return optionalBook;
+        }
     }
 
     @Override
@@ -68,9 +71,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book = resultSetToBook(resultSet);
-                bookList.add(book);
+                bookList.add(resultSetToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get books from DB ", e);
@@ -110,18 +111,14 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book resultSetToBook(ResultSet resultSet) {
+    private Book resultSetToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        try {
-            Long id = resultSet.getObject("id", Long.class);
-            String title = resultSet.getString("title");
-            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-            book.setId(id);
-            book.setTitle(title);
-            book.setPrice(price);
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book: " + book, e);
-        }
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }

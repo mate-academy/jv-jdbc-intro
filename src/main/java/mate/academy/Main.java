@@ -25,15 +25,15 @@ public class Main {
 
         bookDao.create(book);
 
-        bookDao.findById(9L);
+        bookDao.findById(15L);
 
         bookDao.findAll();
 
         book.setPrice(BigDecimal.valueOf(39.50));
-        book.setId(9L);
+        book.setId(15L);
         bookDao.update(book);
 
-        bookDao.deleteById(9L);
+        bookDao.deleteById(15L);
 
     }
 }
