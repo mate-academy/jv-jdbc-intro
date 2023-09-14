@@ -42,24 +42,18 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Book book = new Book();
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
+            Book book = null;
             if (resultSet.next()) {
                 book = resultSetToBook(resultSet);
             }
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book by id " + id, e);
-        }
-
-        Optional<Book> optionalBook = Optional.of(book);
-        if (optionalBook.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return optionalBook;
         }
     }
 
