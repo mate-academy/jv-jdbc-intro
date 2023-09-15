@@ -43,7 +43,8 @@ public class Main {
         System.out.println("updateBook: ");
         Book updatedBook = new Book();
         updatedBook.setId(1L);
-        updatedBook.setTitle("Clean Architecture: A Craftsman's Guide to Software Structure and Design");
+        updatedBook.setTitle("Clean Architecture: "
+                + "A Craftsman's Guide to Software Structure and Design");
         updatedBook.setPrice(BigDecimal.valueOf(50.00));
         Book updatedResult = bookDao.update(updatedBook);
         if (updatedResult != null) {
