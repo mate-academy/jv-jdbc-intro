@@ -1,0 +1,8 @@
+CREATE DATABASE `jdbc`;
+USE jdbc;
+CREATE TABLE `books`
+(
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255),
+    `price` DECIMAL(12,2)
+);
