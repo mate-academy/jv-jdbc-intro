@@ -1,6 +1,5 @@
 package mate.academy.dao.impl;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,10 +34,11 @@ public class BookDaoImpl implements BookDao {
                 throw new DataProcessingException("Expected to insert at least 1 row "
                         + "but inserted 0 rows");
             }
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(COLUMN_ID, Long.class);
-                book.setId(id);
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    Long id = generatedKeys.getLong(COLUMN_ID);
+                    book.setId(id);
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add the new book", e);
@@ -54,12 +54,13 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                book = new Book(
-                        id,
-                        resultSet.getObject(COLUMN_TITLE, String.class),
-                        resultSet.getObject(COLUMN_PRICE, BigDecimal.class));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    book = new Book(
+                            id,
+                            resultSet.getString(COLUMN_TITLE),
+                            resultSet.getBigDecimal(COLUMN_PRICE));
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find by id " + id, e);
@@ -72,14 +73,14 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books;";
         List<Book> bookList = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                        ResultSet resultSet = preparedStatement.executeQuery()) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Book book = new Book(
-                        resultSet.getObject(COLUMN_ID, Long.class),
-                        resultSet.getObject(COLUMN_TITLE, String.class),
-                        resultSet.getObject(COLUMN_PRICE, BigDecimal.class));
+                        resultSet.getLong(COLUMN_ID),
+                        resultSet.getString(COLUMN_TITLE),
+                        resultSet.getBigDecimal(COLUMN_PRICE));
                 bookList.add(book);
             }
         } catch (SQLException e) {
