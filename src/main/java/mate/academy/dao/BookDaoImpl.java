@@ -16,10 +16,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final String ID_COLUMN_NAME = "id";
-    private static final String TITLE_COLUMN_NAME = "title";
-    private static final String PRICE_COLUMN_NAME = "price";
-
     @Override
     public Book create(Book book) {
         String insertBookQuery = "INSERT INTO books (title, price) VALUES(?, ?)";
@@ -108,9 +104,9 @@ public class BookDaoImpl implements BookDao {
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getObject(ID_COLUMN_NAME, Long.class));
-        book.setTitle(resultSet.getString(TITLE_COLUMN_NAME));
-        book.setPrice(resultSet.getObject(PRICE_COLUMN_NAME, BigDecimal.class));
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getObject("price", BigDecimal.class));
         return book;
     }
 }
