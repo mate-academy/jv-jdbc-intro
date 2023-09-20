@@ -1,6 +1,6 @@
 package mate.academy;
 
-import mate.academy.DAO.service.BookDao;
+import mate.academy.dao.service.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 import java.math.BigDecimal;

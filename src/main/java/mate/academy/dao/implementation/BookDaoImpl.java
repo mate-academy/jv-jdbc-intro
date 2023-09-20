@@ -1,8 +1,8 @@
-package mate.academy.DAO.implementation;
+package mate.academy.dao.implementation;
 
 import mate.academy.exception.DataProcessingException;
 import mate.academy.model.ConnectionUtil;
-import mate.academy.DAO.service.BookDao;
+import mate.academy.dao.service.BookDao;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import java.math.BigDecimal;
