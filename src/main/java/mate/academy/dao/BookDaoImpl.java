@@ -16,6 +16,10 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String ID_COLUMN_NAME = "id";
+    private static final String TITLE_COLUMN_NAME = "title";
+    private static final String PRICE_COLUMN_NAME = "price";
+
     @Override
     public Book create(Book book) {
         String insertBookQuery = "INSERT INTO books (title, price) VALUES(?, ?)";
@@ -46,11 +50,7 @@ public class BookDaoImpl implements BookDao {
             getBookByIdStatement.setObject(1, id);
             ResultSet resultSet = getBookByIdStatement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
-                receivedBookOptional = Optional.of(book);
+                receivedBookOptional = Optional.of(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book by id: " + id + " from db", e);
@@ -67,11 +67,7 @@ public class BookDaoImpl implements BookDao {
                         connection.prepareStatement(getBooksQuery)) {
             ResultSet resultSet = getAllFormatsStatement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
-                allBooks.add(book);
+                allBooks.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books from db", e);
@@ -108,5 +104,13 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't delete book by id: " + id, e);
         }
         return changedRows > 0;
+    }
+
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject(ID_COLUMN_NAME, Long.class));
+        book.setTitle(resultSet.getString(TITLE_COLUMN_NAME));
+        book.setPrice(resultSet.getObject(PRICE_COLUMN_NAME, BigDecimal.class));
+        return book;
     }
 }
