@@ -20,8 +20,8 @@ public class BookDaoImpl implements BookDao {
     private static final String PRICE_COLUMN_NAME = "price";
     private static final String ID_COLUMN_NAME = "id";
     private static final String CREATE_QUERY = "INSERT INTO books (title, price) VALUES (?,?)";
-    private static final String FINDBYID_QUERY = "SELECT * FROM books WHERE id = ?";
-    private static final String FINDALL_QUERY = "SELECT * FROM books";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM books";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
 
@@ -33,11 +33,7 @@ public class BookDaoImpl implements BookDao {
                          Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert at least 1 row,"
-                        + "but inserted 0 rows.");
-            }
+            statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -53,7 +49,7 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement
-                        = connection.prepareStatement(FINDBYID_QUERY)) {
+                        = connection.prepareStatement(FIND_BY_ID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -70,7 +66,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement
-                         = connection.prepareStatement(FINDALL_QUERY)) {
+                         = connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(retrievingDataFromResultSet(resultSet));
@@ -89,11 +85,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update at least one row,"
-                        + "but updated 0 rows.");
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book, e);
         }
@@ -106,15 +98,14 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement
                         = connection.prepareStatement(DELETE_QUERY)) {
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id" + id, e);
         }
     }
 
     private Book retrievingDataFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong(ID_COLUMN_NAME);
+        Long id = resultSet.getObject(ID_COLUMN_NAME, Long.class);
         String title = resultSet.getString(TITLE_COLUMN_NAME);
         BigDecimal price = resultSet.getBigDecimal(PRICE_COLUMN_NAME);
         return new Book(id, title, price);
