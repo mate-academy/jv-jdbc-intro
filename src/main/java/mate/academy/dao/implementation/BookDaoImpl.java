@@ -17,13 +17,12 @@ import mate.academy.model.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO book (title, price) Values (?, ?)";
+        String query = "INSERT INTO book (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                          PreparedStatement statement = connection
-                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        .prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
@@ -38,7 +37,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("" + book, e);
+            throw new RuntimeException("Can't create the book - " + book, e);
         }
         return book;
     }
@@ -62,7 +61,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can not create a connection to the DB", e);
+            throw new DataProcessingException("Can not create a connection to the DB", e);
         }
         return Optional.empty();
     }
@@ -75,7 +74,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book newBook = createBook(resultSet);
+                Book newBook = parseBook(resultSet);
                 books.add(newBook);
             }
         } catch (SQLException e) {
@@ -92,8 +91,6 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-
-            int affectedRows = statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can not update the book: " + book, e);
         }
@@ -113,7 +110,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book createBook(ResultSet resultSet) {
+    private Book parseBook(ResultSet resultSet) {
         try {
             Long id = resultSet.getObject("id", Long.class);
             String title = resultSet.getObject("title", String.class);
