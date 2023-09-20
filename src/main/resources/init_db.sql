@@ -1,10 +1,10 @@
 CREATE DATABASE Library;
 
-CREATE TABLE `books`
+CREATE TABLE IF NOT EXISTS `books`
 (
     `id`    INT NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(255),
-    `price` INT,
+    `title` VARCHAR(255) NOT NULL,
+    `price` DECIMAL(7,2) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
