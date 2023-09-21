@@ -7,10 +7,9 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/book_db";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "Entermail13*");
         try {
