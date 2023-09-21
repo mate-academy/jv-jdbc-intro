@@ -28,6 +28,9 @@ public class BookDaoImpl implements BookDao {
                         INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
+            if (statement.executeUpdate() < 1) {
+                throw new DataProcessingException("Creating book failed, no rows affected.");
+            }
             book.setId(getCreatedId(statement));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create new book", e);
@@ -42,7 +45,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return Optional.of(matToBook(resultSet));
+                    return Optional.of(mapToBook(resultSet));
                 }
             }
             return Optional.empty();
@@ -60,7 +63,7 @@ public class BookDaoImpl implements BookDao {
                 ResultSet resultSet = statement.executeQuery()) {
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
-                books.add(matToBook(resultSet));
+                books.add(mapToBook(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -75,9 +78,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (statement.executeUpdate() < 1) {
                 throw new DataProcessingException(
                         String.format("Book with id=%d wasn't updated, no rows affected.",
                                 book.getId())
@@ -96,8 +97,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(
                     String.format("Deletion book by id=%d was failed", id), e
@@ -106,10 +106,6 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Long getCreatedId(PreparedStatement statement) throws SQLException {
-        int affectedRows = statement.executeUpdate();
-        if (affectedRows < 1) {
-            throw new DataProcessingException("Creating book failed, no rows affected.");
-        }
         try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
             if (!generatedKeys.next()) {
                 throw new DataProcessingException("Creating book failed, no ID obtained.");
@@ -118,7 +114,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book matToBook(ResultSet resultSet) throws SQLException {
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
         return new Book(
                 resultSet.getLong("id"),
                 resultSet.getString("title"),
