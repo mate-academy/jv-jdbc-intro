@@ -108,11 +108,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
 
-            if (rowsDeleted > 0) {
-                return true;
-            } else {
-                return false;
-            }
+           return rowsDeleted > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Delete book failed: id = " + id);
         }
