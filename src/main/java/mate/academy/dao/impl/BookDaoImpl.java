@@ -19,8 +19,7 @@ public class BookDaoImpl implements BookDao {
     private static final String INSERT_QUERY = "INSERT INTO books(title, price) VALUES (?, ?);";
     private static final String SELECT_QUERY = "SELECT * FROM books WHERE id = ?";
     private static final String SELECT_ALL_QUERY = "SELECT * FROM books;";
-    private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? " 
-            + "WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id =?";
     private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?;";
 
     @Override
@@ -31,7 +30,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();
-            book.setId(setCreatedBookId(preparedStatement));
+            book.setId(getGeneratedId(preparedStatement));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add the new book", e);
         }
@@ -106,13 +105,13 @@ public class BookDaoImpl implements BookDao {
                 resultSet.getBigDecimal("price"));
     }
 
-    private static Long setCreatedBookId(PreparedStatement preparedStatement)
+    private Long getGeneratedId(PreparedStatement preparedStatement)
             throws SQLException {
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             }
         }
-        throw new DataProcessingException("Can't get ID");
+        throw new DataProcessingException("Insert failed. Can't obtain generated id");
     }
 }
