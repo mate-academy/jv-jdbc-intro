@@ -18,7 +18,11 @@ public class Main {
         book.setPrice(BigDecimal.valueOf(350));
         bookDao.create(book);
         bookDao.findById(book.getId());
-        bookDao.update(book);
+        Book anotherBook = new Book();
+        anotherBook.setId(16L);
+        anotherBook.setTitle("OOP conceptions");
+        anotherBook.setPrice(BigDecimal.valueOf(500));
+        bookDao.update(anotherBook);
         bookDao.deleteById(book.getId());
         System.out.println(bookDao.findAll());
     }
