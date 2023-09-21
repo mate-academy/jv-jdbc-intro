@@ -29,9 +29,9 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection
                         .prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setInt(2, book.getPrice().intValue());
-            checkAffectedRows(preparedStatement.executeUpdate());
-            setCreatedBookId(book, preparedStatement);
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.executeUpdate();
+            book.setId(setCreatedBookId(preparedStatement));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add the new book", e);
         }
@@ -78,9 +78,9 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection
                         .prepareStatement(UPDATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setInt(2, book.getPrice().intValue());
+            preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-            checkAffectedRows(preparedStatement.executeUpdate());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book, e);
         }
@@ -106,20 +106,13 @@ public class BookDaoImpl implements BookDao {
                 resultSet.getBigDecimal("price"));
     }
 
-    private void checkAffectedRows(int affectedRows) {
-        if (affectedRows < 1) {
-            throw new DataProcessingException("Expected to insert at least 1 row "
-                    + "but inserted 0 rows");
-        }
-    }
-
-    private static void setCreatedBookId(Book book, PreparedStatement preparedStatement)
+    private static Long setCreatedBookId(PreparedStatement preparedStatement)
             throws SQLException {
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getLong("id");
-                book.setId(id);
+                return generatedKeys.getLong(1);
             }
         }
+        throw new DataProcessingException("Can't get ID");
     }
 }

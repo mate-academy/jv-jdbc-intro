@@ -13,11 +13,11 @@ public class Main {
 
         System.out.println("Find by id 1 " + bookDao.findById(1L));
 
-        Book newBook = new Book("Цветы для Элджернона", BigDecimal.valueOf(350));
+        Book newBook = new Book("Цветы для Элджернона", BigDecimal.valueOf(350.00d));
         Book createdBook = bookDao.create(newBook);
         System.out.println("Created book " + createdBook);
 
-        Book bookToUpdate = new Book(3L, "Тёмные начала", BigDecimal.valueOf(500));
+        Book bookToUpdate = new Book(3L, "Тёмные начала", BigDecimal.valueOf(500.00));
         Book updated = bookDao.update(bookToUpdate);
         System.out.println("Updated book " + updated);
 
