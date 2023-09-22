@@ -1,10 +1,5 @@
 package mate.academy.dao;
 
-import mate.academy.ConnectionUtil;
-import mate.academy.exceptions.DataProcessingException;
-import mate.academy.lib.Dao;
-import mate.academy.model.Book;
-
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.ConnectionUtil;
+import mate.academy.exceptions.DataProcessingException;
+import mate.academy.lib.Dao;
+import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -26,7 +25,8 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected ye insert at least 1 row, but was" + affectedRows);
+                throw new RuntimeException("Expected ye insert at least 1 row, but was"
+                        + affectedRows);
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -95,11 +95,13 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to update at least 1 row, but was: " + affectedRows);
+                throw new RuntimeException("Expected to update at least 1 row, but was: "
+                        + affectedRows);
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update this book value: " + book.getTitle(), e);
+            throw new DataProcessingException("Can't update this book value: "
+                    + book.getTitle(), e);
         }
     }
 
@@ -109,7 +111,7 @@ public class BookDaoImpl implements BookDao {
         try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sql)) {
             statement.setLong(1, id);
             int resultSet = statement.executeUpdate();
-                return resultSet > 0;
+            return resultSet > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with this id:" + id, e);
         }

@@ -1,10 +1,9 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-
-import java.math.BigDecimal;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
@@ -20,13 +19,13 @@ public class Main {
         //Testing deleteById method
         bookDao.deleteById(createdBook.getId());
         //Testing findAll method
-        Book secondCreatedBook = bookDao.create(book);
         Book book1 = new Book();
         book1.setTitle("Twilight");
         book1.setPrice(BigDecimal.valueOf(999));
         bookDao.create(book1);
         bookDao.findAll().forEach(System.out::println);
         //Testing update method
+        Book secondCreatedBook = bookDao.create(book);
         Book book2 = new Book();
         book2.setId(secondCreatedBook.getId());
         book2.setTitle("Indiana Johns");
