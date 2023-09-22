@@ -19,12 +19,12 @@ import mate.academy.model.Book;
 public class BookDaoImpl implements BookDao {
     @Override
     public void create(Book book) {
-        String sqlInsert = "INSERT INTO books(book_title, book_price) values(?, ?)";
+        String sqlInsert = "INSERT INTO books(title, price) values(?, ?)";
         try (Connection connection = ConnectionUtil.connect();
                  PreparedStatement statement = connection.prepareStatement(sqlInsert,
                          Statement.RETURN_GENERATED_KEYS);) {
-            statement.setString(1,book.getTitle());
-            statement.setBigDecimal(2,book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to insert at least 1 row,but inserted 0 rows");
@@ -50,8 +50,8 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Long bookId = resultSet.getObject("id", Long.class);
-                String bookName = resultSet.getObject("book_title",String.class);
-                BigDecimal bookPrice = resultSet.getObject("book_price", BigDecimal.class);
+                String bookName = resultSet.getObject("title", String.class);
+                BigDecimal bookPrice = resultSet.getObject("price", BigDecimal.class);
 
                 returnedBook.setId(bookId);
                 returnedBook.setTitle(bookName);
@@ -76,8 +76,8 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
 
                 book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("book_title"));
-                book.setPrice(resultSet.getBigDecimal("book_price"));
+                book.setTitle(resultSet.getString("title"));
+                book.setPrice(resultSet.getBigDecimal("price"));
 
                 books.add(book);
             }
@@ -89,11 +89,11 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sqlUpdateByName = "UPDATE books SET book_title = ?, book_price = ? WHERE id = ?";
+        String sqlUpdateByName = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement = connection.prepareStatement(sqlUpdateByName)) {
-            statement.setString(1,book.getTitle());
-            statement.setBigDecimal(2,book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int rowsUpdated = statement.executeUpdate();
 

@@ -11,14 +11,14 @@ public class Main {
 
     public static void main(String[] args) {
         Book book = new Book();
-        book.setId(5L);
+        book.setId(1L);
         book.setTitle("Story of Roman Empire");
         book.setPrice(BigDecimal.valueOf(350));
         BookDao bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
         bookDao.create(book);
         bookDao.findById(book.getId());
         Book anotherBook = new Book();
-        anotherBook.setId(16L);
+        anotherBook.setId(2L);
         anotherBook.setTitle("OOP conceptions");
         anotherBook.setPrice(BigDecimal.valueOf(500));
         bookDao.update(anotherBook);
