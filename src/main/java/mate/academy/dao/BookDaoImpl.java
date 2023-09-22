@@ -41,7 +41,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sqlFindById = "SELECT * FROM books WHERE id = ?";
+        String sqlFindRowById = "SELECT * FROM books WHERE id = ?";
         try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sqlFindById)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
