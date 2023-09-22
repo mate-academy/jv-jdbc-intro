@@ -19,7 +19,8 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sqlCreateNewRow = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = ConnectionUtil
-                .getConnection().prepareStatement(sqlCreateNewRow, Statement.RETURN_GENERATED_KEYS)) {
+                .getConnection().prepareStatement(sqlCreateNewRow,
+                        Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
 
@@ -42,7 +43,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sqlFindRowById = "SELECT * FROM books WHERE id = ?";
-        try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sqlFindById)) {
+        try (PreparedStatement statement = ConnectionUtil
+                .getConnection().prepareStatement(sqlFindRowById)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -65,7 +67,8 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String sqlGetAllRows = "SELECT * FROM books";
         List<Book> bookList = new ArrayList<>();
-        try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sqlGetAllRows)) {
+        try (PreparedStatement statement = ConnectionUtil
+                .getConnection().prepareStatement(sqlGetAllRows)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 String bookName = resultSet.getString("title");
@@ -108,7 +111,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Boolean deleteById(Long id) {
         String sqlDeleteRowById = "DELETE FROM books WHERE id = ?";
-        try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sqlDeleteRowById)) {
+        try (PreparedStatement statement = ConnectionUtil
+                .getConnection().prepareStatement(sqlDeleteRowById)) {
             statement.setLong(1, id);
             int resultSet = statement.executeUpdate();
             return resultSet > 0;
