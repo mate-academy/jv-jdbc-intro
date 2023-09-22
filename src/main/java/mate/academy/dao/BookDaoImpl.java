@@ -62,8 +62,7 @@ public class BookDaoImpl implements BookDao {
                          connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = mapToBook(resultSet);
-                books.add(book);
+                books.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create a connection to the DB");
@@ -73,29 +72,23 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        Long id = book.getId();
-        Optional<Book> optionalBook = findById(id);
-        if (optionalBook.isEmpty()) {
-            throw new RuntimeException("Book not found with id " + id);
-        }
-
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
                          connection.prepareStatement(query)) {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
-            statement.setLong(3, id);
+            statement.setLong(3, book.getId());
 
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected to update at less one row,"
-                        + " but inserted 0 rows.");
+            if (statement.executeUpdate() < 1) {
+                throw new DataProcessingException(
+                        String.format("Book with id=%d wasn't updated, no rows affected.",
+                                book.getId()));
             }
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book);
         }
-        return book;
     }
 
     @Override
@@ -106,11 +99,10 @@ public class BookDaoImpl implements BookDao {
                  PreparedStatement statement =
                          connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            updatedRows = statement.executeUpdate();
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id " + id);
         }
-        return (updatedRows > 0);
     }
 
     private static long getCreatedId(PreparedStatement statement) throws SQLException {
