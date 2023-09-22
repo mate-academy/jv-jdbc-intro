@@ -19,10 +19,10 @@ import mate.academy.model.Book;
 public class BookDaoImpl implements BookDao {
     @Override
     public void create(Book book) {
-        try (Connection connection = ConnectionUtil.connect()) {
-            String sqlInsert = "INSERT INTO books(book_title, book_price) values(?, ?)";
-            PreparedStatement statement = connection.prepareStatement(sqlInsert,
-                    Statement.RETURN_GENERATED_KEYS);
+        String sqlInsert = "INSERT INTO books(book_title, book_price) values(?, ?)";
+        try (Connection connection = ConnectionUtil.connect();
+                 PreparedStatement statement = connection.prepareStatement(sqlInsert,
+                         Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1,book.getTitle());
             statement.setBigDecimal(2,book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -42,9 +42,10 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         Book returnedBook = new Book();
-        try (Connection connection = ConnectionUtil.connect()) {
-            String sqlFindById = "SELECT * FROM books WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sqlFindById);
+        String sqlFindById = "SELECT * FROM books WHERE id = ?";
+
+        try (Connection connection = ConnectionUtil.connect();
+                PreparedStatement statement = connection.prepareStatement(sqlFindById)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -67,11 +68,10 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        try (Connection connection = ConnectionUtil.connect()) {
-            String sqlFindAll = "SELECT * FROM books";
-            PreparedStatement statement = connection.prepareStatement(sqlFindAll);
+        String sqlFindAll = "SELECT * FROM books";
+        try (Connection connection = ConnectionUtil.connect();
+                PreparedStatement statement = connection.prepareStatement(sqlFindAll)) {
             ResultSet resultSet = statement.executeQuery();
-
             while (resultSet.next()) {
                 Book book = new Book();
 
@@ -89,9 +89,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        try (Connection connection = ConnectionUtil.connect()) {
-            String sqlUpdateByName = "UPDATE books SET book_title = ?, book_price = ? WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sqlUpdateByName);
+        String sqlUpdateByName = "UPDATE books SET book_title = ?, book_price = ? WHERE id = ?";
+        try (Connection connection = ConnectionUtil.connect();
+                PreparedStatement statement = connection.prepareStatement(sqlUpdateByName)) {
             statement.setString(1,book.getTitle());
             statement.setBigDecimal(2,book.getPrice());
             statement.setLong(3, book.getId());
@@ -110,9 +110,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        try (Connection connection = ConnectionUtil.connect()) {
-            String sqlDelete = "DELETE FROM books WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sqlDelete);
+        String sqlDelete = "DELETE FROM books WHERE id = ?";
+        try (Connection connection = ConnectionUtil.connect();
+                 PreparedStatement statement = connection.prepareStatement(sqlDelete)) {
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
             return rowsDeleted > 0;
