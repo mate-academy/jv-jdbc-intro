@@ -15,9 +15,9 @@ public class Main {
         bookDao.create(firstBook);
         bookDao.create(secondBook);
         bookDao.findAll();
-        bookDao.findById(1L);
+        bookDao.findById(firstBook.getId());
         firstBook.setTitle("The Great Gatsby");
         bookDao.update(firstBook);
-        bookDao.deleteById(2L);
+        bookDao.deleteById(secondBook.getId());
     }
 }
