@@ -17,21 +17,18 @@ public class Main {
 
         bookDao.create(book);
 
-        // Optional<Book> byId = bookDao.findById(1L);
-
         Book book1 = new Book();
         book1.setTitle("boook");
         book1.setPrice(BigDecimal.valueOf(13));
-        book1.setId(1L);
+
         Book update = bookDao.update(book1);
         System.out.println(update);
 
         List<Book> all = bookDao.findAll();
         System.out.println(all);
 
-        boolean b = bookDao.deleteById(1L);
-        System.out.println(b);
+        boolean isDeleted = bookDao.deleteById(1L);
+        System.out.println(isDeleted);
 
-        // bookDao.findById(1L);
     }
 }
