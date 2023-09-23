@@ -19,23 +19,20 @@ import mate.academy.model.Book;
 public class BookDaoImpl implements BookDao {
     @Override
     public void create(Book book) {
-        String sqlInsert = "INSERT INTO books(title, price) values(?, ?)";
+        String sqlInsert = "INSERT INTO books(title, price) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.connect();
                  PreparedStatement statement = connection.prepareStatement(sqlInsert,
                          Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least 1 row,but inserted 0 rows");
-            }
+            statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed insert book: " + book.getTitle());
+            throw new DataProcessingException("Failed insert book: " + book.getTitle(), e);
         }
     }
 
@@ -49,17 +46,14 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Long bookId = resultSet.getObject("id", Long.class);
-                String bookName = resultSet.getObject("title", String.class);
-                BigDecimal bookPrice = resultSet.getObject("price", BigDecimal.class);
 
-                returnedBook.setId(bookId);
-                returnedBook.setTitle(bookName);
-                returnedBook.setPrice(bookPrice);
+                setFields(returnedBook, resultSet.getObject("id", Long.class),
+                        resultSet.getObject("title", String.class),
+                        resultSet.getObject("price", BigDecimal.class));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed get book by id command.Book "
-                    + "with id" + id);
+                    + "with id" + id, e);
         }
 
         return Optional.of(returnedBook);
@@ -75,14 +69,14 @@ public class BookDaoImpl implements BookDao {
             while (resultSet.next()) {
                 Book book = new Book();
 
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
+                setFields(book, resultSet.getObject("id",Long.class),
+                        resultSet.getString("title"),
+                        resultSet.getBigDecimal("price"));
 
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed select all book from db");
+            throw new DataProcessingException("Failed select all book from db", e);
         }
         return books;
     }
@@ -104,7 +98,8 @@ public class BookDaoImpl implements BookDao {
                         + " book with ID: " + book.getId());
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Operation updade failed with book title: "
+                    + book.getTitle(), e);
         }
     }
 
@@ -117,7 +112,14 @@ public class BookDaoImpl implements BookDao {
             int rowsDeleted = statement.executeUpdate();
             return rowsDeleted > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Delete book failed: id = " + id);
+            throw new DataProcessingException("Delete book failed: id = " + id, e);
         }
+    }
+
+    private static void setFields(Book returnedBook, Long bookId,
+                                  String bookName, BigDecimal bookPrice) {
+        returnedBook.setId(bookId);
+        returnedBook.setTitle(bookName);
+        returnedBook.setPrice(bookPrice);
     }
 }

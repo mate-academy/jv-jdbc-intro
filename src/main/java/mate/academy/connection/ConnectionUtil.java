@@ -1,33 +1,32 @@
 package mate.academy.connection;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DВ_URL = "jdbc:mysql://localhost:3306/books_schema";
     private static final Properties DB_PROPERTIES;
-    private static final String password;
 
     static {
         try {
-            password = Files.readString(Path.of("src/password.txt"));
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Can`t load jdbc driver: ",e);
-        } catch (IOException e) {
-            throw new RuntimeException("Can`t find file with password: ", e);
         }
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user","root");
-        DB_PROPERTIES.put("password",password);
+        DB_PROPERTIES.put("password","Haker2013");
     }
 
-    public static Connection connect() throws SQLException {
-        return DriverManager.getConnection(DВ_URL, DB_PROPERTIES);
+    public static Connection connect() {
+        try {
+            return DriverManager.getConnection(DВ_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can`t connect to DB with url"
+                    + DВ_URL + "Properties: " + DB_PROPERTIES);
+        }
     }
 }
