@@ -35,12 +35,7 @@ public class BookDaoImpl implements BookDao {
                         "Creating book failed , no rows affected " + book
                 );
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
-                book.setId(id);
-            }
-
+            book.setId(getGeneratedId(statement));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create a new book: " + book, e);
         }
@@ -119,6 +114,15 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException(
                     String.format("Book with id = %d wasn't delete", id), e);
         }
+    }
+
+    private Long getGeneratedId(PreparedStatement preparedStatement) throws SQLException {
+            try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getObject(1 , Long.class);
+                }
+            }
+            throw new DataProcessingException("Can't get generated id ");
     }
 
     private Book castResultSetToBook(ResultSet resultSet) throws SQLException {
