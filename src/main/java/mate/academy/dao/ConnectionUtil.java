@@ -21,11 +21,11 @@ public class ConnectionUtil {
         }
     }
 
-    public  static Connection getConnection() {
+    public static Connection getConnection() {
         try {
             return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create a connection" ,e);
+            throw new RuntimeException("Can't create a connection", e);
         }
     }
 }
