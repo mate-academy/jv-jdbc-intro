@@ -53,7 +53,6 @@ public class BookDaoImpl implements BookDao {
             while (resultSet.next()) {
                 optionalBook = Optional.of(castResultSetToBook(resultSet));
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException(
                     String.format("Can't find a book with id = %d ", id), e
@@ -72,7 +71,6 @@ public class BookDaoImpl implements BookDao {
             while (resultSet.next()) {
                 list.add(castResultSetToBook(resultSet));
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books from DB",e);
         }
@@ -93,7 +91,6 @@ public class BookDaoImpl implements BookDao {
                                 "Book with id = %d wasn't updated , no rows affected", book.getId()
                         ));
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException(
                     String.format(
