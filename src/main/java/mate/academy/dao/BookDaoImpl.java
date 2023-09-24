@@ -25,9 +25,9 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement statement =
-                         connection.prepareStatement(CREATE_QUERY,
-                                 Statement.RETURN_GENERATED_KEYS)) {
+                  PreparedStatement statement =
+                             connection.prepareStatement(CREATE_QUERY,
+                             Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
@@ -46,8 +46,8 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         Optional<Book> optionalBook = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement statement
-                         = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+                 PreparedStatement statement =
+                         connection.prepareStatement(FIND_BY_ID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -65,14 +65,14 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         List<Book> list = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement statement
-                         = connection.prepareStatement(FIND_ALL_QUERY)) {
+                 PreparedStatement statement =
+                         connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 list.add(castResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get all books from DB",e);
+            throw new DataProcessingException("Can't get all books from DB", e);
         }
         return list;
     }
@@ -114,12 +114,12 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Long getGeneratedId(PreparedStatement preparedStatement) throws SQLException {
-            try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getObject(1 , Long.class);
-                }
+        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                return generatedKeys.getObject(1, Long.class);
             }
-            throw new DataProcessingException("Can't get generated id ");
+        }
+        throw new DataProcessingException("Can't get generated id ");
     }
 
     private Book castResultSetToBook(ResultSet resultSet) throws SQLException {
