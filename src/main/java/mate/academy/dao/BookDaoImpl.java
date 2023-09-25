@@ -51,7 +51,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create connection to the DB", e);
+            throw new DataProcessingException("Cannot find book by id " + id, e);
         }
         return Optional.empty();
     }
@@ -100,7 +100,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create connection to the DB", e);
+            throw new DataProcessingException("Cannot delete book with this id " + id, e);
         }
     }
 
