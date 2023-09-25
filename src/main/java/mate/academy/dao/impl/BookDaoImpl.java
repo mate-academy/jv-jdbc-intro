@@ -1,6 +1,5 @@
 package mate.academy.dao.impl;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,16 +8,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.connection.ConnectionUtil;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
     @Override
-    public void create(Book book) {
+    public Book create(Book book) {
         String sqlInsert = "INSERT INTO books(title, price) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.connect();
                  PreparedStatement statement = connection.prepareStatement(sqlInsert,
@@ -31,6 +30,7 @@ public class BookDaoImpl implements BookDao {
                 Long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
+            return new Book(book.getId(), book.getTitle(), book.getPrice());
         } catch (SQLException e) {
             throw new DataProcessingException("Failed insert book: " + book.getTitle(), e);
         }
@@ -38,25 +38,18 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Book returnedBook = new Book();
         String sqlFindById = "SELECT * FROM books WHERE id = ?";
-
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement = connection.prepareStatement(sqlFindById)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-
-                setFields(returnedBook, resultSet.getObject("id", Long.class),
-                        resultSet.getObject("title", String.class),
-                        resultSet.getObject("price", BigDecimal.class));
+                return Optional.of(mapResultToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed get book by id command.Book "
-                    + "with id" + id, e);
+            throw new DataProcessingException("Can't find book by id: " + id, e);
         }
-
-        return Optional.of(returnedBook);
+        return Optional.empty();
     }
 
     @Override
@@ -67,12 +60,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sqlFindAll)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-
-                setFields(book, resultSet.getObject("id",Long.class),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price"));
-
+                Book book = mapResultToBook(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -116,10 +104,11 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private static void setFields(Book returnedBook, Long bookId,
-                                  String bookName, BigDecimal bookPrice) {
-        returnedBook.setId(bookId);
-        returnedBook.setTitle(bookName);
-        returnedBook.setPrice(bookPrice);
+    private static Book mapResultToBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }

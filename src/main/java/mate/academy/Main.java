@@ -25,7 +25,7 @@ public class Main {
         Book newBook = new Book(2L,"Top 10 musicians of all time",BigDecimal.valueOf(500));
         bookDao.update(newBook);
 
-        System.out.println(bookDao.findById(3L));
+        System.out.println(bookDao.findById(4L));
         bookDao.deleteById(3L);
     }
 }
