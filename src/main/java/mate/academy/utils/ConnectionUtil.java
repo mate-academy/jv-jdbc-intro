@@ -7,13 +7,11 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/mate";
-    private static final Properties userProperties;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        userProperties = new Properties();
-
-        userProperties.put("user", "root");
-        userProperties.put("password", "Root1234!");
+        DB_PROPERTIES.put("user", "root");
+        DB_PROPERTIES.put("password", "Root1234!");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -24,7 +22,7 @@ public class ConnectionUtil {
 
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(DB_URL, userProperties);
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
         } catch (SQLException e) {
             throw new RuntimeException("Try to connect to DataBase was unsuccessful: ", e);
         }
