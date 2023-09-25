@@ -30,14 +30,13 @@ public class BookDaoImpl implements BookDao {
             if (rowsAffected == 0) {
                 throw new DataProcessingException("Creating book failed, no rows affected.");
             }
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    long id = generatedKeys.getLong(1);
-                    book.setId(id);
-                    return book;
-                } else {
-                    throw new DataProcessingException("Creating book failed, no ID obtained.");
-                }
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                long id = generatedKeys.getLong(1);
+                book.setId(id);
+                return book;
+            } else {
+                throw new DataProcessingException("Creating book failed, no ID obtained.");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error creating book", e);
