@@ -111,17 +111,4 @@ public class BookDaoImpl implements BookDao {
             resultSet.getBigDecimal("price")
         );
     }
-
-    private void checkId(Long id) {
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(CHECK_ID_QUERY)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                throw new SQLException("There is no book with id = " + id);
-            }
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't find book by id = " + id, e);
-        }
-    }
 }
