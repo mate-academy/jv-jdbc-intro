@@ -8,27 +8,29 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO books (title,price) VALUES(?,?)";
+        String insertQuery = "INSERT INTO books (title,price) VALUES(?,?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                         query, Statement.RETURN_GENERATED_KEYS)) {
+                         insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-
             if (statement.executeUpdate() < 1) {
                 throw new DataProcessingException("Creating book failed, no rows affected.");
             }
-            book.setId(getCreatedId(statement));
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getObject(1, Long.class);
+                book.setId(id);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Can't add new book: " + book, e);
         }
@@ -37,45 +39,45 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String query = "SELECT * FROM books WHERE id = ?";
+        String findByIdQuery = "SELECT * FROM books WHERE id = ?";
         Book book = null;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(findByIdQuery)) {
             statement.setLong(1, id);
 
-            ResultSet generatedKeys = statement.executeQuery();
-            if (generatedKeys.next()) {
-                book = mapToBook(generatedKeys);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                book = mapToBook(resultSet);
             }
             return Optional.ofNullable(book);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection: " + id, e);
+            throw new DataProcessingException("Cannot find book by id " + id, e);
         }
     }
 
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM books";
+        String selectAllQuery = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
-                         connection.prepareStatement(query)) {
+                         connection.prepareStatement(selectAllQuery)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create a connection to the DB");
+            throw new DataProcessingException("Can not find all books from table", e);
         }
         return books;
     }
 
     @Override
     public Book update(Book book) {
-        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
-                         connection.prepareStatement(query)) {
+                         connection.prepareStatement(updateQuery)) {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -93,24 +95,16 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String query = "DELETE FROM books WHERE id = ?";
+        String deleteQuery = "DELETE FROM books WHERE id = ?";
         int updatedRows;
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
-                         connection.prepareStatement(query)) {
+                         connection.prepareStatement(deleteQuery)) {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id " + id);
         }
-    }
-
-    private static long getCreatedId(PreparedStatement statement) throws SQLException {
-        ResultSet generatedKeys = statement.getGeneratedKeys();
-        if (!generatedKeys.next()) {
-            throw new DataProcessingException("Creating book failed, no ID obtained.");
-        }
-        return generatedKeys.getLong(1);
     }
 
     private Book mapToBook(ResultSet resultSet) throws SQLException {
