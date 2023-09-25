@@ -1,7 +1,34 @@
 package mate.academy;
 
-public class Main {
-    public static void main(String[] args) {
+import java.math.BigDecimal;
+import java.util.List;
+import mate.academy.dao.BookDao;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
 
+public class Main {
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
+    public static void main(String[] args) {
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        List<Book> bookList = List.of(
+                new Book("Art of programming", BigDecimal.valueOf(1500.00)),
+                new Book("Hunger games. Part-1", BigDecimal.valueOf(865.00)),
+                new Book("The Pragmatic Programmer", BigDecimal.valueOf(1200.50))
+        );
+
+        List<Book> createdBooks = bookList.stream() //CREATING rows with books
+                .map(bookDao::create)
+                .toList();
+
+        Book book = bookDao.findById(createdBooks.get(0).getId()) //GET BY ID
+                .orElseThrow(() -> new RuntimeException("Book was not found"));
+        System.out.println(book);
+        bookDao.findAll().forEach(System.out::println); //FIND ALL
+        bookDao.deleteById(createdBooks.get(2).getId()); //DELETE
+        book.setPrice(BigDecimal.valueOf(2000));
+        book.setTitle("Some updated book");
+        Book update = bookDao.update(book);
+        System.out.println(update); //UPDATE
     }
 }
