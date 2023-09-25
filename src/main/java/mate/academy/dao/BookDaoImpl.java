@@ -44,21 +44,21 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Optional<Book> optionalBook = Optional.empty();
+        Optional<Book> book = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
                          connection.prepareStatement(FIND_BY_ID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                optionalBook = Optional.of(castResultSetToBook(resultSet));
+                book = Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
                     String.format("Can't find a book with id = %d ", id), e
             );
         }
-        return optionalBook;
+        return book;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BookDaoImpl implements BookDao {
                          connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                list.add(castResultSetToBook(resultSet));
+                list.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books from DB", e);
@@ -122,8 +122,8 @@ public class BookDaoImpl implements BookDao {
         throw new DataProcessingException("Can't get generated id ");
     }
 
-    private Book castResultSetToBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getObject("id", Long.class);
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong("id");
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");
         return new Book(id, title, price);
