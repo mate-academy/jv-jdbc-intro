@@ -17,12 +17,17 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String INSERT_QUERY = "INSERT INTO books (title, price) VALUES (?, ?)";
+    private static final String FIND_SELECT_QUERY = "SELECT * FROM books WHERE id = ?";
+    private static final String FIND_ALL_SELECT_QUERY = "SELECT * FROM books";
+    private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
+
     @Override
     public Book create(Book book) {
-        String insertQuery = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -42,13 +47,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String selectQuery = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
-                = connection.prepareStatement(selectQuery)) {
+                = connection.prepareStatement(FIND_SELECT_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(setDataToBook(resultSet));
+                return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id: " + id, e);
@@ -58,13 +62,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String selectQuery = "SELECT * FROM books";
         List<Book> booksList = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
-                = connection.prepareStatement(selectQuery)) {
+                = connection.prepareStatement(FIND_ALL_SELECT_QUERY)) {
             ResultSet resultId = statement.executeQuery();
             while (resultId.next()) {
-                booksList.add(setDataToBook(resultId));
+                booksList.add(mapToBook(resultId));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create list of all books", e);
@@ -74,9 +77,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
-                = connection.prepareStatement(updateQuery)) {
+                = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -89,9 +91,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String deleteQuery = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
-                = connection.prepareStatement(deleteQuery)) {
+                = connection.prepareStatement(DELETE_QUERY)) {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -99,7 +100,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book setDataToBook(ResultSet resultSet) {
+    private Book mapToBook(ResultSet resultSet) {
         Book book = new Book();
         try {
             Long id = resultSet.getObject("id", Long.class);

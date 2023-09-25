@@ -8,10 +8,9 @@ import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/library";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "oliverReex");
         DB_PROPERTIES.put("password", "Sq1348ldtbd!");
         try {
