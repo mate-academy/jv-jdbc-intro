@@ -16,7 +16,7 @@ public class Main {
         bookDao.create(secondBook);
         bookDao.findAll();
         bookDao.findById(firstBook.getId());
-        firstBook.setTitle("PALE FIRE");
+        firstBook.setTitle("VVN");
         bookDao.update(firstBook);
         bookDao.deleteById(secondBook.getId());
     }
