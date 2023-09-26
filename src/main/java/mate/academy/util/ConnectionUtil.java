@@ -8,7 +8,7 @@ import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DВ_URL = "jdbc:mysql://localhost:3306/books_schema";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
         try {
@@ -16,12 +16,11 @@ public class ConnectionUtil {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Can`t load jdbc driver: ",e);
         }
-        DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user","root");
         DB_PROPERTIES.put("password","Haker2013");
     }
 
-    public static Connection connect() {
+    public static Connection getConnection() {
         try {
             return DriverManager.getConnection(DВ_URL, DB_PROPERTIES);
         } catch (SQLException e) {

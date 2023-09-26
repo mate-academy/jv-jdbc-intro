@@ -19,13 +19,12 @@ public class BookDaoImpl implements BookDao {
     private static final String SQL_INSERT = "INSERT INTO books(title, price) VALUES(?, ?)";
     private static final String SQL_FIND_ALL = "SELECT * FROM books";
     private static final String SQL_FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
-    private static final String SQL_UPDATE_BY_NAME = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-
-
+    private static final String SQL_UPDATE_BY_NAME = "UPDATE books SET title = ?,"
+            + " price = ? WHERE id = ?";
 
     @Override
     public Book create(Book book) {
-        try (Connection connection = ConnectionUtil.connect();
+        try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
                          Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
@@ -44,7 +43,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        try (Connection connection = ConnectionUtil.connect();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -60,7 +59,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        try (Connection connection = ConnectionUtil.connect();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -75,29 +74,27 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        try (Connection connection = ConnectionUtil.connect();
+        try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_BY_NAME)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int rowsUpdated = statement.executeUpdate();
-
-            if (rowsUpdated > 0) {
-                return book;
-            } else {
-                throw new DataProcessingException("Failed to update the"
-                        + " book with ID: " + book.getId());
+            if (rowsUpdated < 1) {
+                throw new DataProcessingException("Failed to update "
+                        + "the book with ID: " + book.getId());
             }
+            return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Operation updade failed with book title: "
-                    + book.getTitle(), e);
+            throw new DataProcessingException("Operation update failed "
+                    + "with book title: " + book.getTitle(), e);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
         String sqlDelete = "DELETE FROM books WHERE id = ?";
-        try (Connection connection = ConnectionUtil.connect();
+        try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sqlDelete)) {
             statement.setLong(1, id);
             int rowsDeleted = statement.executeUpdate();
