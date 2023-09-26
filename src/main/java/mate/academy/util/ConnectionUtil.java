@@ -7,7 +7,7 @@ import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/jdbc";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "Nikita13543";
 
