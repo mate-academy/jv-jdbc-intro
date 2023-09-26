@@ -50,10 +50,10 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(mapBook(resultSet));
+                return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find a book by Id" + id, e);
+            throw new DataProcessingException("Can't find a book by id: " + id, e);
         }
         return Optional.empty();
     }
@@ -65,7 +65,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(SELECT_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                books.add(mapBook(resultSet));
+                books.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't find all books! ", e);
@@ -99,9 +99,9 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book mapBook(ResultSet resultSet) throws SQLException {
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
         return new Book(
-                resultSet.getLong("id"),
+                resultSet.getObject("id", Long.class),
                 resultSet.getString("title"),
                 resultSet.getBigDecimal("price")
         );
