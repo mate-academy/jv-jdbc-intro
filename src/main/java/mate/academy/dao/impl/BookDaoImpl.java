@@ -16,11 +16,17 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String SQL_INSERT = "INSERT INTO books(title, price) VALUES(?, ?)";
+    private static final String SQL_FIND_ALL = "SELECT * FROM books";
+    private static final String SQL_FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
+    private static final String SQL_UPDATE_BY_NAME = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+
+
+
     @Override
     public Book create(Book book) {
-        String sqlInsert = "INSERT INTO books(title, price) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.connect();
-                 PreparedStatement statement = connection.prepareStatement(sqlInsert,
+                 PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
                          Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -30,7 +36,7 @@ public class BookDaoImpl implements BookDao {
                 Long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
-            return new Book(book.getId(), book.getTitle(), book.getPrice());
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed insert book: " + book.getTitle(), e);
         }
@@ -38,9 +44,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sqlFindById = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.connect();
-                PreparedStatement statement = connection.prepareStatement(sqlFindById)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -55,9 +60,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String sqlFindAll = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.connect();
-                PreparedStatement statement = connection.prepareStatement(sqlFindAll)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book book = mapResultToBook(resultSet);
@@ -71,9 +75,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sqlUpdateByName = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.connect();
-                PreparedStatement statement = connection.prepareStatement(sqlUpdateByName)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_BY_NAME)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
