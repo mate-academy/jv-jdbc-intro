@@ -15,12 +15,18 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+
+    public static final String INSERT_QUERY = "INSERT INTO books (title,price) VALUES(?,?)";
+    public static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
+    public static final String SELECT_ALL_QUERY = "SELECT * FROM books";
+    public static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    public static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
+
     @Override
     public Book create(Book book) {
-        String insertQuery = "INSERT INTO books (title,price) VALUES(?,?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                         insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
@@ -39,12 +45,10 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String findByIdQuery = "SELECT * FROM books WHERE id = ?";
         Book book = null;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(findByIdQuery)) {
+                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
             statement.setLong(1, id);
-
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 book = mapToBook(resultSet);
@@ -58,10 +62,9 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String selectAllQuery = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
-                         connection.prepareStatement(selectAllQuery)) {
+                         connection.prepareStatement(SELECT_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(mapToBook(resultSet));
@@ -74,14 +77,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
-                         connection.prepareStatement(updateQuery)) {
+                         connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             statement.setLong(3, book.getId());
-
             if (statement.executeUpdate() < 1) {
                 throw new DataProcessingException(
                         String.format("Book with id=%d wasn't updated, no rows affected.",
@@ -95,11 +96,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String deleteQuery = "DELETE FROM books WHERE id = ?";
-        int updatedRows;
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
-                         connection.prepareStatement(deleteQuery)) {
+                         connection.prepareStatement(DELETE_QUERY)) {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -108,7 +107,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapToBook(ResultSet resultSet) throws SQLException {
-        return new Book(resultSet.getLong("id"),
+        return new Book(resultSet.getObject("id", Long.class),
                 resultSet.getString("title"),
                 resultSet.getBigDecimal("price"));
     }
