@@ -20,8 +20,8 @@ public class Main {
         bookDao.create(fourthBook);
         bookDao.update(new Book(secondBook.getId(),
                 "John BarleyCorn", new BigDecimal(250)));
-        bookDao.deleteById(4L);
-        System.out.println(bookDao.findById(1L));
+        bookDao.deleteById(fourthBook.getId());
+        System.out.println(bookDao.findById(firstBook.getId()));
         System.out.println(bookDao.findAll());
     }
 }

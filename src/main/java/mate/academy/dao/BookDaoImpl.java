@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int createdRows = statement.executeUpdate();
             if (createdRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row");
+                throw new DataProcessingException("Expected to insert at least one row");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can`t add new book: " + book, e);
+            throw new DataProcessingException("Can`t add new book: " + book, e);
         }
         return book;
     }
@@ -85,7 +85,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int updatedRows = statement.executeUpdate();
             if (updatedRows < 1) {
-                throw new RuntimeException("Failed to update book with ID: " + book.getId());
+                throw new DataProcessingException("Failed to update book with ID: " + book.getId());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error while updating book: " + book, e);
