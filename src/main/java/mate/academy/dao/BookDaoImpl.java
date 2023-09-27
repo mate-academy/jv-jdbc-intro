@@ -16,7 +16,7 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final String CREATE_QUERY = "INSERT INTO books(title , price) values (? , ?)";
+    private static final String INSERT_QUERY = "INSERT INTO books(title , price) values (? , ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books where id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
@@ -26,7 +26,7 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
                   PreparedStatement statement =
-                             connection.prepareStatement(CREATE_QUERY,
+                             connection.prepareStatement(INSERT_QUERY,
                              Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -123,7 +123,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapToBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
+        Long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");
         return new Book(id, title, price);
