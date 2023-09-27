@@ -17,18 +17,18 @@ public class Main {
                 new Book("The Pragmatic Programmer", BigDecimal.valueOf(1200.50))
         );
 
-        List<Book> createdBooks = bookList.stream() //CREATING rows with books
+        List<Book> createdBooks = bookList.stream()
                 .map(bookDao::create)
                 .toList();
 
-        Book book = bookDao.findById(createdBooks.get(0).getId()) //GET BY ID
+        Book book = bookDao.findById(createdBooks.get(0).getId())
                 .orElseThrow(() -> new RuntimeException("Book was not found"));
         System.out.println(book);
-        bookDao.findAll().forEach(System.out::println); //FIND ALL
-        bookDao.deleteById(createdBooks.get(2).getId()); //DELETE
+        bookDao.findAll().forEach(System.out::println);
+        bookDao.deleteById(createdBooks.get(2).getId());
         book.setPrice(BigDecimal.valueOf(2000));
         book.setTitle("Some updated book");
         Book update = bookDao.update(book);
-        System.out.println(update); //UPDATE
+        System.out.println(update);
     }
 }
