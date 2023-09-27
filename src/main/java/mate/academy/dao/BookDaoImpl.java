@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add new book", e);
+            throw new DataProcessingException("Can't add new book");
         }
         return book;
     }
@@ -52,7 +52,7 @@ public class BookDaoImpl implements BookDao {
                 booksList.add(setDataToBook(resultId));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create list of all books", e);
+            throw new DataProcessingException("Can't create list of all books");
         }
         return booksList;
     }
@@ -68,7 +68,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(setDataToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find book with id: " + id, e);
+            throw new DataProcessingException("Can't find book with id: " + id);
         }
         return Optional.empty();
     }
@@ -83,7 +83,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book with id " + book.getId(), e);
+            throw new DataProcessingException("Can't update book with id " + book.getId());
         }
         return book;
     }
@@ -96,7 +96,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete book with id " + id, e);
+            throw new DataProcessingException("Can't delete book with id " + id);
         }
     }
 
@@ -111,7 +111,7 @@ public class BookDaoImpl implements BookDao {
             book.setPrice(price);
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't set data to book", e);
+            throw new DataProcessingException("Can't set data to book");
         }
     }
 }
