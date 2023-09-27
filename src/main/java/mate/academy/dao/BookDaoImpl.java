@@ -103,6 +103,7 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Error deleting a book by ID", e);
         }
     }
+
     private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setId(resultSet.getLong("id"));
