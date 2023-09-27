@@ -1,10 +1,6 @@
-CREATE DATABASE db;
-
-USE db;
-
 CREATE TABLE IF NOT EXISTS books(
     `id` BIGINT NOT NULL  AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
-    `price` BIGINT NOT NULL,
+    `price` DECIMAL NOT NULL,
     PRIMARY KEY (id)
 );
