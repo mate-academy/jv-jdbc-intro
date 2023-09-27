@@ -19,25 +19,20 @@ public class Main {
                 new Book("Tropic of Cancer", BigDecimal.valueOf(550)),
                 new Book("19Q4", BigDecimal.valueOf(450))
         );
-        // add books to DB
         List<Book> createdBooks =
                 books.stream()
                 .map(bookDao::create)
                 .toList();
         System.out.println(createdBooks);
-        // find book by ID
         Book book = bookDao.findById(books.get(0).getId())
                 .orElseThrow(() -> new RuntimeException("Book was not found"));
         System.out.println(book);
-        // find all books
         List<Book> allBook = bookDao.findAll();
         System.out.println(allBook);
-        // update book
         Book updatedBook = books.get(0);
         updatedBook.setPrice(BigDecimal.valueOf(1000));
         Book updatedBookFromDB = bookDao.update(updatedBook);
-        System.out.println(updatedBook);
-        // delete book
+        System.out.println(updatedBookFromDB);
         System.out.println(bookDao.deleteById(books.get(0).getId()));
     }
 }

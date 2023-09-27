@@ -20,7 +20,6 @@ public class BookDaoImpl implements BookDao {
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
-    private static final String CHECK_ID_QUERY = "DELETE FROM books WHERE id = ?";
 
     @Override
     public Book create(Book book) {
@@ -32,7 +31,11 @@ public class BookDaoImpl implements BookDao {
             if (statement.executeUpdate() < 1) {
                 throw new SQLException("Expected to insert at least 1 row, but inserted 0 rows.");
             }
-            book.setId(getCreatedId(statement.getGeneratedKeys()));
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getObject(1, Long.class);
+                book.setId(id);
+            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add new book to the DB", e);
@@ -46,7 +49,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(getBook(resultSet));
+                return Optional.of(mapToBook(resultSet));
             }
             return Optional.empty();
         } catch (SQLException e) {
@@ -61,7 +64,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                books.add(getBook(resultSet));
+                books.add(mapToBook(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -97,14 +100,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Long getCreatedId(ResultSet generatedKeys) throws SQLException {
-        if (!generatedKeys.next()) {
-            throw new SQLException("Can't create a book");
-        }
-        return generatedKeys.getObject(1, Long.class);
-    }
-
-    private Book getBook(ResultSet resultSet) throws SQLException {
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
         return new Book(
             resultSet.getLong("id"),
             resultSet.getString("title"),
