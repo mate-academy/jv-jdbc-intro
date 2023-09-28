@@ -12,6 +12,7 @@ import java.util.Optional;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -28,13 +29,13 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                    PreparedStatement statement = connection.prepareStatement(
+                PreparedStatement statement = connection.prepareStatement(
                             CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(
+                throw new DataProcessingException(
                         "Expected to insert at least 1 row, but 0 was inserted");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -56,9 +57,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = resultSet.getObject(COLUMN_PRICE, BigDecimal.class);
-                result = Optional.of(new Book(id, title, price));
+                result = Optional.of(handleResultsAfterResultSet(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find a book by id: " + id, e);
@@ -74,9 +73,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Long id = resultSet.getObject(COLUMN_ID, Long.class);
-                String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = resultSet.getObject(COLUMN_PRICE, BigDecimal.class);
-                result.add(new Book(id, title, price));
+                result.add(handleResultsAfterResultSet(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find books in the table ", e);
@@ -86,10 +83,6 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        Optional<Book> foundBook = findById(book.getId());
-        if (foundBook.isEmpty()) {
-            throw new RuntimeException("There is no such book in the DB: " + book);
-        }
         try (Connection connection = ConnectionUtil.getConnection();
                         PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, book.getTitle());
@@ -97,9 +90,8 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(
-                        "Expected to update at least 1 row, but 0 was updated.",
-                        new RuntimeException());
+                throw new DataProcessingException(
+                        "Expected to update at least 1 row, but 0 was updated.");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update a book by the id: " + book.getId(), e);
@@ -109,16 +101,22 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        Optional<Book> foundBook = findById(id);
-        if (foundBook.isEmpty()) {
-            throw new RuntimeException("There is no such book in the DB by id: " + id);
-        }
         try (Connection connection = ConnectionUtil.getConnection();
                         PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete the book by id: " + id, e);
+        }
+    }
+
+    private Book handleResultsAfterResultSet(ResultSet resultSet, Long id) {
+        try {
+            String title = resultSet.getString(COLUMN_TITLE);
+            BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
+            return new Book(id, title, price);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get the results from ResultSet", e);
         }
     }
 }
