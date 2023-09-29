@@ -21,6 +21,7 @@ public class BookDaoImpl implements BookDao {
     private static final String SQL_UPDATE_ROW
             = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String SQL_DELETE_ROW_BY_ID = "DELETE FROM books WHERE id = ?";
+    private static final String SQL_GET_ALL_ROWS = "SELECT * FROM books";
 
     @Override
     public Book create(Book book) {
@@ -32,7 +33,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected ye insert at least 1 row, but was"
+                throw new DataProcessingException("Expected to insert at least 1 row, but was: "
                         + affectedRows);
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -53,7 +54,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book bookFromDb = createBookFromDb(resultSet);
+                Book bookFromDb = mapToBook(resultSet);
                 return Optional.of(bookFromDb);
             }
         } catch (SQLException e) {
@@ -64,13 +65,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String sqlGetAllRows = "SELECT * FROM books";
         List<Book> bookList = new ArrayList<>();
         try (PreparedStatement statement = ConnectionUtil
-                .getConnection().prepareStatement(sqlGetAllRows)) {
+                .getConnection().prepareStatement(SQL_GET_ALL_ROWS)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book bookFromDb = createBookFromDb(resultSet);
+                Book bookFromDb = mapToBook(resultSet);
                 bookList.add(bookFromDb);
             }
         } catch (SQLException e) {
@@ -111,7 +111,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book createBookFromDb(ResultSet resultSet) {
+    private Book mapToBook(ResultSet resultSet) {
         try {
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getBigDecimal("price");
