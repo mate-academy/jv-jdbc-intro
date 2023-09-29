@@ -30,13 +30,13 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
+                throw new DataProcessingException("Book wasn't added. 0 rows were affected");
+            }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
-            }
-            if (affectedRows < 1) {
-                throw new RuntimeException("Book wasn't added. 0 rows were affected");
             }
             return book;
         } catch (SQLException e) {
@@ -83,7 +83,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(3, book.getId());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Book wasn't changed. 0 rows were affected");
+                throw new DataProcessingException("Book wasn't changed. 0 rows were affected");
             }
             return book;
         } catch (SQLException e) {
@@ -104,7 +104,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private static Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long bookId = resultSet.getLong("id");
+        Long bookId = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");
         return new Book(bookId, title, price);
