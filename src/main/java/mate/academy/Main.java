@@ -14,7 +14,7 @@ public class Main {
         firstBook.setTitle("name1");
         firstBook.setPrice(BigDecimal.valueOf(100));
         bookDao.create(firstBook);
-        System.out.println(bookDao.findById(6L));
+        System.out.println(bookDao.findById(7L));
         System.out.println(bookDao.findAll());
         Book secondBook = new Book();
         secondBook.setId(7L);
