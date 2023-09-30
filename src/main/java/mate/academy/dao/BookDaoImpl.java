@@ -52,7 +52,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             Book book = null;
             if (resultSet.next()) {
-                book = setBook(resultSet);
+                book = parseBook(resultSet);
             }
             return Optional.ofNullable(book);
         } catch (SQLException e) {
@@ -68,7 +68,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(findAllSql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                books.add(setBook(resultSet));
+                books.add(parseBook(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -104,7 +104,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book setBook(ResultSet resultSet) throws SQLException {
+    private Book parseBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setId(resultSet.getObject(ID, Long.class));
         book.setTitle(resultSet.getString(TITLE));
