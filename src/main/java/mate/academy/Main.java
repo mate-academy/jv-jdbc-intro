@@ -20,5 +20,4 @@ public class Main {
         bookDao.update(firstBook);
         bookDao.deleteById(secondBook.getId());
     }
-
 }

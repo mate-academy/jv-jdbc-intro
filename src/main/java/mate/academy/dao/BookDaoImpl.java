@@ -16,12 +16,17 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String INSERT_DATA = "INSERT INTO books (title, price) VALUES (?, ?)";
+    private static final String READ_DATA_BY_ID = "SELECT * FROM books WHERE id = ?";
+    private static final String READ_ALL_DATA = "SELECT * FROM books";
+    private static final String UPDATE_DATA = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETE_DATA = "DELETE FROM books WHERE id = ?";
+
     @Override
     public Book create(Book book) {
-        String insertData = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        insertData, Statement.RETURN_GENERATED_KEYS)) {
+                        INSERT_DATA, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -35,16 +40,15 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t add new book: " + book, e);
+            throw new DataProcessingException("Can't add new book: " + book, e);
         }
         return book;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String readDataById = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(readDataById)) {
+                PreparedStatement statement = connection.prepareStatement(READ_DATA_BY_ID)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -58,25 +62,23 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String readAllData = "SELECT * FROM books";
         List<Book> booksList = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(readAllData)) {
+                PreparedStatement statement = connection.prepareStatement(READ_ALL_DATA)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 booksList.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create connection to the DB", e);
+            throw new DataProcessingException("Cannot find all books", e);
         }
         return booksList;
     }
 
     @Override
     public Book update(Book book) {
-        String changeData = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(changeData)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_DATA)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -86,21 +88,20 @@ public class BookDaoImpl implements BookDao {
                         "Expected to insert at least one row, but inserted 0 rows.");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t add new book: " + book, e);
+            throw new DataProcessingException("Can't update: " + book, e);
         }
         return book;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String deleteData = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(deleteData)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_DATA)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot delete book with this id " + id, e);
+            throw new DataProcessingException("Cannot delete book with id " + id, e);
         }
     }
 
