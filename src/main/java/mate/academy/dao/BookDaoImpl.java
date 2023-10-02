@@ -37,7 +37,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can not add book " + book, e);
+            throw new DataProcessingException("Can not add book " + book, e);
         }
         return book;
     }
@@ -53,7 +53,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot find book by id " + id, e);
+            throw new DataProcessingException("Cannot find book by id " + id, e);
         }
         return Optional.empty();
     }
@@ -61,7 +61,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.prepareStatement(FIND_ALL_SQL_QUERY)) {
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL_SQL_QUERY)) {
             List<Book> books = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(FIND_ALL_SQL_QUERY);
             while (resultSet.next()) {
@@ -70,7 +70,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException("Can not find all books from table", e);
+            throw new DataProcessingException("Can not find all books from table", e);
         }
     }
 
