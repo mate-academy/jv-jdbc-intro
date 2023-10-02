@@ -30,7 +30,7 @@ public class Main {
         System.out.println("All the books");
         books.forEach(System.out::println);
         // delete the book
-        bookDao.deleteById(5L); // change id if it doesn't exist
+        bookDao.deleteById(updateResult.getId()); 
         System.out.println("All the after deleting books");
         books = bookDao.findAll();
         books.forEach(System.out::println);
