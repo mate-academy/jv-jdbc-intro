@@ -1,13 +1,17 @@
-package mate.academy.impl;
+package mate.academy.dao;
 
-import mate.academy.ConnectionUtil;
-import mate.academy.exception.DataProcessingException;
-import mate.academy.lib.Dao;
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.ConnectionUtil;
+import mate.academy.exception.DataProcessingException;
+import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
 @Dao
@@ -22,8 +26,8 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row," +
-                        "but inserted 0 rows");
+                throw new RuntimeException("Expected to insert at least one row,"
+                        + "but inserted 0 rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -50,6 +54,7 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
                 book.setTitle(title);
                 book.setPrice(price);
+                return Optional.of(book);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create connection to DB", e);
@@ -87,8 +92,8 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int executeUpdate = statement.executeUpdate();
             if (executeUpdate < 1) {
-                throw new RuntimeException("Expected to update at least one row," +
-                        "but updated 0 rows");
+                throw new RuntimeException("Expected to update at least one row,"
+                        + "but updated 0 rows");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book with id " + book.getId(), e);
