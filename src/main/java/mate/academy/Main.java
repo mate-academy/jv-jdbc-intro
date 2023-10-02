@@ -18,6 +18,7 @@ public class Main {
                 new Book("Book3", BigDecimal.valueOf(250)),
                 new Book("Book4", BigDecimal.valueOf(310)),
                 new Book("Book5", BigDecimal.valueOf(390)),
+                new Book("Book6", BigDecimal.valueOf(400)),
                 new Book("Book6", BigDecimal.valueOf(400))
         );
         for (Book b : books) {
