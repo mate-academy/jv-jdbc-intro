@@ -8,13 +8,11 @@ import mate.academy.exceptions.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/books_store_db";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "Sv@toslav_2006");
-
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -29,5 +27,4 @@ public class ConnectionUtil {
             throw new DataProcessingException("Cannot establish connection with the DB", e);
         }
     }
-
 }
