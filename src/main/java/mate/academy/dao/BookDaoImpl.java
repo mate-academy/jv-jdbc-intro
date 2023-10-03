@@ -20,8 +20,8 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sql = "INSERT INTO books(title, price) VALUES (?, ?);";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                 PreparedStatement statement = connection.prepareStatement(sql,
+                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
@@ -44,44 +44,27 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
+            List<Book> bookList = mapToBook(resultSet);
+            if (bookList.isEmpty()) {
+                return Optional.empty();
             }
-
+            return Optional.of(bookList.get(0));
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find user by id " + id, e);
+            throw new DataProcessingException("Can not find book by id " + id, e);
         }
-        return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
-        List<Book> bookList = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                bookList.add(book);
-            }
-
+            List<Book> bookList = mapToBook(resultSet);
+            return bookList;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find all entities", e);
+            throw new DataProcessingException("Can not find all books", e);
         }
-        return bookList;
     }
 
     @Override
@@ -94,7 +77,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not update the book", e);
+            throw new DataProcessingException("Can not update the book " + book.getTitle(), e);
         }
         return book;
     }
@@ -103,12 +86,31 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                  PreparedStatement preparedStatement = connection
+                PreparedStatement preparedStatement = connection
                         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not delete by id " + id, e);
+            throw new DataProcessingException("Can not delete book by id " + id, e);
         }
+    }
+
+    private List<Book> mapToBook(ResultSet resultSet) {
+        List<Book> bookList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                Long id = resultSet.getObject("id", Long.class);
+                String title = resultSet.getString("title");
+                BigDecimal price = resultSet.getBigDecimal("price");
+                Book book = new Book();
+                book.setId(id);
+                book.setTitle(title);
+                book.setPrice(price);
+                bookList.add(book);
+            }
+        } catch (SQLException e) {
+            throw new DataProcessingException("ResultSet error occurred", e);
+        }
+        return bookList;
     }
 }
