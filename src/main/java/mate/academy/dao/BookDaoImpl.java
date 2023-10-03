@@ -8,9 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -22,18 +23,21 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            try (PreparedStatement statement = connection
-                    .prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, book.getTitle());
-                statement.setBigDecimal(2, book.getPrice());
-                if (statement.executeUpdate() < 1) {
-                    throw new RuntimeException("Creating book failed, no rows affected.");
-                }
-                book.setId(getCreatedId(statement));
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            if (statement.executeUpdate() < 1) {
+                throw new DataProcessingException("Creating book failed, no rows affected.");
+            }
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getObject(1, Long.class);
+                book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create new book", e);
+            throw new RuntimeException("Can't add new book: " + book, e);
         }
         return book;
     }
@@ -52,9 +56,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    String.format("Getting book by id=%d was failed", id), e
-            );
+            throw new DataProcessingException("Cannot find book by id " + id, e);
         }
     }
 
@@ -71,7 +73,7 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Retrieving all books from DB was failed", e);
+            throw new DataProcessingException("Retrieving all books from DB was failed", e);
         }
     }
 
@@ -83,10 +85,9 @@ public class BookDaoImpl implements BookDao {
                 statement.setBigDecimal(2, book.getPrice());
                 statement.setLong(3, book.getId());
                 if (statement.executeUpdate() < 1) {
-                    throw new RuntimeException(
+                    throw new DataProcessingException(
                             String.format("Book with id=%d wasn't updated, no rows affected.",
-                                    book.getId())
-                    );
+                                    book.getId()));
                 }
                 return book;
             }
@@ -105,18 +106,9 @@ public class BookDaoImpl implements BookDao {
                 return statement.executeUpdate() > 0;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(
+            throw new DataProcessingException(
                     String.format("Deletion book by id=%d was failed", id), e
             );
-        }
-    }
-
-    private Long getCreatedId(PreparedStatement statement) throws SQLException {
-        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-            if (!generatedKeys.next()) {
-                throw new RuntimeException("Creating book failed, no ID.");
-            }
-            return generatedKeys.getLong(1);
         }
     }
 

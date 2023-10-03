@@ -19,25 +19,16 @@ public class Main {
                 new Book("Last one", BigDecimal.valueOf(228.10))
         );
 
-        // insert books to DB
         List<Book> createdBooks = books.stream()
                 .map(bookDao::create)
                 .toList();
-
-        // get book by id
         Book book = bookDao.findById(createdBooks.get(1).getId())
                 .orElseThrow(() -> new RuntimeException("Book was not found"));
         System.out.println(book);
-
-        // get all books
         bookDao.findAll().forEach(System.out::println);
-
-        // update book
         book.setTitle("UPDATED BOOK");
         Book updateBook = bookDao.update(book);
         System.out.println(updateBook);
-
-        // delete first book from list
         bookDao.deleteById(createdBooks.get(0).getId());
     }
 }
