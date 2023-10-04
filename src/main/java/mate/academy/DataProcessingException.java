@@ -5,4 +5,7 @@ public class DataProcessingException extends RuntimeException {
         super(message);
     }
 
+    public DataProcessingException(String message, Throwable ex) {
+        super(message,ex);
+    }
 }
