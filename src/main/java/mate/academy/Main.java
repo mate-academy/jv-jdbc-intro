@@ -11,14 +11,13 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book starWar = new Book();
         starWar.setTitle("Star War");
         starWar.setPrice(new BigDecimal("1950"));
         Book avatar = new Book();
         avatar.setTitle("Avatar");
         avatar.setPrice(new BigDecimal("5500"));
-
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book starWarCreat = bookDao.create(starWar);
         Book avatarCreat = bookDao.create(avatar);
 
