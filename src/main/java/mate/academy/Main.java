@@ -19,12 +19,13 @@ public class Main {
                 new Book("Book4", BigDecimal.valueOf(310)),
                 new Book("Book5", BigDecimal.valueOf(390)),
                 new Book("Book6", BigDecimal.valueOf(400)),
-                new Book("Book6", BigDecimal.valueOf(400))
+                new Book("Book7", BigDecimal.valueOf(400))
         );
         for (Book b : books) {
             bookDao.create(b);
         }
-        Optional<Book> findById = bookDao.findById(4L);
+        Book book1 = books.get(2);
+        Optional<Book> findById = bookDao.findById(book1.getId());
         System.out.println(findById);
         List<Book> bookList = bookDao.findAll();
         bookList.stream().forEach(System.out::println);
