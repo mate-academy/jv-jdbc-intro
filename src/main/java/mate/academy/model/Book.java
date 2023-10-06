@@ -7,8 +7,7 @@ public class Book {
     private String title;
     private BigDecimal price;
 
-    public Book(Long id, String title, BigDecimal price) {
-        this.id = id;
+    public Book(String title, BigDecimal price) {
         this.title = title;
         this.price = price;
     }
@@ -19,6 +18,14 @@ public class Book {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public String getTitle() {

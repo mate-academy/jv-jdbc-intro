@@ -12,19 +12,20 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book1 = new Book(1L, "Math", BigDecimal.valueOf(200));
-        Book book2 = new Book(2L, "Biology", BigDecimal.valueOf(250));
-        Book book3 = new Book(3L, "Chemistry", BigDecimal.valueOf(300));
+        Book book1 = new Book("Math", BigDecimal.valueOf(200));
+        Book book2 = new Book("Biology", BigDecimal.valueOf(250));
+        Book book3 = new Book("Chemistry", BigDecimal.valueOf(300));
         bookDao.create(book1);
         bookDao.create(book2);
         bookDao.create(book3);
-        bookDao.deleteById(2L);
+        bookDao.deleteById(book1.getId());
         List<Book> books = bookDao.findAll();
-        Optional<Book> findBook = bookDao.findById(3L);
+        Optional<Book> findBook = bookDao.findById(book3.getId());
         System.out.println(books);
         System.out.println(findBook);
-        Book book4 = new Book(3L, "Geography", BigDecimal.valueOf(280));
-        Book updatedBook = bookDao.update(book4);
+        book3.setTitle("Geography");
+        book3.setPrice(BigDecimal.valueOf(320));
+        Book updatedBook = bookDao.update(book3);
         System.out.println(updatedBook);
     }
 }
