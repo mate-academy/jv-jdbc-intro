@@ -10,6 +10,11 @@ public class Book {
   public Book() {
   }
 
+  public Book(String title, BigDecimal price) {
+    this.title = title;
+    this.price = price;
+  }
+
   public Long getId() {
     return id;
   }
