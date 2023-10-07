@@ -1,6 +1,7 @@
-package mate.academy.dao;
+package mate.academy.dao.impl;
 
 import mate.academy.ConnectionUtil;
+import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
