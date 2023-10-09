@@ -46,7 +46,10 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            return Optional.of(find(resultSet));
+            if (resultSet.next()) {
+                return Optional.of(setBook(resultSet));
+            }
+            return Optional.empty();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create connection to DB", e);
         }
@@ -59,7 +62,9 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
-            books.add(find(resultSet));
+            while (resultSet.next()) {
+                books.add(setBook(resultSet));
+            }
             return books;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't retrieve books from DB", e);
@@ -97,13 +102,11 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    public Book find(ResultSet resultSet) throws SQLException {
+    public Book setBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        while (resultSet.next()) {
-            book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
-            book.setId(resultSet.getObject("id", Long.class));
-        }
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        book.setId(resultSet.getObject("id", Long.class));
         return book;
     }
 }
