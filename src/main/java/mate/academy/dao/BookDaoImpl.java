@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -20,8 +20,8 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sql = "INSERT INTO books(title, price) VALUES (?, ?);";
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(sql,
-                         Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(sql,
+                        Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
@@ -95,21 +95,17 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private List<Book> mapToBook(ResultSet resultSet) {
+    private List<Book> mapToBook(ResultSet resultSet) throws SQLException {
         List<Book> bookList = new ArrayList<>();
-        try {
-            while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                bookList.add(book);
-            }
-        } catch (SQLException e) {
-            throw new DataProcessingException("ResultSet error occurred", e);
+        while (resultSet.next()) {
+            Long id = resultSet.getObject("id", Long.class);
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getBigDecimal("price");
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            bookList.add(book);
         }
         return bookList;
     }
