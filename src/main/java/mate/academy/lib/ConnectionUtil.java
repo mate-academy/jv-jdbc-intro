@@ -6,13 +6,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
-    private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
-    private static final String QUERY = "SELECT * FROM car WHERE id = ?";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/book?serverTimezone=UTC";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
+        //are there config files in java to store sensitive info? Or any other way?
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "thispassword");
 
