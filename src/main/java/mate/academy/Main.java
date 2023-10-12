@@ -18,19 +18,17 @@ public class Main {
 
         bookDao.create(book);
 
-//        List<Book> books = bookDao.findAll();
-//        System.out.println(books);
-//
-//        Optional<Book> searchedBook = bookDao.findById(3L);
-//        System.out.println(searchedBook);
-//
-//        Book updatedBook = new Book(1L, "Narnia Chronicles", BigDecimal.valueOf(400));
-//        bookDao.update(updatedBook);
-//        System.out.println(bookDao.findById(1L));
-//
-//        System.out.println(bookDao.deleteById(1L));
-//        System.out.println(bookDao.findAll());
+        List<Book> books = bookDao.findAll();
+        System.out.println(books);
 
-        // test other methods from BookDao
+        Optional<Book> searchedBook = bookDao.findById(3L);
+        System.out.println(searchedBook);
+
+        Book updatedBook = new Book(5L, "Narnia Chronicles", BigDecimal.valueOf(400));
+        bookDao.update(updatedBook);
+        System.out.println(bookDao.findById(1L));
+
+        System.out.println(bookDao.deleteById(1L));
+        System.out.println(bookDao.findAll());
     }
 }

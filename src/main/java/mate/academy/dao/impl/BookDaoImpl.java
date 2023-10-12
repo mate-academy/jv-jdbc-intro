@@ -17,8 +17,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books(title, price) VALUES(?, ?)";
-//        Optional<Book>
-        if (findById(book.getId()).equals(Optional.empty())) {
+        Optional<Book> checkRecordInBase = findById(book.getId());
+        if (checkRecordInBase.equals(Optional.empty())) {
             query = "INSERT INTO books(title, price, id) VALUES(?, ?, ?)";
         }
 
@@ -28,7 +28,9 @@ public class BookDaoImpl implements BookDao {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            if (checkRecordInBase.equals(Optional.empty())) {
+                statement.setLong(3, book.getId());
+            }
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
@@ -59,9 +61,6 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-//                String title = resultSet.getString("title");
-//                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
                 return Optional.of(retrieveBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
@@ -79,10 +78,6 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-//                Long id = resultSet.getLong("id");
-//                String title = resultSet.getString("title");
-//                BigDecimal price = resultSet.getBigDecimal("price");
-
                 books.add(retrieveBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
