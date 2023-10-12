@@ -17,12 +17,19 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books(title, price) VALUES(?, ?)";
+//        Optional<Book>
+        if (findById(book.getId()).equals(Optional.empty())) {
+            query = "INSERT INTO books(title, price, id) VALUES(?, ?, ?)";
+        }
+
         try (Connection connection = ConnectionUtil.getConnection();
             PreparedStatement statement =
                     connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
+
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException("Could not insert book into database. "
@@ -31,19 +38,10 @@ public class BookDaoImpl implements BookDao {
                         + ", price=" + book.getPrice());
             }
 
-//            Book insertedBook = new Book();
             ResultSet generatedKeys = statement.getGeneratedKeys();
 
             if (generatedKeys.next()) {
-                book.setId(generatedKeys.getLong("id"));
-//                Long id = generatedKeys.getObject(1, Long.class);
-//                String title = generatedKeys.getString(2);
-//                BigDecimal price = generatedKeys.getObject(3, BigDecimal.class);
-//                insertedBook = new Book(id, title, price);
-
-//                insertedBook = new Book(generatedKeys.getLong("id"),
-//                        book.getTitle(),
-//                        book.getPrice());
+                book.setId(generatedKeys.getObject(1, Long.class));
             }
 
             return book;
