@@ -31,19 +31,22 @@ public class BookDaoImpl implements BookDao {
                         + ", price=" + book.getPrice());
             }
 
-            Book insertedBook = new Book();
+//            Book insertedBook = new Book();
             ResultSet generatedKeys = statement.getGeneratedKeys();
 
             if (generatedKeys.next()) {
+                book.setId(generatedKeys.getLong("id"));
 //                Long id = generatedKeys.getObject(1, Long.class);
 //                String title = generatedKeys.getString(2);
 //                BigDecimal price = generatedKeys.getObject(3, BigDecimal.class);
 //                insertedBook = new Book(id, title, price);
 
-                insertedBook = retrieveBookFromResultSet(generatedKeys);
+//                insertedBook = new Book(generatedKeys.getLong("id"),
+//                        book.getTitle(),
+//                        book.getPrice());
             }
 
-            return insertedBook;
+            return book;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
