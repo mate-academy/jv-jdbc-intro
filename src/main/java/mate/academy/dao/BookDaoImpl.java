@@ -38,7 +38,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Book book = new Book();
+        Book book = null;
         String sql = "SELECT * FROM books WHERE id = ? AND is_deleted = false;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
@@ -48,11 +48,10 @@ public class BookDaoImpl implements BookDao {
             if (resultSet.next()) {
                 book = conversion(resultSet);
             }
-
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find by id " + id, e);
         }
-        return Optional.of(book);
     }
 
     @Override
@@ -102,14 +101,10 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book conversion(ResultSet resultSet) {
-        try {
-            Long bookId = resultSet.getObject(1, Long.class);
-            String title = resultSet.getString("title");
-            BigDecimal price = resultSet.getBigDecimal("price");
-            return new Book(bookId, title, price);
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can`t conversion resultSet " + resultSet, e);
-        }
+    private Book conversion(ResultSet resultSet) throws SQLException {
+        Long bookId = resultSet.getObject(1, Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Book(bookId, title, price);
     }
 }
