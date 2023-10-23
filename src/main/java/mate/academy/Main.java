@@ -2,9 +2,9 @@ package mate.academy;
 
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
-import mate.academy.model.Book;
 import java.math.BigDecimal;
 import java.util.Optional;
+import mate.academy.model.Book;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,7 +14,6 @@ public class Main {
         book.setTitle("Sample Book");
         book.setPrice(new BigDecimal("19.99"));
         book = bookDao.create(book);
-
 
         Optional<Book> foundBook = bookDao.findById(book.getId());
         foundBook.ifPresent(System.out::println);
