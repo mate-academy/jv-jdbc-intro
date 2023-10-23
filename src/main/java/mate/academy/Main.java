@@ -1,9 +1,9 @@
 package mate.academy;
 
-import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
 import java.math.BigDecimal;
 import java.util.Optional;
+import mate.academy.dao.BookDao;
+import mate.academy.dao.BookDaoImpl;
 import mate.academy.model.Book;
 
 public class Main {
