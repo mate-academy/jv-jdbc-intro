@@ -9,6 +9,10 @@ public class ConnectionUtil {
     private static final String URL_DB = "jdbc:mysql://localhost:3306/mateDB";
     private static final Properties DB_PROPERTIES;
 
+    private ConnectionUtil(){
+
+    }
+
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user","root");
