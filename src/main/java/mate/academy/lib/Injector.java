@@ -110,7 +110,7 @@ public class Injector {
             for (File file : files) {
                 if (file.isDirectory()) {
                     if (file.getName().contains(".")) {
-                        throw new RuntimeException("File name shouldn't consist point.");
+                        throw new RuntimeException("File name shouldn't contain point.");
                     }
                     classes.addAll(findClasses(file, packageName + "."
                             + file.getName()));
