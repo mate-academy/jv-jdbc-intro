@@ -25,14 +25,14 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(final Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement
-                     = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             final int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert at least one row, but " +
-                        "inserted 0 rows.", new RuntimeException());
+                throw new DataProcessingException("Expected to insert at least one row, but "
+                        + "inserted 0 rows.", new RuntimeException());
             }
             final ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -48,7 +48,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(final Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)) {
             statement.setLong(1, id);
             final ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -64,7 +64,7 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL)) {
             final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(convertResultSetRowToBook(resultSet));
@@ -78,14 +78,14 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(final Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setLong(3, book.getId());
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             final int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update at least one row, but " +
-                        "updated 0 rows.", new RuntimeException());
+                throw new DataProcessingException("Expected to update at least one row, but "
+                        + "updated 0 rows.", new RuntimeException());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book with id=" + book.getId(),
@@ -97,7 +97,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(final Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+                PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setLong(1, id);
             final int affectedRows = statement.executeUpdate();
             return affectedRows > 0;

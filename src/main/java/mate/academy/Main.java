@@ -14,16 +14,16 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         // test method create()
-        Book book_1 = new Book();
-        book_1.setTitle("Effective Java");
-        book_1.setPrice(BigDecimal.valueOf(123.45d));
-        final Book createdBook_1 = bookDao.create(book_1);
+        Book book01 = new Book();
+        book01.setTitle("Effective Java");
+        book01.setPrice(BigDecimal.valueOf(123.45d));
+        final Book createdBook_1 = bookDao.create(book01);
         System.out.println("created book: " + createdBook_1);
 
-        Book book_2 = new Book();
-        book_2.setTitle("Java concurrency in practice");
-        book_2.setPrice(BigDecimal.valueOf(40.75d));
-        final Book createdBook_2 = bookDao.create(book_2);
+        Book book02 = new Book();
+        book02.setTitle("Java concurrency in practice");
+        book02.setPrice(BigDecimal.valueOf(40.75d));
+        final Book createdBook_2 = bookDao.create(book02);
         System.out.println("created book: " + createdBook_2);
 
         // test method findById()
