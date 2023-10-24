@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -63,11 +64,7 @@ public class SimpleBookDao implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                book = new Book(
-                        resultSet.getLong("id"),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")
-                        );
+                book = getBook(resultSet);
             }
 
         } catch (SQLException e) {
@@ -89,12 +86,7 @@ public class SimpleBookDao implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                books.add(
-                        new Book(
-                        resultSet.getLong("id"),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")
-                        ));
+                books.add(getBook(resultSet));
             }
 
         } catch (SQLException e) {
@@ -140,5 +132,13 @@ public class SimpleBookDao implements BookDao {
             throw new DataProcessingException("Failed to delete from `books` for id = "
                     + id, e);
         }
+    }
+
+    private Book getBook(ResultSet resultSet) throws SQLException {
+        return new Book(
+                resultSet.getObject("id", Long.class),
+                resultSet.getString("title"),
+                resultSet.getObject("price", BigDecimal.class)
+        );
     }
 }
