@@ -26,12 +26,14 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new DataProcessingException("Failed to create a book: No rows affected" + book);
+                throw new DataProcessingException("Failed to create a book: No rows affected"
+                        + book);
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (!generatedKeys.next()) {
-                throw new DataProcessingException("Failed to create a book: No obtained ID" + book);
+                throw new DataProcessingException("Failed to create a book: No obtained ID"
+                        + book);
             }
 
             book.setId(generatedKeys.getLong(1));
