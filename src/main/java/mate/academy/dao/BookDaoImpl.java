@@ -61,10 +61,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery(query);
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId((long) resultSet.getInt("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
+                Book book = getBookFromResultSet(resultSet);
                 books.add(book);
             }
             return books;
@@ -75,7 +72,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book, Long id) {
-        String query = "UPDATE books SET title=?, price=? WHERE id=?";
+        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, book.getTitle());
@@ -98,6 +95,13 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Error deleting book " + book.getId(), e);
         }
+    }
 
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong("id"));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }

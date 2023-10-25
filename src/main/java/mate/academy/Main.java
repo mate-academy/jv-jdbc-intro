@@ -3,7 +3,6 @@ package mate.academy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
 import mate.academy.model.Book;
@@ -21,10 +20,10 @@ public class Main {
         books.forEach(System.out::println);
         Optional<Book> book = bookDao.findById(1L);
         System.out.println(book);
-        /*Book bookForUpdate = new Book("updateTitle", BigDecimal.valueOf(40));
+        Book bookForUpdate = new Book("updateTitle", BigDecimal.valueOf(40));
         Book update = bookDao.update(bookForUpdate, 1L);
-        System.out.println(update);*/
-        //boolean delete = bookDao.delete(book1);
-        //System.out.println(delete);
+        System.out.println(update);
+        boolean delete = bookDao.delete(book1);
+        System.out.println(delete);
     }
 }
