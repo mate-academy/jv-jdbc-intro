@@ -26,17 +26,17 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new RuntimeException("Failed to create a book");
+                throw new DataProcessingException("Failed to create a book: No rows affected" + book);
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (!generatedKeys.next()) {
-                throw new RuntimeException("Failed to create a book");
+                throw new DataProcessingException("Failed to create a book: No obtained ID" + book);
             }
 
             book.setId(generatedKeys.getLong(1));
         } catch (SQLException e) {
-            throw new RuntimeException("Error while creating a book", e);
+            throw new DataProcessingException("Error while creating a book" + book, e);
         }
         return book;
     }
@@ -69,7 +69,7 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while finding a book by ID", e);
+            throw new DataProcessingException("Error while finding a book by ID" + id, e);
         }
         return Optional.empty();
     }
@@ -86,9 +86,9 @@ public class BookDaoImpl implements BookDao {
                 return book;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while updating book", e);
+            throw new DataProcessingException("Error while updating book" + book, e);
         }
-        throw new RuntimeException("Failed to update a book");
+        throw new DataProcessingException("Failed to update a book" + book);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, book.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while deleting a book", e);
+            throw new DataProcessingException("Error while deleting a book" + book, e);
         }
     }
 
