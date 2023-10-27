@@ -1,29 +1,34 @@
 package mate.academy;
 
-import mate.academy.dao.BookDao;
-import mate.academy.lib.Injector;
-import mate.academy.model.Book;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.dao.BookDao;
+import mate.academy.dao.BookDaoImpl;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = new BookDaoImpl();
         Book book = new Book();
-        book.setTitle("The Great Gatsby");
-        book.setPrice(new BigDecimal(20));
-        Book newBook = bookDao.create(book);
-        Optional<Book> byId = bookDao.findById(1L);
-        List<Book> bookDaoAll = bookDao.findAll();
-        Book book1 = new Book();
-        book1.setTitle("1984");
-        book1.setPrice(new BigDecimal(24));
-        book1.setId(1L);
-        Book updateBook = bookDao.update(book1);
-        boolean b = bookDao.deleteById(1L);
-        System.out.println(newBook.getId());
+        book.setTitle("1984");
+        book.setPrice(new BigDecimal(100));
+        bookDao.create(book);
+        Optional<Book> optionalBook = bookDao.findById(1L);
+        System.out.println(optionalBook.get());
+        List<Book> bookList = bookDao.findAll();
+        System.out.println(bookList);
+        Book newBook = new Book();
+        newBook.setTitle("365 days");
+        newBook.setPrice(new BigDecimal(50));
+        newBook.setId(1L);
+        Book updatedBook = bookDao.update(newBook);
+        List<Book> updatedBookList = bookDao.findAll();
+        boolean isDelete = bookDao.deleteById(1L);
+        System.out.println(updatedBookList);
+        System.out.println(isDelete);
     }
 }
