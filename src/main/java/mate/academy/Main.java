@@ -22,7 +22,7 @@ public class Main {
         book1.setTitle("1984");
         book1.setPrice(new BigDecimal(24));
         book1.setId(1L);
-        Book updatedBook = bookDao.update(book1);
+        Book updateBook = bookDao.update(book1);
         boolean b = bookDao.deleteById(1L);
         System.out.println(newBook.getId());
     }
