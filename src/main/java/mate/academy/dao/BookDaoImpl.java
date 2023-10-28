@@ -27,7 +27,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException(
-                        "Expected insert at leas one row, but inserted 0 rows.", new Throwable());
+                        "Expected insert at leas one row, but inserted 0 rows.");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -49,12 +49,12 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                bookList.add(BookDaoImpl.setResult(resultSet));
+                bookList.add(BookDaoImpl.parseResultSet(resultSet));
             }
             return bookList;
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can not create a connection to the DB", new Throwable());
+                    "Can not create a connection to the DB", e);
         }
     }
 
@@ -66,17 +66,17 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(BookDaoImpl.setResult(resultSet));
+                return Optional.of(BookDaoImpl.parseResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can not create a connection to the DB", new Throwable());
+                    "Can not create a connection to the DB", e);
         }
         return Optional.empty();
     }
 
     @Override
-    public Book update(Book book) {
+    public Book update(Book book) throws DataProcessingException {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
             int executeUpdate = statement.executeUpdate();
             if (executeUpdate < 1) {
                 throw new DataProcessingException(
-                        "Expected to update at leas one row, but updated 0 rows", new Throwable());
+                        "Expected to update at leas one row, but updated 0 rows");
             }
 
         } catch (SQLException e) {
@@ -106,12 +106,12 @@ public class BookDaoImpl implements BookDao {
             deleted = executeUpdate >= 1;
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can not create a connection to the DB", new Throwable());
+                    "Can not create a connection to the DB", e);
         }
         return deleted;
     }
 
-    private static Book setResult(ResultSet resultSet) {
+    private static Book parseResultSet(ResultSet resultSet) {
         try {
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getBigDecimal("price");
