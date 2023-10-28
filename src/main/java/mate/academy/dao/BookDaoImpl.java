@@ -19,8 +19,7 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        query, Statement.RETURN_GENERATED_KEYS
-                )) {
+                        query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -29,7 +28,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add a new book", e);
+            throw new DataProcessingException("Can't add a new book: " + book, e);
         }
         return book;
     }
