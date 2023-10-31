@@ -76,7 +76,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Book update(Book book) throws DataProcessingException {
+    public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -111,18 +111,14 @@ public class BookDaoImpl implements BookDao {
         return deleted;
     }
 
-    private static Book parseResultSet(ResultSet resultSet) {
-        try {
-            String title = resultSet.getString("title");
-            BigDecimal price = resultSet.getBigDecimal("price");
-            long key = resultSet.getObject("id", Long.class);
-            Book book = new Book();
-            book.setId(key);
-            book.setTitle(title);
-            book.setPrice(price);
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Database access error or closed result set", e);
-        }
+    private static Book parseResultSet(ResultSet resultSet) throws SQLException {
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        long key = resultSet.getObject("id", Long.class);
+        Book book = new Book();
+        book.setId(key);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
