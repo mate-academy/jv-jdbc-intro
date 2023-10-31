@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -52,8 +52,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(ONE, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(mapingOfBook(resultSet.getObject(ID, Long.class),
-                       resultSet.getString(TITLE), resultSet.getObject(PRICE, BigDecimal.class)));
+                return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot get book by id " + id, e);
@@ -69,8 +68,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Book book = mapingOfBook(resultSet.getObject(ID, Long.class),
-                        resultSet.getString(TITLE), resultSet.getObject(PRICE, BigDecimal.class));
+                Book book = mapToBook(resultSet);
                 listOfBooks.add(book);
             }
         } catch (SQLException e) {
@@ -113,11 +111,11 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private static Book mapingOfBook(Long id, String title, BigDecimal price) {
+    private static Book mapToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(id);
-        book.setTitle(title);
-        book.setPrice(price);
+        book.setId(resultSet.getObject(ID, Long.class));
+        book.setTitle(resultSet.getString(TITLE));
+        book.setPrice(resultSet.getObject(PRICE, BigDecimal.class));
         return book;
     }
 }
