@@ -15,4 +15,3 @@ VALUES('Neurofitness', 720);
 
 INSERT INTO book(title, price)
 VALUES('Dopamine Nation', 360);
-

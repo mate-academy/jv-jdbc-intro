@@ -45,13 +45,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getNString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
+                return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book in DB with id: " + id, e);
@@ -67,14 +61,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String title = resultSet.getNString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                allBooks.add(book);
+                allBooks.add(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find books in DB", e);
@@ -114,5 +101,16 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can not delete object from DB with id: " + id, e);
         }
         return false;
+    }
+
+    private Book getBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getNString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }

@@ -25,4 +25,3 @@ public class ConnectionUtil {
                 .getConnection(DB_URL, DB_PROPERTIES);
     }
 }
-
