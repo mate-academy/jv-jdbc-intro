@@ -3,10 +3,9 @@ package mate.academy.model;
 import java.math.BigDecimal;
 
 public class Book {
-
-        private Long id;
-        private String title;
-        private BigDecimal price;
+    private Long id;
+    private String title;
+    private BigDecimal price;
 
     public Long getId() {
         return id;
@@ -34,11 +33,11 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
 
