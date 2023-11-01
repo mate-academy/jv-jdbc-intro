@@ -1,4 +1,4 @@
-package mate.academy.lib;
+package mate.academy.dao;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -13,12 +13,17 @@ import mate.academy.conection.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.model.Book;
 
+@Dao
 public class BookDaoImpl implements BookDao {
-    private Book makeResultSet(ResultSet resultSet) throws SQLException {
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_PRICE = "price";
+
+    private Book parseResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        Long id = resultSet.getObject("id", Long.class);
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        Long id = resultSet.getObject(COLUMN_ID, Long.class);
+        String title = resultSet.getString(COLUMN_TITLE);
+        BigDecimal price = resultSet.getObject(COLUMN_PRICE, BigDecimal.class);
         book.setId(id);
         book.setPrice(price);
         book.setTitle(title);
@@ -58,7 +63,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(makeResultSet(resultSet));
+                return Optional.of(parseResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not find book by id:" + id, e);
@@ -74,8 +79,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Book book = makeResultSet(resultSet);
-                allBooks.add(book);
+                allBooks.add(parseResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not get all books from db", e);
@@ -85,8 +89,6 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        Book oldBook = findById(book.getId()).orElseThrow(()
-                -> new RuntimeException("Can not update information " + book));
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.connection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -96,12 +98,12 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException(
-                        "Expected to insert at least one row, but inserted 0 rows");
+                        "Expected to update at least one row, but updated 0 rows");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not update information", e);
+            throw new DataProcessingException("Can not update book information", e);
         }
-        return oldBook;
+        return book;
     }
 
     @Override

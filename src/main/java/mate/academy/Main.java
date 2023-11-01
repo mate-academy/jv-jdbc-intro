@@ -2,8 +2,7 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-import mate.academy.lib.BookDao;
+import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
@@ -16,7 +15,7 @@ public class Main {
         book.setTitle("Sapiens");
         book.setPrice(BigDecimal.valueOf(100));
         bookDao.create(book);
-        Optional<Book> bookById = bookDao.findById(1L);
+        var bookById = bookDao.findById(1L);
         List<Book> books = bookDao.findAll();
         System.out.println(books);
         System.out.println(bookById);

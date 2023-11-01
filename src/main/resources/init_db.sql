@@ -1,5 +1,5 @@
-CREATE DATABASE `book`;
-USE book;
+CREATE DATABASE `hw`;
+USE hw;
 CREATE TABLE `books` (
                          `id` BIGINT NOT NULL AUTO_INCREMENT,
                          `title` VARCHAR(100) NOT NULL,
