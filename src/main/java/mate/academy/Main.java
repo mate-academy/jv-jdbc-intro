@@ -13,12 +13,12 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-//        Book book = new Book();
-//        book.setTitle("Mathematics");
-//        BigDecimal price = new BigDecimal("230.00");
-//        book.setPrice(price);
-//        Book bookCreate = bookDao.create(book);
-//        System.out.println(bookCreate);
+        Book book = new Book();
+        book.setTitle("Mathematics");
+        BigDecimal price = new BigDecimal("230.00");
+        book.setPrice(price);
+        Book bookCreate = bookDao.create(book);
+        System.out.println(bookCreate);
 
         List<Book> all = bookDao.findAll();
         System.out.println(all);
@@ -26,14 +26,14 @@ public class Main {
         Optional<Book> byId = bookDao.findById(1L);
         byId.ifPresent(System.out::println);
 
-//        Book updateBook = new Book();
-//        updateBook.setId(1L);
-//        updateBook.setTitle("Geography");
-//        updateBook.setPrice(new BigDecimal("245.50"));
-//        Book update = bookDao.update(updateBook);
-//        System.out.println("The book is update" + update);
-//
-//        boolean deleteById = bookDao.deleteById(4L);
-//        System.out.println(deleteById);
+        Book updateBook = new Book();
+        updateBook.setId(1L);
+        updateBook.setTitle("Geography");
+        updateBook.setPrice(new BigDecimal("245.50"));
+        Book update = bookDao.update(updateBook);
+        System.out.println("The book is update" + update);
+
+        boolean deleteById = bookDao.deleteById(4L);
+        System.out.println(deleteById);
     }
 }
