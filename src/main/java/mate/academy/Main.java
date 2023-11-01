@@ -8,10 +8,10 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
-    private static final Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         List<Book> bookList = getListBook();
         bookDao.create(bookList.get(0));
         Optional<Book> optionalBook = bookDao.findById(1L);
@@ -35,7 +35,6 @@ public class Main {
         newBook.setTitle("365 days");
         newBook.setPrice(new BigDecimal(50));
         newBook.setId(1L);
-        List<Book> books = List.of(book, newBook);
-        return books;
+        return List.of(book, newBook);
     }
 }

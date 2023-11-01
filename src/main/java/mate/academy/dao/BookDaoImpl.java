@@ -16,6 +16,10 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String INSERT = "INSERT INTO books (title, price) VALUES (?, ?)";
+    private static final String FIND = "SELECT * FROM books WHERE id = ?";
+    private static final String UPDATE = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETE = "DELETE FROM books WHERE id = ?";
     private static final String ID = "id";
     private static final String PRICE = "price";
     private static final String TITLE = "title";
@@ -27,10 +31,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement
-                        = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(ONE, book.getTitle());
             preparedStatement.setBigDecimal(TWO, book.getPrice());
             checkAffectedRows(preparedStatement.executeUpdate());
@@ -46,9 +49,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND)) {
             preparedStatement.setLong(ONE, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -79,10 +81,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement
-                        = connection.prepareStatement(sql)) {
+                        = connection.prepareStatement(UPDATE)) {
             preparedStatement.setString(ONE, book.getTitle());
             preparedStatement.setBigDecimal(TWO, book.getPrice());
             preparedStatement.setLong(THREE, book.getId());
@@ -97,7 +98,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setLong(ONE, id);
             return preparedStatement.executeUpdate() >= ONE;
         } catch (SQLException e) {
