@@ -14,7 +14,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -35,6 +34,17 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
+    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong("id");
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
+    }
+
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
@@ -43,13 +53,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Long bookId = resultSet.getLong("id");
-                    String title = resultSet.getString("title");
-                    BigDecimal price = resultSet.getBigDecimal("price");
-                    Book book = new Book();
-                    book.setId(bookId);
-                    book.setTitle(title);
-                    book.setPrice(price);
+                    Book book = createBookFromResultSet(resultSet);
                     return Optional.of(book);
                 }
             }
@@ -64,16 +68,10 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = createBookFromResultSet(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
