@@ -30,12 +30,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least 1 row, actual: "
-                        + affectedRows);
-            }
+            verifyAffectedRows(statement.executeUpdate());
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -58,12 +53,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-            }
+            book = parseBook(resultSet);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find a book with id " + id, e);
         }
@@ -78,16 +68,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL)) {
             ResultSet allBooks = statement.executeQuery();
 
-            while (allBooks.next()) {
-                Book book = new Book();
-                book.setId(allBooks.getLong("id"));
-                book.setTitle(allBooks.getString("title"));
-                book.setPrice(allBooks.getBigDecimal("price"));
-
-                books.add(book);
-            }
-
-            return books;
+            return getBooks(allBooks, books);
         } catch (SQLException e) {
             throw new DataProcessingException("DB is empty", e);
         }
@@ -122,11 +103,42 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setLong(1, id);
 
-            int affectedRows = statement.executeUpdate();
-
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete the book with id: " + id, e);
+        }
+    }
+
+    private static Book parseBook(ResultSet resultSet) throws SQLException {
+        Book book = null;
+
+        if (resultSet.next()) {
+            book = new Book();
+            book.setId(resultSet.getLong("id"));
+            book.setTitle(resultSet.getString("title"));
+            book.setPrice(resultSet.getBigDecimal("price"));
+        }
+
+        return book;
+    }
+
+    private static List<Book> getBooks(ResultSet resultSet, List<Book> result) throws SQLException {
+        while (resultSet.next()) {
+            Book book = new Book();
+            book.setId(resultSet.getLong("id"));
+            book.setTitle(resultSet.getString("title"));
+            book.setPrice(resultSet.getBigDecimal("price"));
+
+            result.add(book);
+        }
+
+        return result;
+    }
+
+    private static void verifyAffectedRows(int affectedRows) {
+        if (affectedRows < 1) {
+            throw new RuntimeException("Expected to insert at least 1 row, actual: "
+                    + affectedRows);
         }
     }
 }
