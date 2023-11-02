@@ -16,9 +16,9 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final String labelId = "id";
-    private static final String labelTitle = "title";
-    private static final String labelPrice = "price";
+    private static final String LABEL_ID = "id";
+    private static final String LABEL_TITLE = "title";
+    private static final String LABEL_PRICE = "price";
     private static final String SQL_CREATE = "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String SQL_FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
     private static final String SQL_FIND_ALL = "SELECT * FROM books";
@@ -68,7 +68,6 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL)) {
@@ -90,11 +89,11 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
 
-            Optional<Book> oldBook = findById(book.getId());
-
             statement.executeUpdate();
 
-            return oldBook.orElse(null);
+            Optional<Book> updatedBook = findById(book.getId());
+
+            return updatedBook.orElse(null);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update the book "
                     + book.getTitle(), e);
@@ -117,9 +116,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book parseBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getObject(labelId, Long.class);
-        String title = resultSet.getObject(labelTitle, String.class);
-        BigDecimal price = resultSet.getObject(labelPrice, BigDecimal.class);
+        Long id = resultSet.getObject(LABEL_ID, Long.class);
+        String title = resultSet.getObject(LABEL_TITLE, String.class);
+        BigDecimal price = resultSet.getObject(LABEL_PRICE, BigDecimal.class);
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);

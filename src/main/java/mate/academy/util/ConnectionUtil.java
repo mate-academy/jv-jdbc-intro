@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String USER = "root";
-    private static final String PASSWORD = "1602";
+    private static final String USER = "";
+    private static final String PASSWORD = "";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final Properties DB_PROPERTIES;

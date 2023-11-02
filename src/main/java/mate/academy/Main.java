@@ -28,7 +28,6 @@ public class Main {
         System.out.println("Update books:");
         bookWithId.setTitle("Hibernate");
         bookWithId.setPrice(BigDecimal.valueOf(550));
-        System.out.println("Old book: " + bookDao.update(bookWithId));
         System.out.println("Updated book: " + bookDao.update(bookWithId));
         Book bookWithNotExistingId = new Book("Some book", BigDecimal.valueOf(300));
         bookWithNotExistingId.setId(10L);
