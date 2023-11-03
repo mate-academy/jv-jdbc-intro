@@ -46,19 +46,17 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Book book = null;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID)) {
             statement.setLong(1, id);
 
             ResultSet resultSet = statement.executeQuery();
+            Book book = parseBook(resultSet);
 
-            book = parseBook(resultSet);
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find a book with id " + id, e);
         }
-
-        return Optional.ofNullable(book);
     }
 
     @Override
@@ -76,24 +74,19 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        Long id = book.getId();
-        String title = book.getTitle();
-        BigDecimal price = book.getPrice();
-
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
-            statement.setString(1, title);
-            statement.setBigDecimal(2, price);
-            statement.setLong(3, id);
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
 
             statement.executeUpdate();
 
-            Optional<Book> oldBook = findById(id);
+            Optional<Book> oldBook = findById(book.getId());
 
-            return oldBook.orElseThrow(()
-                    -> new RuntimeException("Book is not exist"));
+            return oldBook.orElse(null);
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book: " + title, e);
+            throw new DataProcessingException("Can't update book: " + book.getTitle(), e);
         }
     }
 
