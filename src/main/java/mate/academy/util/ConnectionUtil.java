@@ -12,7 +12,6 @@ public class ConnectionUtil {
     private static final String USER_NAME = "root";
     private static final String USER_PASSWORD = "F!mT1d&Ek7g#";
 
-
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", USER_NAME);
