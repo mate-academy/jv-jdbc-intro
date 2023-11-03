@@ -28,6 +28,7 @@ public class BookDaoImpl implements BookDao {
     private static final int TWO = 2;
     private static final int THREE = 3;
     private static final String FEW_AFFECTED_ROWS = "Affected rows should be more than 0";
+    private static final String SELECT_SQL = "SELECT * FROM books";
 
     @Override
     public Book create(Book book) {
@@ -65,9 +66,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> listOfBooks = new ArrayList<>();
-        String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Book book = mapToBook(resultSet);
@@ -96,7 +96,6 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setLong(ONE, id);
