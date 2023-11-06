@@ -37,7 +37,8 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add book " + book.getTitle() + " to the DB", e);
+            throw new DataProcessingException("Can't add book " + book.getTitle()
+                    + " to the DB", e);
         }
 
         return book;
