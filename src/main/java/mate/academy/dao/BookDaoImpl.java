@@ -37,7 +37,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add book " + book.getTitle() + "to the DB", e);
+            throw new DataProcessingException("Can't add book " + book.getTitle() + " to the DB", e);
         }
 
         return book;
@@ -50,7 +50,11 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
 
             ResultSet resultSet = statement.executeQuery();
-            Book book = parseBook(resultSet);
+            Book book = null;
+
+            if (resultSet.next()) {
+                book = parseBook(resultSet);
+            }
 
             return Optional.ofNullable(book);
         } catch (SQLException e) {
@@ -102,25 +106,14 @@ public class BookDaoImpl implements BookDao {
     }
 
     private static Book parseBook(ResultSet resultSet) throws SQLException {
-        Book book = null;
-
-        if (resultSet.next()) {
-            book = new Book();
-            book.setId(resultSet.getLong("id"));
-            book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
-        }
-
-        return book;
+        return new Book(resultSet.getLong("id"),
+                resultSet.getString("title"),
+                resultSet.getBigDecimal("price"));
     }
 
     private static List<Book> getBooks(ResultSet resultSet, List<Book> result) throws SQLException {
         while (resultSet.next()) {
-            Book book = new Book();
-            book.setId(resultSet.getLong("id"));
-            book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
-
+            Book book = parseBook(resultSet);
             result.add(book);
         }
 
