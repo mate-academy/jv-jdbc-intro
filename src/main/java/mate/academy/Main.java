@@ -16,7 +16,7 @@ public class Main {
 
         book = bookDao.create(book);
         System.out.println("Create method: " + book);
-        System.out.println("Find by id method: " + bookDao.findById(1L).get());
+        System.out.println("Find by id method: " + bookDao.findById(book.getId()).get());
         System.out.println("Find all method: " + bookDao.findAll());
 
         book.setTitle("New Title!");

@@ -5,7 +5,6 @@ import java.util.Optional;
 import mate.academy.model.Book;
 
 public interface BookDao {
-
     Book create(Book book);
 
     Optional<Book> findById(Long id);
@@ -15,5 +14,4 @@ public interface BookDao {
     Book update(Book book);
 
     boolean deleteById(Long id);
-
 }
