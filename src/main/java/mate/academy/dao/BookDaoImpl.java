@@ -38,6 +38,7 @@ public class BookDaoImpl implements BookDao {
     private static final int FIRST_PARAMETER_INDEX = 1;
     private static final int SECOND_PARAMETER_INDEX = 2;
     private static final int THIRD_PARAMETER_INDEX = 3;
+    private static final int FIRST_COLUMN_INDEX = 1;
     private static final String INSERT_ACTION = "insert";
     private static final String UPDATE_ACTION = "update";
     private static final String DELETE_ACTION = "delete";
@@ -57,8 +58,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(FIRST_PARAMETER_INDEX, Long.class);
-                book.setId(id);
+                book.setId(generatedKeys.getObject(FIRST_COLUMN_INDEX, Long.class));
             }
 
         } catch (SQLException e) {
@@ -120,8 +120,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.executeQuery(FIND_ALL_SQL_QUERY);
             while (resultSet.next()) {
-                Book book = extractBook(resultSet);
-                list.add(book);
+                list.add(extractBook(resultSet));
             }
 
         } catch (SQLException e) {
@@ -147,14 +146,10 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book extractBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getObject("id", Long.class);
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
         Book book = new Book();
-        book.setId(id);
-        book.setTitle(title);
-        book.setPrice(price);
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getObject("price", BigDecimal.class));
         return book;
     }
 
