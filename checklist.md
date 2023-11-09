@@ -93,12 +93,12 @@ Good: `books.title`
 * Use informative messages for exceptions.
     - Bad practice:
         ```java
-            throw new DataProcessingException("Can't get a books", e);
+            throw new DataProcessingException("Can't get a book", e);
         ``` 
     - Good practice: 
         ```java
-            throw new DataProcessingException("Can't get a books by id " + id, e);
-            throw new DataProcessingException("Can't save a books " + books, e);
+            throw new DataProcessingException("Can't get a book by id " + id, e);
+            throw new DataProcessingException("Can't save a book " + book, e);
         ``` 
 
 * Don't use schema's name in your queries, because you are configuring it while establishing a connection with DB.
@@ -120,17 +120,17 @@ Good: `books.title`
        
     - Bad practice:
         ```java
-        Book books = new Book(title);
-        books.setId(id); 
+        Book book = new Book(title);
+        book.setId(id); 
         ``` 
     - Good practice: 
         ```java
-        Book books = new Book(id, title);
+        Book book = new Book(id, title);
         
         // or
         
-        Book books = new Book();
-        books.setId(id);  
-        books.setTitle(title);
+        Book book = new Book();
+        book.setId(id);  
+        book.setTitle(title);
         ```  
     

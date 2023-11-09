@@ -17,9 +17,9 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book books = new Book();
+        Book book = new Book();
         // initialize field values using setters or constructor
-        bookDao.create(books);
+        bookDao.create(book);
         // test other methods from BookDao
     }
 }
