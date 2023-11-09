@@ -18,6 +18,9 @@ import mate.academy.utils.ConnectionUtil;
 @Dao
 public class BookDaoImpl implements BookDao {
     private static final String PROCESSING_FAILURE_MESSAGE = "Processing Data Failure!";
+    private static final String ID_COLUMN_LABEL = "id";
+    private static final String TITLE_COLUMN_LABEL = "title";
+    private static final String PRICE_COLUMN_LABEL = "price";
     private static final String CREATE_SQL_OPERATION =
             "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String FIND_SQL_OPERATION =
@@ -57,8 +60,8 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             Book book = new Book();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
+                String title = resultSet.getString(TITLE_COLUMN_LABEL);
+                BigDecimal price = resultSet.getBigDecimal(PRICE_COLUMN_LABEL);
                 book.setId(id);
                 book.setTitle(title);
                 book.setPrice(price);
@@ -114,9 +117,9 @@ public class BookDaoImpl implements BookDao {
 
     private Book getBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getObject("id", Long.class));
-        book.setTitle(resultSet.getString("title"));
-        book.setPrice(resultSet.getObject("price", BigDecimal.class));
+        book.setId(resultSet.getObject(ID_COLUMN_LABEL, Long.class));
+        book.setTitle(resultSet.getString(TITLE_COLUMN_LABEL));
+        book.setPrice(resultSet.getObject(PRICE_COLUMN_LABEL, BigDecimal.class));
         return book;
     }
 }
