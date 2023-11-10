@@ -110,7 +110,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             checkIfAtLeastOneRowAffected(affectedRows);
             Optional<Book> updatedBook = findById(book.getId());
-            return updatedBook.orElse(null);
+            return updatedBook.get();
         } catch (SQLException e) {
             throw new DataProcessingException(CANT_UPDATE_BOOK_MESSAGE + book.getId(), e);
         }

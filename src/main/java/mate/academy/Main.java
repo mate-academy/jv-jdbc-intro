@@ -2,7 +2,6 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -32,14 +31,14 @@ public class Main {
     }
 
     private static void printAllBooks(List<Book> bookList) {
-        for(Book book : bookList) {
+        for (Book book : bookList) {
             System.out.println(book);
         }
     }
 
     private static void printDeleteResult(boolean isDeleteSuccessful, Long id) {
         if (isDeleteSuccessful) {
-            System.out.println("Book with id: "+ id + " was deleted from DB successfully");
+            System.out.println("Book with id: " + id + " was deleted from DB successfully");
         }
     }
 }
