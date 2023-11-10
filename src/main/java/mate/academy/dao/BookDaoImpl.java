@@ -56,7 +56,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(parseToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find the book by index " + id, e);
+            throw new DataProcessingException("Cannot find the book by id " + id, e);
         }
         return Optional.empty();
     }
@@ -106,7 +106,7 @@ public class BookDaoImpl implements BookDao {
 
     private static void checkAffectedRows(int affectedRows) {
         if (affectedRows < 1) {
-            throw new RuntimeException("Expected to affect at least 1 row: "
+            throw new DataProcessingException("Expected to affect at least 1 row: "
                     + affectedRows + "affected rows");
         }
     }
