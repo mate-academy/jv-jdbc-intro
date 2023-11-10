@@ -1,12 +1,12 @@
 package mate.academy.util;
 
+import static mate.academy.SystemPropertiesSetter.setSystemProperties;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 import mate.academy.model.exception.DriverLoadingException;
-
-import static mate.academy.util.SystemPropertiesSetter.setSystemProperties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/books";
