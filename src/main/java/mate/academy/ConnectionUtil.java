@@ -11,7 +11,7 @@ public class ConnectionUtil {
     static {
         BOOKS_DB_PROPERTIES = new Properties();
         BOOKS_DB_PROPERTIES.put("user", "root");
-        BOOKS_DB_PROPERTIES.put("password", "715914qQ()");
+        BOOKS_DB_PROPERTIES.put("password", "");
     }
 
     private static final String MYSQL_CLASS_NAME = "com.mysql.cj.jdbc.Driver";

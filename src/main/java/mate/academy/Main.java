@@ -26,10 +26,7 @@ public class Main {
         bookDao.update(newBook);
         System.out.println(bookDao.findAll());
 
-
         bookDao.deleteById(1L);
         System.out.println(bookDao.findAll());
-
-
     }
 }
