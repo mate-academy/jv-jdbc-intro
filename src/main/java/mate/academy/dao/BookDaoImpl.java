@@ -123,9 +123,6 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(FIRST_QUERY_PARAM_INDEX, id);
             int affectedRows = statement.executeUpdate();
             checkIfAtLeastOneRowAffected(affectedRows);
-            // Mb, we need to return statement like this: affectedRows == 1, because,
-            // it's strange, if we delete several rows with one id (but we don't have guarantee,
-            // that id unique in random DB), so what?
             return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(CANT_DELETE_BOOK_MESSAGE + id, e);

@@ -6,15 +6,18 @@ import java.sql.SQLException;
 import java.util.Properties;
 import mate.academy.model.exception.DriverLoadingException;
 
+import static mate.academy.util.SystemPropertiesSetter.setSystemProperties;
+
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/books";
     private static final Properties DB_PROPERTIES;
     private static final String DRIVER_LOADING_MESSAGE = "Can't load JDBC Driver";
 
     static {
+        setSystemProperties();
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user","root");
-        DB_PROPERTIES.put("password", "956874lv");
+        DB_PROPERTIES.put("user",System.getProperty("user"));
+        DB_PROPERTIES.put("password", System.getProperty("password"));
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
