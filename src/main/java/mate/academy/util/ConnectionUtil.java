@@ -1,7 +1,5 @@
 package mate.academy.util;
 
-import static mate.academy.SystemPropertiesSetter.setSystemProperties;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -14,7 +12,6 @@ public class ConnectionUtil {
     private static final String DRIVER_LOADING_MESSAGE = "Can't load JDBC Driver";
 
     static {
-        setSystemProperties();
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user",System.getProperty("user"));
         DB_PROPERTIES.put("password", System.getProperty("password"));
