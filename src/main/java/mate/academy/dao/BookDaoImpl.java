@@ -37,15 +37,13 @@ public class BookDaoImpl implements BookDao {
                 .prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, title);
             statement.setDouble(2, price);
-            if (statement.executeUpdate() < MIN_AFFECTED_ROWS) {
-                throw new DataProcessingException(CREATION_EXCEPTION_MESSAGE);
-            }
+            checkAffectedRows(statement.executeUpdate());
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataProcessingException("Failed to put the book into the db");
         }
         return book;
@@ -88,12 +86,9 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setDouble(2, book.getPrice().doubleValue());
             statement.setLong(3, book.getId());
-            if (statement.executeUpdate() < MIN_AFFECTED_ROWS) {
-                throw new DataProcessingException("Failed to update object with such id = "
-                                                                        + book.getId());
-            }
+            checkAffectedRows(statement.executeUpdate());
             return book;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataProcessingException("Error updating book", e);
         }
     }
@@ -119,4 +114,11 @@ public class BookDaoImpl implements BookDao {
         book.setPrice(price);
         return book;
     }
+
+    private void checkAffectedRows(int rows) throws Exception{
+        if(rows < MIN_AFFECTED_ROWS) {
+            throw new DataProcessingException("Data processing failed");
+        }
+    }
+
 }
