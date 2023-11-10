@@ -18,6 +18,10 @@ public class BookDaoImpl implements BookDao {
     private static final String CREATION_EXCEPTION_MESSAGE = "Expected to insert 1 row,"
                                                             + " but inserted 0 rows";
     private static final String WRONG_ID_MESSAGE = "Cant find a book with id = ";
+    private static final String ID_COLUMN = "id";
+    private static final String TITLE_COLUMN = "title";
+    private static final String PRICE_COLUMN = "price";
+
     private static final int MIN_AFFECTED_ROWS = 1;
     private static final String CREATE_QUERY = "INSERT INTO books (title, price) VALUES(?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
@@ -107,9 +111,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapFromResultToBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
-        String title = resultSet.getString("title");
-        BigDecimal price = BigDecimal.valueOf(resultSet.getDouble("price"));
+        Long id = resultSet.getLong(ID_COLUMN);
+        String title = resultSet.getString(TITLE_COLUMN);
+        BigDecimal price = BigDecimal.valueOf(resultSet.getDouble(PRICE_COLUMN));
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);
