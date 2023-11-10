@@ -43,7 +43,7 @@ public class BookDaoImpl implements BookDao {
                 Long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataProcessingException("Failed to put the book into the db");
         }
         return book;
@@ -88,7 +88,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             checkAffectedRows(statement.executeUpdate());
             return book;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataProcessingException("Error updating book", e);
         }
     }
@@ -115,10 +115,9 @@ public class BookDaoImpl implements BookDao {
         return book;
     }
 
-    private void checkAffectedRows(int rows) throws Exception{
-        if(rows < MIN_AFFECTED_ROWS) {
+    private void checkAffectedRows(int rows) throws DataProcessingException {
+        if (rows < MIN_AFFECTED_ROWS) {
             throw new DataProcessingException("Data processing failed");
         }
     }
-
 }
