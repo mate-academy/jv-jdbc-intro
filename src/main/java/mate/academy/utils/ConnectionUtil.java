@@ -9,16 +9,12 @@ public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final String DRIVER_PATH = "com.mysql.cj.jdbc.Driver";
     private static final String DRIVER_LOAD_FAILURE_MESSAGE = "Driver loading failure!";
-    private static final String PROPERTY_USER = "user";
-    private static final String PROPERTY_PASSWORD = "password";
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "QmZo_25107";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put(PROPERTY_USER, DB_USERNAME);
-        DB_PROPERTIES.put(PROPERTY_PASSWORD, DB_PASSWORD);
+        DB_PROPERTIES.put("user", "root");
+        DB_PROPERTIES.put("password", "");
 
         try {
             Class.forName(DRIVER_PATH);
