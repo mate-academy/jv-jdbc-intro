@@ -1,9 +1,6 @@
 package mate.academy.model;
 
-import mate.academy.lib.Dao;
-
 import java.math.BigDecimal;
-import java.util.Optional;
 
 public class Book {
 
