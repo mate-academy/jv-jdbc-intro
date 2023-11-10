@@ -37,8 +37,7 @@ public class BookDaoImpl implements BookDao {
                 .prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, title);
             statement.setDouble(2, price);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < MIN_AFFECTED_ROWS) {
+            if (statement.executeUpdate() < MIN_AFFECTED_ROWS) {
                 throw new DataProcessingException(CREATION_EXCEPTION_MESSAGE);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -59,7 +58,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(mapFromResultToBook(resultSet));
+                return Optional.of(mapFromResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(WRONG_ID_MESSAGE + id, e);
@@ -74,7 +73,7 @@ public class BookDaoImpl implements BookDao {
                     .prepareStatement(FIND_ALL_QUERY);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                listOfBooks.add(mapFromResultToBook(resultSet));
+                listOfBooks.add(mapFromResultSetToBook(resultSet));
             }
             return listOfBooks;
         } catch (SQLException e) {
@@ -85,7 +84,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (PreparedStatement statement = ConnectionUtil.makeConnection()
-                .prepareStatement(UPDATE_QUERY)) {
+                .prepareStatement(UPDATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setDouble(2, book.getPrice().doubleValue());
             statement.setLong(3, book.getId());
@@ -110,7 +109,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book mapFromResultToBook(ResultSet resultSet) throws SQLException {
+    private Book mapFromResultSetToBook(ResultSet resultSet) throws SQLException {
         Long id = resultSet.getLong(ID_COLUMN);
         String title = resultSet.getString(TITLE_COLUMN);
         BigDecimal price = BigDecimal.valueOf(resultSet.getDouble(PRICE_COLUMN));
