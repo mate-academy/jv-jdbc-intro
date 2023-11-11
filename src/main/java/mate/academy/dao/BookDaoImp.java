@@ -1,5 +1,8 @@
 package mate.academy.dao;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,16 +18,20 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImp implements BookDao {
-    private static final String FIND_BY_ID = "SELECT * FROM Book WHERE id = ?";
-    private static final String FIND_ALL = "SELECT * FROM Book";
-    private static final String DELETE_BY_ID = "DELETE FROM Book WHERE id = ?";
-    private static final String ADD_TO_BOOK_BD = "INSERT INTO Book (title, price) VALUES (?, ?)";
-    private static final String UPDATE_IN_BOOK_BD = "UPDATE Book SET Price = ? WHERE title = ?";
+    private static final String FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
+    private static final String FIND_ALL = "SELECT * FROM books";
+    private static final String DELETE_BY_ID = "DELETE FROM books WHERE id = ?";
+    private static final String ADD_TO_BOOK = "INSERT INTO books (title, price) VALUES (?, ?)";
+    private static final String UPDATE_IN_BOOK = "UPDATE books SET Price = ? WHERE title = ?";
+    private static final String PATH_TO_FILE = "src/main/resources/init_db.sql";
+    private static final String COLUM_LABEL_TITLE = "title";
+    private static final String COLUM_LABEL_PRICE = "price";
+    private static final String COLUM_LABEL_ID = "id";
 
     @Override
     public Book create(Book book) {
         try (PreparedStatement statement = ConnectionUtil.getConnection()
-                .prepareStatement(ADD_TO_BOOK_BD, Statement.RETURN_GENERATED_KEYS)) {
+                .prepareStatement(ADD_TO_BOOK, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -50,8 +57,8 @@ public class BookDaoImp implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
+                String title = resultSet.getString(COLUM_LABEL_TITLE);
+                BigDecimal price = resultSet.getBigDecimal(COLUM_LABEL_PRICE);
                 book = new Book();
                 book.setPrice(price);
                 book.setTitle(title);
@@ -70,8 +77,8 @@ public class BookDaoImp implements BookDao {
                 .prepareStatement(FIND_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
+                String title = resultSet.getString(COLUM_LABEL_TITLE);
+                BigDecimal price = resultSet.getBigDecimal(COLUM_LABEL_PRICE);
                 Book book = new Book();
                 book.setPrice(price);
                 book.setTitle(title);
@@ -86,13 +93,13 @@ public class BookDaoImp implements BookDao {
     @Override
     public Book update(Book book) {
         try (PreparedStatement statement = ConnectionUtil.getConnection()
-                .prepareStatement(UPDATE_IN_BOOK_BD, Statement.RETURN_GENERATED_KEYS)) {
+                .prepareStatement(UPDATE_IN_BOOK, Statement.RETURN_GENERATED_KEYS)) {
             statement.setBigDecimal(1, book.getPrice());
             statement.setString(2, book.getTitle());
             statement.executeUpdate();
             ResultSet resultKey = statement.getGeneratedKeys();
             if (resultKey.next()) {
-                book.setId(resultKey.getObject("id", Long.class));
+                book.setId(resultKey.getObject(COLUM_LABEL_ID, Long.class));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update data", e);
@@ -102,15 +109,35 @@ public class BookDaoImp implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
+        int affectedRows;
         try (PreparedStatement statement = ConnectionUtil.getConnection()
                 .prepareStatement(DELETE_BY_ID)) {
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                return false;
-            }
+            affectedRows = statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete data by id", e);
+        }
+        return affectedRows > 0;
+    }
+
+    public boolean createBooksTable() {
+        StringBuilder sqlQuery = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(PATH_TO_FILE))) {
+            String line;
+            while (true) {
+                if ((line = reader.readLine()) == null) {
+                    break;
+                }
+                sqlQuery.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            throw new DataProcessingException("Can't read SQL script", e);
+        }
+        try (PreparedStatement statement = ConnectionUtil.getConnection()
+                .prepareStatement(sqlQuery.toString())) {
+            statement.execute();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't create books table", e);
         }
         return true;
     }

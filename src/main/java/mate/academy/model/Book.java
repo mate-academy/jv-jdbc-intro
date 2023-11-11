@@ -1,9 +1,7 @@
 package mate.academy.model;
 
 import java.math.BigDecimal;
-import mate.academy.lib.Dao;
 
-@Dao
 public class Book {
     private Long id;
     private String title;
