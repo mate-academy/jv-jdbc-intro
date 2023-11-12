@@ -35,8 +35,8 @@ public class Main {
             System.out.println(books);
         }
 
-        if (bookDao.deleteById(bookTwo.getId())) {
-            System.out.println("Delete book by ID: " + bookTwo.getId());
-        }
+        Long id = bookTwo.getId();
+        boolean result = bookDao.deleteById(id);
+        System.out.printf("Delete book by ID: %d is %s", id, result);
     }
 }

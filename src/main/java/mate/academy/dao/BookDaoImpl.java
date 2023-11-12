@@ -100,8 +100,8 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setObject(3, book.getId());
-            int i = statement.executeUpdate();
-            if (i > 1) {
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
                 return Optional.of(book);
             }
 

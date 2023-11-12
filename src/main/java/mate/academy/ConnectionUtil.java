@@ -10,13 +10,14 @@ public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/bookDB";
     private static final Properties DB_PROPERTIES;
     private static final String NOT_LOAD_DRIVE = "Can't loan JDBC driver";
+    private static final String DRIVE = "com.mysql.cj.jdbc.Driver";
 
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "ZXCqwe123");
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DRIVE);
         } catch (ClassNotFoundException e) {
             throw new DataProcessingException(NOT_LOAD_DRIVE, e);
         }
