@@ -1,4 +1,4 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,7 +12,7 @@ public class ConnectionUtil {
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "x");
+        DB_PROPERTIES.put("password", "fiasko13@3");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -42,10 +42,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = QUERY_CREATE_BOOK;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
-                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        .prepareStatement(QUERY_CREATE_BOOK, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(PARAMETER_INDEX_ONE, book.getTitle());
             statement.setBigDecimal(PARAMETER_INDEX_TWO, book.getPrice());
             if (statement.executeUpdate() < EDGE_VALID_NUMBER_AFFECTED_ROWS) {
@@ -64,9 +63,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = QUERY_FIND_BOOK_BY_ID;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(QUERY_FIND_BOOK_BY_ID)) {
             statement.setLong(PARAMETER_INDEX_ONE, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -82,9 +80,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String sql = QUERY_FIND_ALL_BOOKS;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(QUERY_FIND_ALL_BOOKS)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> bookList = new ArrayList<>();
             while (resultSet.next()) {
@@ -101,9 +98,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = QUERY_UPDATE_BOOK;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE_BOOK)) {
             statement.setString(PARAMETER_INDEX_ONE, book.getTitle());
             statement.setBigDecimal(PARAMETER_INDEX_TWO, book.getPrice());
             statement.setLong(PARAMETER_INDEX_THREE, book.getId());
@@ -118,9 +114,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = QUERY_DELETE_BOOK_BY_ID;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement
+                        = connection.prepareStatement(QUERY_DELETE_BOOK_BY_ID)) {
             statement.setLong(PARAMETER_INDEX_ONE, id);
             return statement.executeUpdate() > EDGE_INVALID_NUMBER_AFFECTED_ROWS;
         } catch (SQLException e) {
