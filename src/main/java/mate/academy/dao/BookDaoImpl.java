@@ -23,6 +23,7 @@ public class BookDaoImpl implements BookDao {
     private static final int PARAM_INDEX_TWO = 2;
     private static final int PARAM_INDEX_THREE = 1;
     private static final int MIN_AFFECTED_ROWS = 1;
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO book (title, price) VALUES (?, ?)";
@@ -54,7 +55,8 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE, Double.class));
+                BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE,
+                        Double.class));
                 Book book = createBookObject(id, title, price);
                 return Optional.of(book);
             }
@@ -75,7 +77,8 @@ public class BookDaoImpl implements BookDao {
             while (resultSet.next()) {
                 Long id = resultSet.getObject(COLUMN_ID, Long.class);
                 String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE, Double.class));
+                BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE,
+                        Double.class));
                 Book book = createBookObject(id, title, price);
                 list.add(book);
             }
@@ -115,6 +118,7 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't delete book with given id: " + id, e);
         }
     }
+
     private Book createBookObject(Long id, String title, BigDecimal price) {
         Book book = new Book();
         book.setId(id);
@@ -123,9 +127,11 @@ public class BookDaoImpl implements BookDao {
         return book;
     }
 
-    private boolean checkAffectedRows(int rows, String message) throws RuntimeException{
-        if(rows < MIN_AFFECTED_ROWS) {
+    private boolean checkAffectedRows(int rows, String message) throws RuntimeException {
+        if (rows < MIN_AFFECTED_ROWS) {
             throw new RuntimeException(message);
-        }else return true;
+        } else {
+            return true;
+        }
     }
 }
