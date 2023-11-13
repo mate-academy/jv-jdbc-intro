@@ -44,7 +44,7 @@ public class BookDaoImp implements BookDao {
                 book.setId(resultKey.getObject(1, Long.class));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create new row", e);
+            throw new DataProcessingException("Can't create new row for book - " + book, e);
         }
         return book;
     }
@@ -57,17 +57,12 @@ public class BookDaoImp implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(COLUM_LABEL_TITLE);
-                BigDecimal price = resultSet.getBigDecimal(COLUM_LABEL_PRICE);
-                book = new Book();
-                book.setPrice(price);
-                book.setTitle(title);
-                book.setId(id);
+                book = initializeBook(resultSet);
             }
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find data by id", e);
+            throw new DataProcessingException("Can't find data by id - " + id, e);
         }
-        return Optional.ofNullable(book);
     }
 
     @Override
@@ -77,17 +72,27 @@ public class BookDaoImp implements BookDao {
                 .prepareStatement(FIND_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String title = resultSet.getString(COLUM_LABEL_TITLE);
-                BigDecimal price = resultSet.getBigDecimal(COLUM_LABEL_PRICE);
-                Book book = new Book();
-                book.setPrice(price);
-                book.setTitle(title);
-                books.add(book);
+                books.add(initializeBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't findAll data", e);
         }
         return books;
+    }
+
+    private Book initializeBook(ResultSet resultSet) {
+        try {
+            String title = resultSet.getString(COLUM_LABEL_TITLE);
+            BigDecimal price = resultSet.getBigDecimal(COLUM_LABEL_PRICE);
+            Long id = resultSet.getObject(COLUM_LABEL_ID,Long.class);
+            Book book = new Book();
+            book.setPrice(price);
+            book.setTitle(title);
+            book.setId(id);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't initialize book", e);
+        }
     }
 
     @Override
@@ -102,22 +107,20 @@ public class BookDaoImp implements BookDao {
                 book.setId(resultKey.getObject(COLUM_LABEL_ID, Long.class));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update data", e);
+            throw new DataProcessingException("Can't update data book - " + book, e);
         }
         return book;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        int affectedRows;
         try (PreparedStatement statement = ConnectionUtil.getConnection()
                 .prepareStatement(DELETE_BY_ID)) {
             statement.setLong(1, id);
-            affectedRows = statement.executeUpdate();
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete data by id", e);
+            throw new DataProcessingException("Can't delete data by id - " + id, e);
         }
-        return affectedRows > 0;
     }
 
     public boolean createBooksTable() {
