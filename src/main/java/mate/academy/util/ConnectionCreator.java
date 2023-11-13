@@ -21,7 +21,7 @@ public class ConnectionCreator {
         }
     }
 
-    public Connection createConnection() throws SQLException {
+    public static Connection createConnection() throws SQLException {
         return DriverManager.getConnection(CONNECTION_URL, dbProperties);
     }
 }

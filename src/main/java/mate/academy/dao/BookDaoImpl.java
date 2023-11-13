@@ -32,18 +32,20 @@ public class BookDaoImpl implements BookDao {
             + " price = ? WHERE id = ?";
     private static final String SQL_SELECT_ALL_STATEMENT = "SELECT * FROM books";
     private static final String TITLE_COLUMN_NAME = "title";
-    private static ConnectionCreator connectionCreator = new ConnectionCreator();
+    private static final int INDEX_ONE = 1;
+    private static final int INDEX_TWO = 2;
+    private static final int INDEX_THREE = 3;
 
     @Override
     public Book create(Book book) {
-        try (Connection connection = connectionCreator.createConnection();
+        try (Connection connection = ConnectionCreator.createConnection();
                  PreparedStatement statement = connection.prepareStatement(
                          SQL_INSERT_STATEMENT, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setLong(2, book.getPrice().longValue());
+            statement.setString(INDEX_ONE, book.getTitle());
+            statement.setLong(INDEX_TWO, book.getPrice().longValue());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(NO_ROWS_INSERTED_MSG);
+                throw new DataProcessingException(NO_ROWS_INSERTED_MSG);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -57,9 +59,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        try (Connection connection = connectionCreator.createConnection();
+        try (Connection connection = ConnectionCreator.createConnection();
                  PreparedStatement statement = connection.prepareStatement(SQL_SELECT_STATEMENT)) {
-            statement.setLong(1, id);
+            statement.setLong(INDEX_ONE, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Book book = mapResultSetIntoBook(resultSet);
@@ -74,7 +76,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> list = new ArrayList<>();
-        try (Connection connection = connectionCreator.createConnection();
+        try (Connection connection = ConnectionCreator.createConnection();
                  PreparedStatement statement = connection.prepareStatement(
                          SQL_SELECT_ALL_STATEMENT)) {
             ResultSet resultSet = statement.executeQuery();
@@ -89,14 +91,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        try (Connection connection = connectionCreator.createConnection();
+        try (Connection connection = ConnectionCreator.createConnection();
                  PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATEMENT)) {
-            statement.setString(1, book.getTitle());
-            statement.setObject(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setString(INDEX_ONE, book.getTitle());
+            statement.setObject(INDEX_TWO, book.getPrice());
+            statement.setLong(INDEX_THREE, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(NO_NEEDED_ROW_MSG);
+                throw new DataProcessingException(NO_NEEDED_ROW_MSG);
             }
             return book;
         } catch (SQLException e) {
@@ -106,11 +108,10 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        try (Connection connection = connectionCreator.createConnection();
+        try (Connection connection = ConnectionCreator.createConnection();
                  PreparedStatement statement = connection.prepareStatement(SQL_DELETE_STATEMENT)) {
-            statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows >= 1;
+            statement.setLong(INDEX_ONE, id);
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(FAILED_TO_DELETE_ROW + id, e);
         }
