@@ -115,9 +115,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong(1);
-        String title = resultSet.getString(2);
-        BigDecimal price = BigDecimal.valueOf(resultSet.getDouble(3));
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price =  resultSet.getBigDecimal("price");;
         return new Book(id,title,price);
     }
 }
