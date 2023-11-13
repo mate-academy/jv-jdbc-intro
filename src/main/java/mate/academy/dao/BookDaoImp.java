@@ -16,17 +16,20 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImp implements BookDao {
-    private static final String INSERT_BY_TITLE_AND_PRICE = "INSERT INTO books (title, price) VALUES(?, ?)";
+    private static final String INSERT_BY_TITLE_AND_PRICE =
+            "INSERT INTO books (title, price) VALUES(?, ?)";
     private static final String SELECT_BY_ID = "SELECT * FROM books WHERE id = ?";
     private static final String SELECT_ALL = "SELECT * FROM books";
-    private static final String UPDATE_TITLE_AND_PRICE_BY_ID = "UPDATE books SET price = ?, title = ? WHERE id = ?";
+    private static final String UPDATE_TITLE_AND_PRICE_BY_ID =
+            "UPDATE books SET price = ?, title = ? WHERE id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM books WHERE id = ?";
 
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection
-                        .prepareStatement(INSERT_BY_TITLE_AND_PRICE, Statement.RETURN_GENERATED_KEYS)) {
+                        .prepareStatement(INSERT_BY_TITLE_AND_PRICE,
+                                Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
