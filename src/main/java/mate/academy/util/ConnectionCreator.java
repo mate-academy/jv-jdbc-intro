@@ -6,19 +6,22 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionCreator {
+    public static final String CANNOT_LOAD_DRIVER = "Cannot load the driver";
+    public static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/jdbc_task";
+    private static final String CLASS_NAME = "com.mysql.cj.jdbc.Driver";
     private static final Properties dbProperties = new Properties();
 
     static {
         dbProperties.put("user", "root");
-        dbProperties.put("password", "sqlAntona200!");
+        dbProperties.put("password", "my pass");
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(CLASS_NAME);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot load the driver", e);
+            throw new RuntimeException(CANNOT_LOAD_DRIVER, e);
         }
     }
 
     public Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc_task", dbProperties);
+        return DriverManager.getConnection(CONNECTION_URL, dbProperties);
     }
 }
