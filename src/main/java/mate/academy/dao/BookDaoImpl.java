@@ -64,9 +64,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(TITLE);
-                BigDecimal price = resultSet.getObject(PRICE, BigDecimal.class);
-                return Optional.of(new Book(id, title, price));
+                return Optional.of(mapResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(NOT_ONE_FIND, e);
@@ -81,12 +79,8 @@ public class BookDaoImpl implements BookDao {
             PreparedStatement statement = connection.prepareStatement(SELECT_FROM_BOOKS);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject(ID, Long.class);
-                String title = resultSet.getString(TITLE);
-                BigDecimal price = resultSet.getObject(PRICE, BigDecimal.class);
-                bookList.add(new Book(id, title, price));
+                bookList.add(mapResultSet(resultSet));
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(NOT_ALL_FIND, e);
         }
@@ -104,7 +98,6 @@ public class BookDaoImpl implements BookDao {
             if (affectedRows < 1) {
                 return Optional.of(book);
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException(NOT_UPDATE + book, e);
         }
@@ -116,10 +109,16 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_FROM_BOOKS_ID);
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(DELETE_EXCEPTION + id, e);
         }
+    }
+
+    private Book mapResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject(ID, Long.class);
+        String title = resultSet.getString(TITLE);
+        BigDecimal price = resultSet.getObject(PRICE, BigDecimal.class);
+        return new Book(id, title, price);
     }
 }

@@ -14,5 +14,4 @@ public interface BookDao {
     Optional<Book> update(Book book);
 
     boolean deleteById(Long id);
-
 }

@@ -14,8 +14,8 @@ public class ConnectionUtil {
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "ZXCqwe123");
+        DB_PROPERTIES.put("user", "");
+        DB_PROPERTIES.put("password", "");
         try {
             Class.forName(DRIVE);
         } catch (ClassNotFoundException e) {
