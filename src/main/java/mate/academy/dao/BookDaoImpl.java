@@ -16,6 +16,11 @@ import mate.academy.utils.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String INSERT_QUERY = "INSERT INTO book (title, price) VALUES (?, ?)";
+    private static final String SELECT_BY_ID_QUERY = "SELECT * FROM BOOK WHERE id =?";
+    private static final String SELECT_ALL_QUERY = "SELECT * FROM BOOK";
+    private static final String UPDATE_QUERY = "UPDATE book SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM book WHERE id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_PRICE = "price";
@@ -26,15 +31,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO book (title, price) VALUES (?, ?)";
         String errorMessage = "Expected to insert at least one row";
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(sql,
+                 PreparedStatement statement = connection.prepareStatement(INSERT_QUERY,
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(PARAM_INDEX_ONE, book.getTitle());
             statement.setBigDecimal(PARAM_INDEX_TWO, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            checkAffectedRows(affectedRows,errorMessage);
+            checkAffectedRows(affectedRows, errorMessage);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(PARAM_INDEX_ONE, Long.class);
@@ -48,16 +52,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM BOOK WHERE id =?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_QUERY)) {
             statement.setLong(PARAM_INDEX_ONE, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE,
-                        Double.class));
-                Book book = createBookObject(id, title, price);
+                Book book = createBookObject(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -69,17 +69,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String sql = "SELECT * FROM BOOK";
         List<Book> list = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject(COLUMN_ID, Long.class);
-                String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE,
-                        Double.class));
-                Book book = createBookObject(id, title, price);
+                Book book = createBookObject(resultSet);
                 list.add(book);
             }
         } catch (SQLException e) {
@@ -90,10 +85,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE book SET title = ?, price = ? WHERE id = ?";
         String errorMessage = "Expected to update at least 1 row";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
+                PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY,
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(PARAM_INDEX_THREE, book.getId());
             statement.setString(PARAM_INDEX_ONE, book.getTitle());
@@ -108,9 +102,8 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             statement.setLong(PARAM_INDEX_ONE, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
@@ -119,19 +112,26 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book createBookObject(Long id, String title, BigDecimal price) {
-        Book book = new Book();
-        book.setId(id);
-        book.setTitle(title);
-        book.setPrice(price);
-        return book;
+    private Book createBookObject(ResultSet resultSet) {
+        String error = "Can't create a book with given parameters";
+        try {
+            Long id = resultSet.getObject(COLUMN_ID, Long.class);
+            String title = resultSet.getString(COLUMN_TITLE);
+            BigDecimal price = BigDecimal.valueOf(resultSet.getObject(COLUMN_PRICE,
+                    Double.class));
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
+        } catch (SQLException e) {
+            throw new RuntimeException(error, e);
+        }
     }
 
-    private boolean checkAffectedRows(int rows, String message) throws RuntimeException {
+    private void checkAffectedRows(int rows, String message) throws RuntimeException {
         if (rows < MIN_AFFECTED_ROWS) {
             throw new RuntimeException(message);
-        } else {
-            return true;
         }
     }
 }
