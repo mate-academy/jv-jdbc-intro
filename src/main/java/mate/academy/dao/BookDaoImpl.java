@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
@@ -94,10 +93,10 @@ public class BookDaoImpl implements BookDao {
                 Long id = resultSet.getObject(COLUMN_LABEL_ID, Long.class);
                 bookList.add(new Book(id, title, price));
             }
+            return bookList;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return Collections.EMPTY_LIST;
     }
 
     @Override
