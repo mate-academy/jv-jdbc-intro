@@ -26,7 +26,7 @@ public class BookDaoImpl implements BookDao {
     private static final int THIRD_PARAMETER_INDEX = 3;
     private static final int MINIMUM_AFFECTED_ROWS = 1;
     private static final int FIRST_COLUMN_INDEX = 1;
-    private static final int Zero_ROW = 0;
+    private static final int ZERO_ROW = 0;
 
     private static final int RETURN_GENERATED_KEYS = Statement.RETURN_GENERATED_KEYS;
 
@@ -98,7 +98,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement = connection.prepareStatement(DELETE_BOOK_QUERY)) {
             statement.setLong(FIRST_PARAMETER_INDEX, id);
-            return statement.executeUpdate() > Zero_ROW;
+            return statement.executeUpdate() > ZERO_ROW;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id: " + id, e);
         }

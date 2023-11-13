@@ -9,8 +9,8 @@ import mate.academy.DataProcessingException;
 public class ConnectionUtil {
     public static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/jdbc_hw_1";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "@groFix_test_2023";
+    private static final String USERNAME = "";
+    private static final String PASSWORD = "";
     private static final Properties DB_PROPERTIES;
 
     static {
