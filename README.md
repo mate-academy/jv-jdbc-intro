@@ -40,10 +40,10 @@ public class Book {
 ```
 
 ### BookDao methods:
-    - Book create(Book book);
+    - Book create(Book books);
     - Optional<Book> findById(Long id);
     - List<Book> findAll();
-    - Book update(Book book);
+    - Book update(Book books);
     - boolean deleteById(Long id);
     
 ### Create custom exception
