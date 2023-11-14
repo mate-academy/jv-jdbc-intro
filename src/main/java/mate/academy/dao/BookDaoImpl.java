@@ -95,7 +95,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             if (book.getId() == null) {
-                throw new RuntimeException(NULL_ID_ERROR_MESSAGE);
+                throw new IllegalArgumentException(NULL_ID_ERROR_MESSAGE);
             }
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
