@@ -19,7 +19,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book get(Long id) {
         return bookDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can't find book with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Can't find book with id " + id));
     }
 
     @Override
