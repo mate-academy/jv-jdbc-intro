@@ -41,7 +41,7 @@ public class BookDaoImpl implements BookDao {
             = "UPDATE books SET title = ?, price = ? WHERE id = ?";
 
     @Override
-    public mate.academy.model.Book create(mate.academy.model.Book book) {
+    public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(QUERY_CREATE_BOOK, Statement.RETURN_GENERATED_KEYS)) {
@@ -62,13 +62,13 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Optional<mate.academy.model.Book> findById(Long id) {
+    public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(QUERY_FIND_BOOK_BY_ID)) {
             statement.setLong(PARAMETER_INDEX_ONE, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(getBook(resultSet));
+                return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(EXCEPTION_NOT_FIND_BOOK_BY_ID + id, e);
@@ -83,8 +83,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(QUERY_FIND_ALL_BOOKS)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = getBook(resultSet);
-                bookList.add(book);
+                bookList.add(mapToBook(resultSet));
             }
             return bookList;
         } catch (SQLException e) {
@@ -93,7 +92,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public mate.academy.model.Book update(mate.academy.model.Book book) {
+    public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE_BOOK)) {
             statement.setString(PARAMETER_INDEX_ONE, book.getTitle());
@@ -120,7 +119,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private static Book getBook(ResultSet resultSet) throws SQLException {
+    private static Book mapToBook(ResultSet resultSet) throws SQLException {
         String title = resultSet.getString(COLUMN_LABEL_TITLE);
         BigDecimal price = resultSet.getObject(COLUMN_LABEL_PRICE, BigDecimal.class);
         Long id = resultSet.getObject(COLUMN_LABEL_ID, Long.class);
