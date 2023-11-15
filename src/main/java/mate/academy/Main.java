@@ -31,7 +31,7 @@ public class Main {
         System.out.println("Updated book: " + bookDao.update(lordOfTheRingWithId));
 
         System.out.println("Delete book");
-        System.out.println("Delete Lord Of The Ring - " + bookDao.delete(book));
-        System.out.println("Delete Bible - " + bookDao.delete(book2));
+        System.out.println("Delete Lord Of The Ring - " + bookDao.deleteById(1L));
+        System.out.println("Delete Bible - " + bookDao.deleteById(2L));
     }
 }

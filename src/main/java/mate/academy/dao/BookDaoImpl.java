@@ -18,6 +18,7 @@ public class BookDaoImpl implements BookDao {
     private static final int FIRST_INDEX = 1;
     private static final int SECOND_INDEX = 2;
     private static final int THIRD_INDEX = 3;
+    private static final int ZERO_ROW = 0;
     private static final String INSERT_SQL = "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String SELECT_BY_ID_SQL = "SELECT * FROM books WHERE id = ?";
     private static final String SELECT_ALL_SQL = "SELECT * FROM books";
@@ -73,13 +74,13 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean delete(Book book) {
+    public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
-            statement.setLong(FIRST_INDEX, book.getId());
-            return statement.executeUpdate() > 0;
+            statement.setLong(FIRST_INDEX, id);
+            return statement.executeUpdate() > ZERO_ROW;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error deleting book " + book.getId(), e);
+            throw new DataProcessingException("Can't delete book with id: " + id, e);
         }
     }
 
