@@ -30,7 +30,8 @@ public class BookDaoImpl implements BookDao {
     private static final String ZERO_INSERTED_ROWS_MESSAGE
             = "Expected to insert at least 1 row, but inserted 0 rows";
     private static final String CANNOT_SAVE_BOOK_MESSAGE_TEMPLATE = "Cannot save this book: ";
-    private static final String CANNOT_FIND_BOOK_BY_ID_MESSAGE_TEMPLATE = "Cannot find a book by this id: ";
+    private static final String CANNOT_FIND_BOOK_BY_ID_MESSAGE_TEMPLATE
+            = "Cannot find a book by this id: ";
     private static final String CANNOT_FIND_BOOKS_MESSAGE = "Cannot find books from the table";
     private static final String ZERO_UPDATED_BOOKS_MESSAGE = "No books were updated in the table";
     private static final String CANNOT_UPDATE_BOOK_MESSAGE_TEMPLATE = "Cannot update this book: ";
@@ -40,8 +41,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement
-                        = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(
+                        SAVE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(FIRST_PARAMETER_INDEX, book.getTitle());
             statement.setBigDecimal(SECOND_PARAMETER_INDEX, book.getPrice());
             if (statement.executeUpdate() < 1) {
