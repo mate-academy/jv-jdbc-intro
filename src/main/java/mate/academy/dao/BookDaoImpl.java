@@ -21,73 +21,63 @@ public class BookDaoImpl implements BookDao {
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM books WHERE id = ?";
+    private static final int FIRST_PARAMETER_INDEX = 1;
+    private static final int SECOND_PARAMETER_INDEX = 2;
+    private static final int THIRD_PARAMETER_INDEX = 3;
+    private static final String ID_COLUMN_LABEL = "id";
+    private static final String TITLE_COLUMN_LABEL = "title";
+    private static final String PRICE_COLUMN_LABEL = "price";
     private static final String ZERO_INSERTED_ROWS_MESSAGE
             = "Expected to insert at least 1 row, but inserted 0 rows";
-    private static final String CANNOT_SAVE_BOOK_MESSAGE = "Cannot save this book: ";
-    private static final String CANNOT_FIND_BOOK_BY_ID_MESSAGE = "Cannot find a book by this id: ";
+    private static final String CANNOT_SAVE_BOOK_MESSAGE_TEMPLATE = "Cannot save this book: ";
+    private static final String CANNOT_FIND_BOOK_BY_ID_MESSAGE_TEMPLATE = "Cannot find a book by this id: ";
     private static final String CANNOT_FIND_BOOKS_MESSAGE = "Cannot find books from the table";
     private static final String ZERO_UPDATED_BOOKS_MESSAGE = "No books were updated in the table";
-    private static final String CANNOT_UPDATE_BOOK_MESSAGE = "Cannot update this book: ";
-    private static final String CANNOT_DELETE_BOOK_BY_ID_MESSAGE
+    private static final String CANNOT_UPDATE_BOOK_MESSAGE_TEMPLATE = "Cannot update this book: ";
+    private static final String CANNOT_DELETE_BOOK_BY_ID_MESSAGE_TEMPLATE
             = "Cannot delete a book by this id: ";
 
     @Override
     public Book create(Book book) {
-        String sql = SAVE_QUERY;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement
-                        = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException(ZERO_INSERTED_ROWS_MESSAGE);
+                        = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(FIRST_PARAMETER_INDEX, book.getTitle());
+            statement.setBigDecimal(SECOND_PARAMETER_INDEX, book.getPrice());
+            if (statement.executeUpdate() < 1) {
+                throw new DataProcessingException(ZERO_INSERTED_ROWS_MESSAGE);
             }
-
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(ID_COLUMN_LABEL, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException(CANNOT_SAVE_BOOK_MESSAGE + book, e);
+            throw new DataProcessingException(CANNOT_SAVE_BOOK_MESSAGE_TEMPLATE + book, e);
         }
         return book;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = FIND_BY_ID_QUERY;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+            statement.setLong(FIRST_PARAMETER_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book(id, title, price);
-                return Optional.of(book);
-            }
+            return resultSet.next() ? Optional.of(mapResultSetToBook(resultSet)) : Optional.empty();
         } catch (SQLException e) {
-            throw new DataProcessingException(CANNOT_FIND_BOOK_BY_ID_MESSAGE + id, e);
+            throw new DataProcessingException(CANNOT_FIND_BOOK_BY_ID_MESSAGE_TEMPLATE + id, e);
         }
-        return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
-        String sql = FIND_ALL_QUERY;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> bookList = new ArrayList<>();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                bookList.add(new Book(id, title, price));
+                bookList.add(mapResultSetToBook(resultSet));
             }
             return bookList;
         } catch (SQLException e) {
@@ -97,34 +87,35 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = UPDATE_QUERY;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+            statement.setString(FIRST_PARAMETER_INDEX, book.getTitle());
+            statement.setBigDecimal(SECOND_PARAMETER_INDEX, book.getPrice());
+            statement.setLong(THIRD_PARAMETER_INDEX, book.getId());
+            if (statement.executeUpdate() < 1) {
                 throw new RuntimeException(ZERO_UPDATED_BOOKS_MESSAGE);
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException(CANNOT_UPDATE_BOOK_MESSAGE + book, e);
+            throw new DataProcessingException(CANNOT_UPDATE_BOOK_MESSAGE_TEMPLATE + book, e);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = DELETE_BY_ID_QUERY;
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
-
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+                PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID_QUERY)) {
+            statement.setLong(FIRST_PARAMETER_INDEX, id);
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException(CANNOT_DELETE_BOOK_BY_ID_MESSAGE + id, e);
+            throw new DataProcessingException(CANNOT_DELETE_BOOK_BY_ID_MESSAGE_TEMPLATE + id, e);
         }
+    }
+
+    private Book mapResultSetToBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject(ID_COLUMN_LABEL, Long.class);
+        String title = resultSet.getString(TITLE_COLUMN_LABEL);
+        BigDecimal price = resultSet.getBigDecimal(PRICE_COLUMN_LABEL);
+        return new Book(id, title, price);
     }
 }
