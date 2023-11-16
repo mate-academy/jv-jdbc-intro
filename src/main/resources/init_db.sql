@@ -1,6 +1,7 @@
 USE tests;
-CREATE TABLE books (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL
+CREATE TABLE `books`(
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255),
+    `price` DECIMAL(10,2),
+    PRIMARY KEY (`id`)
 );
