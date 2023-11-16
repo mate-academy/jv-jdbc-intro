@@ -1,13 +1,11 @@
 package mate.academy;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 import mate.academy.service.ConnectionUtil;
-
-import java.math.BigDecimal;
-import java.sql.SQLException;
 
 public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
