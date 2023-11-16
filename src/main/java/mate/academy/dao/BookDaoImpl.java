@@ -1,14 +1,13 @@
 package mate.academy.dao;
 
-import mate.academy.lib.Dao;
-import mate.academy.model.Book;
-import mate.academy.service.ConnectionUtil;
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.lib.Dao;
+import mate.academy.model.Book;
+import mate.academy.service.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
