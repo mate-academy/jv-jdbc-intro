@@ -19,12 +19,12 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sql = "INSERT INTO books(title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql, Statement
-                       .RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(sql, Statement
+                        .RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if(affectedRows < 1 ) {
+            if (affectedRows < 1 ) {
                 throw new RuntimeException("Expected to insert at least one row, "
                         + "but was inserted zero rows.");
             }
