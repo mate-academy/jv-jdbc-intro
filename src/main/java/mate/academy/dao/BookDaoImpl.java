@@ -24,7 +24,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1 ) {
+            if (affectedRows < 1) {
                 throw new RuntimeException("Expected to insert at least one row, "
                         + "but was inserted zero rows.");
             }
@@ -43,7 +43,7 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             Book book = null;
@@ -51,7 +51,7 @@ public class BookDaoImpl implements BookDao {
                 book = resultSetBook(resultSet);
             }
             return Optional.ofNullable(book);
-        }  catch(SQLException e) {
+        } catch (SQLException e) {
             throw new DataProcessingException("Can not get book by: " + id, e);
         }
     }
@@ -61,12 +61,12 @@ public class BookDaoImpl implements BookDao {
         List<Book> bookList = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 bookList.add(resultSetBook(resultSet));
             }
-        }  catch(SQLException e) {
+        } catch (SQLException e) {
             throw new DataProcessingException("Can not get books from DB", e);
         }
         return bookList;
@@ -76,13 +76,13 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ?, WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw  new RuntimeException ("Expected update at least one row, "
+                throw new RuntimeException("Expected update at least one row, "
                 + "but was updated 0 row");
             }
         } catch (SQLException e) {
@@ -95,16 +95,16 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setLong(1, id);
-                int affectedRows = statement.executeUpdate();
-                return affectedRows > 0;
-            } catch (SQLException e) {
-                throw new DataProcessingException("Can`t delete book with id: " + id, e);
-            }
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can`t delete book with id: " + id, e);
         }
+    }
 
-        private Book resultSetBook(ResultSet resultSet) throws  SQLException {
+    private Book resultSetBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
