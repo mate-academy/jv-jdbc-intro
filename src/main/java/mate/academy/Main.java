@@ -1,6 +1,7 @@
 package mate.academy;
 
 import java.math.BigDecimal;
+import java.util.function.IntUnaryOperator;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -24,6 +25,9 @@ public class Main {
         System.out.println(bookDao.findById(1L));
         System.out.println(bookDao.findById(2L));
         System.out.println(bookDao.findById(5L));
+
+        IntUnaryOperator operator = n -> n * n;
+        int result = operator.applyAsInt(10);
 
         System.out.println("Update books:");
         lordOfTheRingWithId.setTitle("Hobbit");

@@ -52,7 +52,12 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(SECOND_INDEX, book.getPrice());
             statement.setLong(THIRD_INDEX, book.getId());
             statement.executeUpdate();
-            return findById(book.getId()).orElse(book);
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
+                throw new DataProcessingException("db don't have needed row", new SQLException());
+            }
+            return book;
+
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update the book "
                     + book.getTitle(), e);
