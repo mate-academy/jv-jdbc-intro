@@ -45,24 +45,17 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        Book book = new Book();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                Integer price = resultSet.getObject("price", Integer.class);
-
-                book.setId(id);
-                book.setPrice(price);
-                book.setTitle(title);
-                return Optional.of(book);
+                return Optional.of(extractBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t create connection to DB ", e);
+            throw new DataProcessingException("Can't create connection to DB ", e);
         }
-        return Optional.of(book);
+        return Optional.empty();
     }
 
     @Override
@@ -75,16 +68,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                Integer price = resultSet.getObject("price", Integer.class);
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-
-                books.add(book);
+                books.add(extractBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create connection to the DB ", e);
@@ -97,7 +81,7 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, book.getTitle());
             statement.setInt(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -119,5 +103,18 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t create connection to the DB ", e);
         }
+    }
+
+    private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong("id");
+        String title = resultSet.getString("title");
+        Integer price = resultSet.getObject("price", Integer.class);
+
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+
+        return book;
     }
 }

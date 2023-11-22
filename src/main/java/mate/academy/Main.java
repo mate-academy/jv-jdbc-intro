@@ -1,5 +1,6 @@
 package mate.academy;
 
+import java.util.List;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -8,13 +9,8 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        Book book = new Book();
-        book.setId(1L);
-        book.setTitle("FIRST_UPDATED");
-        book.setPrice(350);
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        bookDao.update(book);
-        Book book2 = new Book();
-        bookDao.deleteById(2L);
+        List<Book> books = bookDao.findAll();
+        System.out.println(books);
     }
 }

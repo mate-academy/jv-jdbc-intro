@@ -7,7 +7,6 @@ import mate.academy.model.Book;
 
 @Dao
 public interface BookDao {
-
     Book create(Book book);
 
     Optional<Book> findById(Long id);
@@ -18,4 +17,3 @@ public interface BookDao {
 
     boolean deleteById(Long id);
 }
-
