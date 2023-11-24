@@ -11,7 +11,6 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         Book book1 = new Book();
@@ -44,7 +43,6 @@ public class Main {
         System.out.println(updatedBook.getPrice());
 
         bookList.forEach(e -> bookDao.deleteById(e.getId()));
-
 
         bookDao.findAll().forEach(e -> System.out.println(e));
         boolean b = bookDao.deleteById(book4.getId());
