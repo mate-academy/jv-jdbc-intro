@@ -46,7 +46,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             Book book = null;
             if (resultSet.next()) {
-                book = retrieveFromResultSet(resultSet);
+                book = retrieveBookFromResultSet(resultSet);
             }
             return Optional.ofNullable(book);
         } catch (SQLException throwable) {
@@ -63,7 +63,7 @@ public class BookDaoImpl implements BookDao {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    books.add(retrieveFromResultSet(resultSet));
+                    books.add(retrieveBookFromResultSet(resultSet));
                 }
                 return books;
             }
@@ -82,11 +82,10 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            statement.executeUpdate();
-            if (statement.executeUpdate() > 0) {
+            int countUpdatedRows = statement.executeUpdate();
+            if (countUpdatedRows > 0) {
                 return book;
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
             throw new RuntimeException("Can't find book " + book + " in the DB ");
         } catch (SQLException throwable) {
             throw new DataProcessingException("Can't update to DB book: "
@@ -106,7 +105,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book retrieveFromResultSet(ResultSet resultSet) throws SQLException {
+    private Book retrieveBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setTitle(resultSet.getString("title"));
         book.setPrice(resultSet.getObject("price", BigDecimal.class));
