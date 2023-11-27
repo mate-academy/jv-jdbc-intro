@@ -54,13 +54,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String title = resultSet.getObject("title", String.class);
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
+                return Optional.of(extractBookFromRes(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create connection to the DB", e);
@@ -76,22 +70,13 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
 
             ResultSet resultSet = prepareStatement.executeQuery();
+
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getObject("title", String.class);
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-
-                bookList.add(book);
+                bookList.add(extractBookFromRes(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create connection to the DB", e);
         }
-
         return bookList;
     }
 
@@ -137,6 +122,21 @@ public class BookDaoImpl implements BookDao {
             return preparedStatement.execute();
         } catch (SQLException e) {
             throw new DataProcessingException("Cant drop DB jdbc_intro_trokhymchu", e);
+        }
+    }
+
+    private Book extractBookFromRes(ResultSet resultSet) {
+        try {
+            Long id = resultSet.getObject("id", Long.class);
+            String title = resultSet.getObject("title", String.class);
+            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't extract book from ResultSet", e);
         }
     }
 }
