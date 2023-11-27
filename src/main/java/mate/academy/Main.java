@@ -1,9 +1,8 @@
 package mate.academy;
 
-import mate.academy.lib.BookDao;
-
 import java.math.BigDecimal;
 import java.util.Optional;
+import mate.academy.lib.BookDao;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,7 +14,7 @@ public class Main {
 
         if (foundBook.isPresent()) {
             Book bookToUpdate = foundBook.get();
-            bookToUpdate.setPrice(new BigDecimal(200));
+            bookToUpdate.setPrice(new BigDecimal(150));
 
             Book updatedBook = bookDao.update(bookToUpdate);
 

@@ -55,11 +55,16 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT id, title, price FROM Books WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = ConnectionUtil.getConnection();
+            statement = connection.prepareStatement(sql);
             statement.setLong(1, id);
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String title = Optional.ofNullable(resultSet.getString("title")).orElse("");
                 BigDecimal price = resultSet.getBigDecimal("price");
@@ -68,7 +73,10 @@ public class BookDaoImpl implements BookDao {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error while finding Book by id: " + id, e);
+        } finally {
+            closeResources(connection, statement, resultSet);
         }
+
         return Optional.empty();
     }
 
@@ -151,7 +159,9 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private void closeResources(Connection connection, Statement statement, ResultSet resultSet) {
+    private void closeResources(Connection connection,
+                                Statement statement,
+                                ResultSet resultSet) {
         try {
             if (resultSet != null) {
                 resultSet.close();
