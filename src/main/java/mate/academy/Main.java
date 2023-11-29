@@ -33,7 +33,7 @@ public class Main {
 
         //SELECT by id
         System.out.println("SELECT by id");
-        System.out.println(bookDao.findById(1L));
+        System.out.println(bookDao.findById(book1.getId()));
 
         //SELECT ALL
         System.out.println("SELECT ALL");

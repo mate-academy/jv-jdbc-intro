@@ -33,7 +33,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add new book: " + book, e);
+            throw new DataProcessingException("Can't add new book: " + book, e);
         }
         return book;
     }
@@ -47,14 +47,10 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book(id, title, price);
-                return Optional.of(book);
+                return Optional.of(getBookByResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't find book by id:" + id, e);
+            throw new DataProcessingException("Can't find book by id:" + id, e);
         }
         return Optional.empty();
     }
@@ -68,15 +64,10 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book(id, title, price);
-                bookList.add(book);
+                bookList.add(getBookByResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create a connection to the DB", e);
+            throw new DataProcessingException("Can't create a connection to the DB", e);
         }
         return bookList;
     }
@@ -95,7 +86,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             checkAffectedRows(affectedRows);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update book: " + book, e);
+            throw new DataProcessingException("Can't update book: " + book, e);
         }
         return book;
     }
@@ -110,13 +101,21 @@ public class BookDaoImpl implements BookDao {
             int updatedRows = statement.executeUpdate();
             return updatedRows > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book by id: " + id, e);
+            throw new DataProcessingException("Can't delete book by id: " + id, e);
         }
     }
 
     private void checkAffectedRows(int affectedRows) {
         if (affectedRows < 1) {
-            throw new RuntimeException("No database rows were affected by the operation");
+            throw new DataProcessingException("No database rows were affected by the operation");
         }
+    }
+
+    private Book getBookByResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+
+        return new Book(id, title, price);
     }
 }
