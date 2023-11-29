@@ -25,10 +25,7 @@ public class BookDaoImpl implements BookDao {
             statement.setDouble(2, book.getPrice().doubleValue());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row, "
-                        + "but inserted 0 rows");
-            }
+            checkAffectedRows(affectedRows);
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -96,9 +93,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                return null;
-            }
+            checkAffectedRows(affectedRows);
         } catch (SQLException e) {
             throw new RuntimeException("Can't update book: " + book, e);
         }
@@ -116,6 +111,12 @@ public class BookDaoImpl implements BookDao {
             return updatedRows > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Can't delete book by id: " + id, e);
+        }
+    }
+
+    private void checkAffectedRows(int affectedRows) {
+        if (affectedRows < 1) {
+            throw new RuntimeException("No database rows were affected by the operation");
         }
     }
 }
