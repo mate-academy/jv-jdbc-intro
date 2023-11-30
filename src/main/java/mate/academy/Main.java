@@ -34,5 +34,8 @@ public class Main {
 */
         book.setPrice(BigDecimal.valueOf(1000));
         bookDao.update(book);
+
+        System.out.println(bookDao.findById(3L));
+        System.out.println(bookDao.deleteById(3L));
     }
 }
