@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             if (updatedRows < 1) {
                 throw new DataProcessingException("Expected to insert at least 1 row"
                         + ", but inserted 0. Book with id "
-                        + book.getId() + " not found.", new SQLException());
+                        + book.getId() + " not found.");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -87,8 +87,9 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int updatedRows = statement.executeUpdate();
             if (updatedRows < 1) {
-                throw new RuntimeException("Expected to update at least 1 row"
-                        + ", but updated 0. Book with id " + book.getId() + " not found.");
+                throw new DataProcessingException("Expected to update at least 1 row"
+                        + ", but updated 0. Book with id " + book.getId()
+                        + " not found.");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot update a book by id " + book.getId(), e);
