@@ -30,8 +30,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(
+                        INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setLong(1, book.getId());
             statement.setString(2, book.getTitle());
@@ -60,7 +60,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_SQL)) {
 
             statement.setLong(1, id);
 
@@ -88,8 +88,8 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL_SQL)) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(SELECT_ALL_SQL)) {
 
             while (resultSet.next()) {
                 books.add(createBookFromResultSet(resultSet));
@@ -104,7 +104,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book updatedBook) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
 
             statement.setString(1, updatedBook.getTitle());
             statement.setBigDecimal(2, updatedBook.getPrice());
@@ -125,7 +125,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
 
             statement.setLong(1, id);
 
