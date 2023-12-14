@@ -21,7 +21,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new RuntimeException("Can not get connection to DataBase", e);
+        }
     }
 }
