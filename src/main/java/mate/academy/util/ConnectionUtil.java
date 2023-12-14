@@ -8,6 +8,7 @@ import mate.academy.exceptions.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/bookstore";
+    private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "Lq1725W8Zzws";
     private static Properties DB_PROPERTIES;
@@ -17,7 +18,7 @@ public class ConnectionUtil {
         DB_PROPERTIES.put("user", USERNAME);
         DB_PROPERTIES.put("password", PASSWORD);
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
             throw new DataProcessingException("Can't load MYSQL Driver", e);
         }

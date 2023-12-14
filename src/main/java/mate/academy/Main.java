@@ -18,7 +18,6 @@ public class Main {
     private static final BigDecimal FOURTH_PRICE = BigDecimal.valueOf(140.00);
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book firstBook = new Book();
         firstBook.setTitle(FIRST_TITLE);
         firstBook.setPrice(FIRST_PRICE);
@@ -28,20 +27,18 @@ public class Main {
         Book thirdBook = new Book();
         thirdBook.setTitle(THIRD_TITLE);
         thirdBook.setPrice(THIRD_PRICE);
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         bookDao.create(firstBook);
         bookDao.create(secondBook);
         bookDao.create(thirdBook);
-
         Optional<Book> bookById = bookDao.findById(1L);
         System.out.println(bookById);
         List<Book> books = bookDao.findAll();
         System.out.println(books);
-
         thirdBook.setPrice(FOURTH_PRICE);
         bookDao.update(thirdBook);
-
         bookDao.deleteById(2L);
-        System.out.println(books);
+        System.out.println(bookDao.findAll());
     }
 }

@@ -27,7 +27,8 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row, but inserted 0");
+                throw new DataProcessingException(
+                        "Expected to insert at least one row, but inserted 0");
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -82,7 +83,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(3, book.getId());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Can't find book: "
+                throw new DataProcessingException("Can't find book: "
                         + book + " - no rows in database updated");
             }
         } catch (SQLException e) {
