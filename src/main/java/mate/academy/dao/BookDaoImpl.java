@@ -83,7 +83,7 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sqlQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
-                = connection.prepareStatement(sqlQuery);) {
+                = connection.prepareStatement(sqlQuery)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -102,7 +102,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sqlQuery = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
-                = connection.prepareStatement(sqlQuery);) {
+                = connection.prepareStatement(sqlQuery)) {
             statement.setLong(1, id);
             int updatedRows = statement.executeUpdate();
             return updatedRows > 0;
