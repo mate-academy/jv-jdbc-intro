@@ -15,6 +15,10 @@ public class ConnectionUtil {
     private static final String INIT_FILE_PATH = "src/main/resourses/init_db.sql";
     private static String init_script;
 
+    private ConnectionUtil() {
+
+    }
+
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
