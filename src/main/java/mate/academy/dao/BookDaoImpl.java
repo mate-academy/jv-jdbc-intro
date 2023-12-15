@@ -17,29 +17,28 @@ public class BookDaoImpl implements BookDao {
     private static final String READ_SCRIPT
             = "SELECT * FROM books WHERE id = ?";
     private static final String CREATE_SCRIPT
-            = "INSERT INTO books(id, title, price) VALUES (?, ?, ?)";
+            = "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String UPDATE_SCRIPT
             = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_SCRIPT
             = "DELETE FROM books WHERE id = ?";
     private static final String ALL_SCRIPT
             = "SELECT * FROM books";
-    private static final String FIND_MAX_ID_SCRIPT
-            = "SELECT MAX(id) AS id FROM books";
+    private static final String FIND_ID_SCRIPT
+            = "SELECT id FROM books WHERE title = ?";
 
     @Override
     public Book create(Book book) {
-        book.setId(findMaxID() + 1);
         try (PreparedStatement statement = ConnectionUtil.getConnection()
                 .prepareStatement(CREATE_SCRIPT)) {
-            statement.setLong(1, book.getId());
-            statement.setString(2, book.getTitle());
-            statement.setBigDecimal(3, book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
+            book.setId(findID(book.getTitle()));
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create a new book", e);
         }
-        return book;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                book = new Book(resultSet.getObject("id", long.class),
+                book = newBook(resultSet.getObject("id", long.class),
                         resultSet.getString("title"),
                         resultSet.getObject("price", BigDecimal.class));
             }
@@ -67,7 +66,7 @@ public class BookDaoImpl implements BookDao {
                 .prepareStatement(ALL_SCRIPT)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                bookList.add(new Book(resultSet.getObject("id", long.class),
+                bookList.add(newBook(resultSet.getObject("id", long.class),
                         resultSet.getString("title"),
                         resultSet.getObject("price", BigDecimal.class)));
             }
@@ -103,9 +102,10 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private long findMaxID() {
+    private long findID(String title) {
         try (PreparedStatement statement = ConnectionUtil.getConnection()
-                .prepareStatement(FIND_MAX_ID_SCRIPT)) {
+                .prepareStatement(FIND_ID_SCRIPT)) {
+            statement.setString(1, title);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getLong("id");
@@ -114,5 +114,9 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't find max id", e);
         }
         return 0;
+    }
+
+    private Book newBook(long id, String title, BigDecimal price) {
+        return new Book(id, title, price);
     }
 }

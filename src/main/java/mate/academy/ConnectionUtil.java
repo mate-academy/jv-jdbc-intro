@@ -31,7 +31,7 @@ public class ConnectionUtil {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 
-    public static void createTable() {
+    private static void createTable() {
         File initFile = new File(INIT_FILE_PATH);
         try {
             init_script = Files.readAllLines(initFile.toPath()).stream()

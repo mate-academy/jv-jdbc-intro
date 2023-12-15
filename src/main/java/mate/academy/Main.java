@@ -20,6 +20,8 @@ public class Main {
         System.out.println();
         bookDao.deleteById(1L);
         bookDao.findAll().forEach(System.out::println);
+        System.out.println();
+        System.out.println(bookDao.findById(2L).toString());
         bookDao.deleteById(2L);
         bookDao.deleteById(3L);
         bookDao.findAll().forEach(System.out::println);
