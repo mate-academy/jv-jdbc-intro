@@ -85,7 +85,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE book SET title = ?,price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
-                       Statement.RETURN_GENERATED_KEYS)) {
+                        Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
