@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException(
-                        "Expected to insert at least one row, but inserted 0 rows");
+                        "Expected to insert at least one row");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
