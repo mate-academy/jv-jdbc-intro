@@ -12,5 +12,3 @@ INSERT INTO Book (title, price) VALUES
     ('1984', 24.50),
     ('Pride and Prejudice', 14.99),
     ('The Catcher in the Rye', 17.75);
-
-SELECT * FROM book;

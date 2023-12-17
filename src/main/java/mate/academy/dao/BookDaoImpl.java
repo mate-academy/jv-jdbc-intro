@@ -45,14 +45,10 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            String title = resultSet.getString("title");
-            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-            Book book = new Book();
-            book.setId(id);
-            book.setTitle(title);
-            book.setPrice(price);
-            return Optional.of(book);
+            if (resultSet.next()) {
+                return Optional.of(mapToBook(resultSet));
+            }
+            return Optional.empty();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book by id " + id, e);
         }
@@ -66,14 +62,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                books.add(book);
+                books.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get data from database", e);
@@ -112,5 +101,16 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id " + id, e);
         }
+    }
+
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getObject("title", String.class);
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
