@@ -15,18 +15,14 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private final int firstParameter = 1;
-    private final int secondParameter = 2;
-    private final int thirdParameter = 3;
-
     @Override
     public Book create(Book book) {
         String sqlQuery = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(firstParameter, book.getTitle());
-            statement.setBigDecimal(secondParameter, book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -45,7 +41,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(sqlQuery)) {
-            statement.setLong(firstParameter, id);
+            statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Book book = createBook(resultSet);
@@ -79,9 +75,9 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(firstParameter, book.getTitle());
-            statement.setBigDecimal(secondParameter, book.getPrice());
-            statement.setLong(thirdParameter, book.getId());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update DB with book " + book, e);
@@ -95,7 +91,7 @@ public class BookDaoImpl implements BookDao {
         int injuredRows;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            statement.setLong(firstParameter, id);
+            statement.setLong(1, id);
             injuredRows = statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book from DB by " + id, e);
