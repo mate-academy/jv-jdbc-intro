@@ -1,7 +1,6 @@
 package mate.academy.connection;
 
 import mate.academy.exception.DataProcessingException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

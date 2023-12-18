@@ -1,14 +1,17 @@
 package mate.academy.dao;
 
-import mate.academy.connection.ConnectionUtil;
-import mate.academy.exception.DataProcessingException;
-import mate.academy.lib.Dao;
 import java.math.BigDecimal;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.connection.ConnectionUtil;
+import mate.academy.exception.DataProcessingException;
+import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
 @Dao
@@ -25,8 +28,8 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert " +
-                    "at leas on row? but inserted 0 rows.");
+                throw new DataProcessingException("Expected to insert "
+                    + "at leas on row? but inserted 0 rows.");
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -90,8 +93,8 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int executeUpdate = statement.executeUpdate();
             if (executeUpdate < 1) {
-                throw new DataProcessingException("Expected to insert " +
-                    "at leas on row? but inserted 0 rows.");
+                throw new DataProcessingException("Expected to insert "
+                    + "at leas on row? but inserted 0 rows.");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t find book " + book + " don`t update ", e);
@@ -103,7 +106,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             int executeUpdate = statement.executeUpdate();
             return executeUpdate > 0;
