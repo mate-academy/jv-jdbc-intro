@@ -5,10 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;import java.util.List;
-import java.util.ArrayList;
-
+import java.sql.Statement;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 import mate.academy.connection.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
@@ -21,7 +21,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                    connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
