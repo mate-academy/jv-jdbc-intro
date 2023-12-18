@@ -10,6 +10,10 @@ public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final Properties dbProperties;
 
+    private ConnectionUtil() {
+        throw new AssertionError("ConnectionUtil class should not be instantiated.");
+    }
+
     static {
         dbProperties = new Properties();
         dbProperties.put("user", "root");

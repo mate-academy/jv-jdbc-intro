@@ -27,8 +27,8 @@ public class BookDaoImp implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at leas one row,"
-                        + " but inserted 0 rows.");
+                throw new DataProcessingException("Expected to insert at least one row,"
+                        + " but inserted 0 rows.", new RuntimeException());
             }
             ResultSet generationKey = statement.getGeneratedKeys();
             if (generationKey.next()) {
@@ -43,18 +43,17 @@ public class BookDaoImp implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "select * from books WHERE id = ?";
+        String sql = "SELECT * FROM books WHERE id = ?";
         Book book;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                book = new Book(id, title, price);
+                book = extractBookFromResultSet(resultSet);
             } else {
-                throw new RuntimeException("Element with this index was not found. Index = " + id);
+                throw new DataProcessingException("Element with this index was not found. Index = "
+                        + id, new RuntimeException());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Could not find element at index.", e);
@@ -64,19 +63,16 @@ public class BookDaoImp implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String sql = "select * from books";
+        String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                books.add(new Book(id, title, price));
+                books.add(extractBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Could not find element", e);
+            throw new DataProcessingException("Could not find element", e);
         }
         return books;
     }
@@ -91,11 +87,11 @@ public class BookDaoImp implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to update at leas one row,"
-                        + " but updated 0 rows.");
+                throw new DataProcessingException("Expected to update at leas one row,"
+                        + " but updated 0 rows.", new RuntimeException());
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update element.", e);
+            throw new DataProcessingException("Failed to update element.", e);
         }
         return book;
     }
@@ -108,12 +104,19 @@ public class BookDaoImp implements BookDao {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to delete at leas one row,"
-                        + " but deleted 0 rows.");
+                throw new DataProcessingException("Expected to update at leas one row,"
+                        + " but updated 0 rows.", new RuntimeException());
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete element", e);
+            throw new DataProcessingException("Failed to delete element.", e);
         }
         return true;
+    }
+
+    private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong("id");
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Book(id, title, price);
     }
 }
