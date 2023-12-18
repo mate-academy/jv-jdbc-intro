@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mate.academy.exception.DataProcessingException;
 
 public class Injector {
     private static final Map<String, Injector> injectors = new HashMap<>();
@@ -18,7 +19,7 @@ public class Injector {
         try {
             classes.addAll(getClasses(mainPackageName));
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Can't get information about all classes", e);
+            throw new DataProcessingException("Can't get information about all classes", e);
         }
     }
 
@@ -46,7 +47,7 @@ public class Injector {
                 }
             }
         }
-        throw new RuntimeException("Can't find class which implements "
+        throw new DataProcessingException("Can't find class which implements "
                 + certainInterface.getName()
                 + " interface and has valid annotation (Dao or Service)");
     }
@@ -57,7 +58,7 @@ public class Injector {
             Constructor<?> classConstructor = clazz.getConstructor();
             newInstance = classConstructor.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Can't create object of the class", e);
+            throw new DataProcessingException("Can't create object of the class", e);
         }
         return newInstance;
     }
@@ -75,7 +76,7 @@ public class Injector {
             throws IOException, ClassNotFoundException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
-            throw new RuntimeException("Class loader is null");
+            throw new DataProcessingException("Class loader is null");
         }
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
@@ -110,7 +111,7 @@ public class Injector {
             for (File file : files) {
                 if (file.isDirectory()) {
                     if (file.getName().contains(".")) {
-                        throw new RuntimeException("File name shouldn't consist point.");
+                        throw new DataProcessingException("File name shouldn't consist point.");
                     }
                     classes.addAll(findClasses(file, packageName + "."
                             + file.getName()));
