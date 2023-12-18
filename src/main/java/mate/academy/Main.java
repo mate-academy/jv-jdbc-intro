@@ -1,10 +1,8 @@
 package mate.academy;
 
-import com.sun.security.jgss.GSSUtil;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-
 import java.math.BigDecimal;
 
 public class Main {
@@ -12,11 +10,11 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book1 = bookDao.create(new Book("Harry Potter and the Philosopher's Stone",
-            new BigDecimal("10.45")));
+                new BigDecimal("10.45")));
         Book book2 = bookDao.create(new Book("Harry Potter And The Chamber of secrets",
-            new BigDecimal("17.22")));
+                new BigDecimal("17.22")));
         Book book3 = bookDao.create(new Book("Harry Potter and the prisoner of Azkaban",
-            new BigDecimal("20.15")));
+                new BigDecimal("20.15")));
 
         book3.setPrice(new BigDecimal("10.56"));
         System.out.println(bookDao.update(book3));
