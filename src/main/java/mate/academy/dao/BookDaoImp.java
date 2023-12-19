@@ -56,7 +56,7 @@ public class BookDaoImp implements BookDao {
                         + id, new RuntimeException());
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Could not find element at index.", e);
+            throw new NullPointerException();
         }
         return Optional.of(book);
     }
@@ -90,10 +90,10 @@ public class BookDaoImp implements BookDao {
                 throw new DataProcessingException("Expected to update at leas one row,"
                         + " but updated 0 rows.", new RuntimeException());
             }
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to update element.", e);
         }
-        return book;
     }
 
     @Override
