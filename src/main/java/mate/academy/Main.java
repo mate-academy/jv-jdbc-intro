@@ -1,17 +1,14 @@
 package mate.academy;
 
+import java.io.File;
+import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-
-
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
         File createTableScript = new File("src/main/resources/init_db.sql");
         ScriptCreateTable scriptCreateTable = new ScriptCreateTable();

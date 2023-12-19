@@ -12,6 +12,7 @@ public class Book {
         this.title = title;
         this.price = price;
     }
+
     public Book(String title, BigDecimal price) {
         this.title = title;
         this.price = price;
@@ -43,10 +44,9 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price + '}';
     }
 }
