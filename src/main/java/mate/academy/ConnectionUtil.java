@@ -1,32 +1,33 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
-    private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
-    private static final Properties dbProperties;
-
-    private ConnectionUtil() {
-        throw new AssertionError("ConnectionUtil class should not be instantiated.");
-    }
+    private static final Properties DB_PROPERTIES;
 
     static {
-        dbProperties = new Properties();
-        dbProperties.put("user", "root");
-        dbProperties.put("password", "Taras312");
+        DB_PROPERTIES = new Properties();
+        DB_PROPERTIES.put("user", "admin");
+        DB_PROPERTIES.put("password", "admin123");
         try {
-            Class.forName(DRIVER_CLASS_NAME);
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can not loud JDBC driver: " + e);
+            throw new DataProcessingException("Can't load JDBC driver", e);
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, dbProperties);
-    }
+    public static Connection getConnection() {
+        try {
+            return DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/test", DB_PROPERTIES);
 
+        } catch (SQLException e) {
+            throw new DataProcessingException("Unable to connect to DB", e);
+        }
+    }
 }
