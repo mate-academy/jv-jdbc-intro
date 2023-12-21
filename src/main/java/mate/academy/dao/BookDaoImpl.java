@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
+import mate.academy.exceptions.DataProcessingException;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -22,7 +22,7 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title, price) VALUE (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                     query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                        query, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
 
