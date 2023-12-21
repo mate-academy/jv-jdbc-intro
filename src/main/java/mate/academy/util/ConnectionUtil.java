@@ -1,11 +1,11 @@
 package mate.academy.util;
 
-import mate.academy.exceptions.DataProcessingException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import mate.academy.exceptions.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/bookstore";

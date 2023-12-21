@@ -1,10 +1,5 @@
 package mate.academy.dao;
 
-import mate.academy.exceptions.DataProcessingException;
-import mate.academy.lib.Dao;
-import mate.academy.model.Book;
-import mate.academy.util.ConnectionUtil;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +8,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import mate.academy.exceptions.DataProcessingException;
+import mate.academy.lib.Dao;
+import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -104,8 +104,8 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
-            int updateRows = preparedStatement.executeUpdate();
-            return updateRows > 0;
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete a book by id: " + id, e);
