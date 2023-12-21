@@ -8,6 +8,7 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
+
     private static final Injector injector = Injector.getInstance("mate.academy");
     private static final String FIRST_TITLE = "To Kill a Mockingbird";
     private static final String SECOND_TITLE = "1984";
@@ -22,24 +23,31 @@ public class Main {
         Book firstBook = new Book();
         firstBook.setTitle(FIRST_TITLE);
         firstBook.setPrice(FIRST_PRICE);
+
         Book secondBook = new Book();
         secondBook.setTitle(SECOND_TITLE);
         secondBook.setPrice(SECOND_PRICE);
+
         Book thirdBook = new Book();
         thirdBook.setTitle(THIRD_TITLE);
         thirdBook.setPrice(THIRD_PRICE);
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         bookDao.create(firstBook);
         bookDao.create(secondBook);
         bookDao.create(thirdBook);
+
         Optional<Book> bookById = bookDao.findById(1L);
         System.out.println(bookById);
+
         List<Book> books = bookDao.findAll();
         System.out.println(books);
+
         thirdBook.setPrice(FOURTH_PRICE);
         bookDao.update(thirdBook);
+
         bookDao.deleteById(2L);
         System.out.println(bookDao.findAll());
+
     }
 }
