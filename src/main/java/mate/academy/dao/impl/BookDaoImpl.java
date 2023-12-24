@@ -1,4 +1,4 @@
-package mate.academy.dao;
+package mate.academy.dao.impl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
@@ -27,7 +28,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert at least one row,"
+                throw new RuntimeException("Expected to insert at least one row,"
                         + " but inserted 0 rows.", new RuntimeException());
             }
             ResultSet generationKey = preparedStatement.getGeneratedKeys();
@@ -53,7 +54,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(extractBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create a connection to the database", e);
+            throw new DataProcessingException("Can't find the book with id = " + id, e);
         }
         return Optional.empty();
     }
@@ -70,7 +71,7 @@ public class BookDaoImpl implements BookDao {
                 foundBooks.add(extractBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create a connection to the database", e);
+            throw new DataProcessingException("Can't get the books list", e);
         }
         return foundBooks;
     }
@@ -109,7 +110,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
+        Long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");
         return new Book(id, title, price);
