@@ -52,9 +52,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                return Optional.of(createBookObject(id, title, price));
+                return Optional.of(parseBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get a book by id " + id, e);
@@ -71,10 +69,7 @@ public class BookDaoImpl implements BookDao {
         ) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Long id = resultSet.getObject("id", Long.class);
-                bookList.add(createBookObject(id, title, price));
+                bookList.add(parseBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get a book list", e);
@@ -119,7 +114,10 @@ public class BookDaoImpl implements BookDao {
         return true;
     }
 
-    private Book createBookObject(Long id, String title, BigDecimal price) {
+    private Book parseBook(ResultSet resultSet) throws SQLException {
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        Long id = resultSet.getObject("id", Long.class);
         Book book = new Book();
         book.setId(id);
         book.setPrice(price);
