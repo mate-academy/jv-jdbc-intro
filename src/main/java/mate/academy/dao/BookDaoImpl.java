@@ -57,7 +57,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get a book by id " + id, e);
         }
-        throw new DataProcessingException("Can't get a book by id " + id);
+        return Optional.empty();
     }
 
     @Override
