@@ -58,9 +58,9 @@ public class BookDaoImpl implements BookDao {
 
             if (resultSet.next()) {
                 return Optional.of(extractBookFromResultSet(resultSet));
-            } else {
-                return Optional.empty();
             }
+
+            return Optional.empty();
 
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to find a book by ID: " + id, e);
