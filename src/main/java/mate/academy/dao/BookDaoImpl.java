@@ -72,17 +72,9 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = createBookFromResultSet(resultSet);
                 books.add(book);
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException("Error retrieving all books", e);
         }
@@ -102,10 +94,11 @@ public class BookDaoImpl implements BookDao {
             if (affectedRows == 0) {
                 throw new RuntimeException("Failed to update book with id: " + book.getId());
             }
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Error updating book", e);
         }
-        return book;
+
     }
 
     @Override
@@ -118,6 +111,22 @@ public class BookDaoImpl implements BookDao {
             return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Error deleting book with id: " + id, e);
+        }
+    }
+
+    private Book createBookFromResultSet(ResultSet resultSet) {
+        try {
+            Long id = resultSet.getObject("id", Long.class);
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getBigDecimal("price");
+
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't create book file", e);
         }
     }
 }

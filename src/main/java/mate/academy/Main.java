@@ -20,7 +20,8 @@ public class Main {
         for (Book book : books) {
             bookDao.create(book);
         }
-        Book book = bookDao.findById(1L).get();
+        Book book = bookDao.findById(1L).orElseThrow(() ->
+                new RuntimeException("Value is not present"));
 
         List<Book> listBooks = bookDao.findAllById();
         System.out.println(listBooks);
