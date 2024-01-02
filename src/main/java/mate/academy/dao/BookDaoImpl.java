@@ -34,10 +34,10 @@ public class BookDaoImpl implements BookDao {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add data to table", e);
         }
-        return book;
     }
 
     @Override
@@ -114,8 +114,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book createBookFromResultSet(ResultSet resultSet) {
-        try {
+    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
             Long id = resultSet.getObject("id", Long.class);
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getBigDecimal("price");
@@ -125,8 +124,5 @@ public class BookDaoImpl implements BookDao {
             book.setTitle(title);
             book.setPrice(price);
             return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't create book file", e);
-        }
     }
 }
