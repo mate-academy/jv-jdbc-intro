@@ -22,7 +22,7 @@ public class Main {
         System.out.println(bookDao.update(book3));
 
         System.out.println();
-        System.out.println(bookDao.findById(book1.getId()));
+        System.out.println(bookDao.findById(book2.getId()));
 
         bookDao.deleteById(2L);
         System.out.println();
