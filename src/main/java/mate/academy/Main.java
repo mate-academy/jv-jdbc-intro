@@ -17,12 +17,12 @@ public class Main {
                 new BigDecimal("17.22")));
         Book book3 = bookDao.create(new Book("Harry Potter and the prisoner of Azkaban",
                 new BigDecimal("20.15")));
+        System.out.println(bookDao.findById(book1.getId()));
 
-        book3.setPrice(new BigDecimal("10.56"));
         System.out.println(bookDao.update(book3));
 
         System.out.println();
-        System.out.println(bookDao.findById(book2.getId()));
+        book3.setPrice(new BigDecimal("10.56"));
 
         bookDao.deleteById(2L);
         System.out.println();
