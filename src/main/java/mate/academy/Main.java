@@ -4,15 +4,13 @@ import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import mate.academy.model.impl.BookImpl;
 
 public class Main {
     private static final Injector injector = Injector
             .getInstance("mate.academy.dao.impl");
 
     public static void main(String[] args) {
-        Book book = new BookImpl();
-        book.setId(1L);
+        Book book = new Book();
         book.setTitle("Harry Potter");
         book.setPrice(BigDecimal.valueOf(50));
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);

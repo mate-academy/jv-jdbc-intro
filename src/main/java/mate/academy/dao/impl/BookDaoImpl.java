@@ -14,7 +14,6 @@ import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-import mate.academy.model.impl.BookImpl;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -60,10 +59,7 @@ public class BookDaoImpl implements BookDao {
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
 
-                Book book = new BookImpl();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = getBook(id, title, price);
 
                 return Optional.of(book);
             }
@@ -86,11 +82,8 @@ public class BookDaoImpl implements BookDao {
                 Long id = resultSet.getLong("id");
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new BookImpl();
 
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = getBook(id, title, price);
 
                 bookList.add(book);
             }
@@ -99,6 +92,15 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot get all rows", e);
         }
+    }
+
+    private Book getBook(Long id, String title, BigDecimal price) {
+        Book book = new Book();
+
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 
     @Override

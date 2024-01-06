@@ -2,16 +2,40 @@ package mate.academy.model;
 
 import java.math.BigDecimal;
 
-public interface Book {
-    void setTitle(String title);
+public class Book {
+    private Long id;
+    private String title;
+    private BigDecimal price;
 
-    void setPrice(BigDecimal price);
+    public Long getId() {
+        return id;
+    }
 
-    void setId(Long id);
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    String getTitle();
+    public String getTitle() {
+        return title;
+    }
 
-    BigDecimal getPrice();
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    Long getId();
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String toString() {
+        return "Book with "
+                + "id=" + id
+                + ", title='" + title
+                + '\''
+                + ", price=" + price;
+    }
 }
