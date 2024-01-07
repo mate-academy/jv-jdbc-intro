@@ -14,7 +14,8 @@ public class Main {
         Book testBook = new Book("Harry Potter", BigDecimal.valueOf(115L));
         Book book = bookDao.create(testBook);
         Optional<Book> bookById = bookDao.findById(1L);
-        bookDao.update(new Book(10L, "Harry Potter", BigDecimal.valueOf(115L)));
+        Book updateTestBook = new Book(10L, "Peter Pan", BigDecimal.valueOf(130L));
+        bookDao.update(updateTestBook);
         bookDao.deleteById(6L);
         System.out.println(bookDao.findAll());
     }
