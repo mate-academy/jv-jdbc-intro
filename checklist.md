@@ -101,7 +101,7 @@ Good: `books.title`
             throw new DataProcessingException("Can't save a book " + book, e);
         ``` 
 
-* Don't use schema's name in your queries, because you are configuring it while establishing a connection with DB.
+* Don't use schema's name in your queries, because you are configuring it establishing a connection with DB.
 
     - Bad practice:
         ```sql  
