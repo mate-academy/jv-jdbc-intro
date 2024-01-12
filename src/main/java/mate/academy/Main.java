@@ -37,8 +37,6 @@ public class Main {
 
         boolean isDeleted = bookDao.deleteById(book.getId());
         System.out.println("Book deleted: " + (isDeleted ? "Yes" : "No"));
-
-        bookDao.closeConnection();
     }
 }
 
