@@ -15,8 +15,8 @@ public class Main {
 
         Book updateBook = new Book();
         updateBook.setId(2L);
-        updateBook.setTitle("Robin Hood");
-        updateBook.setPrice(BigDecimal.valueOf(520));
+        updateBook.setTitle("Robin");
+        updateBook.setPrice(BigDecimal.valueOf(500));
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
@@ -25,7 +25,7 @@ public class Main {
         // Update
         System.out.println(bookDao.update(updateBook));
         // Delete
-        System.out.println(bookDao.deleteById(5L));
+        System.out.println(bookDao.deleteById(7L));
         // Read
         System.out.println(bookDao.findById(1L));
         System.out.println(bookDao.findAll());
