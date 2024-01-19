@@ -51,10 +51,10 @@ public class BookDaoImpl implements BookDao {
             if (resultSet.next()) {
                 book = mapBookFromResultSet(resultSet);
             }
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find book with id: " + id, e);
         }
-        return Optional.ofNullable(book);
     }
 
     @Override
