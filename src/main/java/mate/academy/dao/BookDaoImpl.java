@@ -32,10 +32,10 @@ public class BookDaoImpl implements BookDao {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot add book: " + book + " to DB", e);
         }
-        return book;
     }
 
     @Override
@@ -49,10 +49,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                book = new Book();
-                book.setId(id);
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
+                book = mapBookFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find book with id: " + id, e);
@@ -70,10 +67,7 @@ public class BookDaoImpl implements BookDao {
         ) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
+                Book book = mapBookFromResultSet(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -118,5 +112,13 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book with id: " + id, e);
         }
+    }
+
+    private Book mapBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong("id"));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getObject("price", BigDecimal.class));
+        return book;
     }
 }
