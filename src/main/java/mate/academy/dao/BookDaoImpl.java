@@ -20,25 +20,24 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        query, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Creating book failed, no rows affected.");
             }
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    book.setId(generatedKeys.getLong(1));
-                } else {
-                    throw new SQLException("Creating book failed, no ID obtained.");
-                }
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                book.setId(generatedKeys.getLong(1));
+            } else {
+                throw new SQLException("Creating book failed, no ID obtained.");
             }
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Error adding book " + book + " to the database", e);
         }
-        return book;
     }
 
     @Override
@@ -48,14 +47,13 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                Book book = null;
                 if (resultSet.next()) {
                     String title = resultSet.getString("title");
                     BigDecimal price = resultSet.getBigDecimal("price");
-                    Book book = new Book(id, title, price);
-                    return Optional.of(book);
-                } else {
-                    return Optional.empty();
+                    book = new Book(id, title, price);
                 }
+                return Optional.ofNullable(book);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error finding book by id="
@@ -77,10 +75,10 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book(id, title, price);
                 books.add(book);
             }
+            return books;
         } catch (SQLException e) {
             throw new DataProcessingException("Error executing SQL query", e);
         }
-        return books;
     }
 
     @Override
