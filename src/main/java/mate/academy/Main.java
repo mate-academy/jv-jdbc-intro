@@ -12,14 +12,17 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book(1L,"Harry Potter and The Chamber of Secrets", new BigDecimal(123));
-        bookDao.create(book);
-        book = new Book(1L,"Lord of The Rings", new BigDecimal(345));
-        bookDao.create(book);
-        Optional<Book> bookFromDB = bookDao.findById(1L);
-        book = new Book(1L, "Harry Potter and The Goblet of Fire", new BigDecimal(321));
-        bookDao.update(book);
-        bookDao.deleteById(1L);
+        Book newBook = new Book("Harry Potter and The Chamber of Secrets", new BigDecimal(123));
+        bookDao.create(newBook);
+        newBook = new Book("Lord of The Rings", new BigDecimal(345));
+        bookDao.create(newBook);
+        Optional<Book> bookFromDB = bookDao.findById(newBook.getId());
+        bookFromDB.ifPresent(book -> {
+            book.setTitle("Harry Potter and The Goblet of Fire");
+            book.setPrice(new BigDecimal(234));
+            bookDao.update(bookFromDB.get());
+        });
+        bookDao.deleteById(newBook.getId());
         List<Book> books = bookDao.findAll();
     }
 }
