@@ -15,7 +15,6 @@ import model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public void create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -64,7 +63,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 books.add(getBook(resultSet));
             }
         } catch (SQLException e) {
@@ -74,7 +73,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void update(Book book) {
+    public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -88,6 +87,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update a book: " + book, e);
         }
+        return book;
     }
 
     @Override

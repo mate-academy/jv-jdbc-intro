@@ -46,7 +46,7 @@ public class Main {
         }
 
         Book updateBook = new Book();
-        updateBook.setId(4L);
+        updateBook.setId(3L);
         updateBook.setTitle(NEW_TITLE_BOOK);
         updateBook.setPrice(NEW_PRICE_BOOK);
         bookDao.update(updateBook);

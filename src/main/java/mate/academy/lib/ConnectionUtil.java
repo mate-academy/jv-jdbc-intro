@@ -8,12 +8,13 @@ import java.util.Properties;
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/homework";
     private static final Properties DB_PROPERTIES;
+    private static final String USER_DB = "root";
+    private static final String PASSWORD_DB = "22M_$fJsha";
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "22M_$fJsha");
-
+        DB_PROPERTIES.put("user", USER_DB);
+        DB_PROPERTIES.put("password", PASSWORD_DB);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
