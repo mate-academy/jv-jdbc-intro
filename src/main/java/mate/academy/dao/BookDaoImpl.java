@@ -16,12 +16,14 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String CREATE_QUERY = "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String PRICE = "price";
 
     @Override
     public Book create(Book book) {
@@ -104,9 +106,9 @@ public class BookDaoImpl implements BookDao {
 
     private Book convertToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getObject("id", Long.class));
-        book.setTitle(resultSet.getString("title"));
-        book.setPrice(resultSet.getObject("price", BigDecimal.class));
+        book.setId(resultSet.getObject(ID, Long.class));
+        book.setTitle(resultSet.getString(TITLE));
+        book.setPrice(resultSet.getObject(PRICE, BigDecimal.class));
         return book;
     }
 }
