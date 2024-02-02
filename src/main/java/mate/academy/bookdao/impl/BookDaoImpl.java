@@ -50,16 +50,16 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Book book = new Book();
+        Book book1 = new Book();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection
                         .prepareStatement(FIND_BY_ID_QUERY)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                book = getBook(resultSet);
+                book1 = getBook(resultSet);
             }
-            return Optional.ofNullable(book);
+            return Optional.ofNullable(book1);
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find a book by id " + id, e);
         }
