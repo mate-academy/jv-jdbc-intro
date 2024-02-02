@@ -32,6 +32,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedKey = preparedStatement.executeUpdate();
+            affectedKey = preparedStatement.executeUpdate();
             if (affectedKey == 0) {
                 throw new RuntimeException("Cannot get key");
             }
@@ -61,7 +62,7 @@ public class BookDaoImpl implements BookDao {
             }
             return Optional.ofNullable(book1);
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot find a book by id " + id, e);
+            throw new RuntimeException(e);
         }
     }
 
