@@ -15,6 +15,9 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_PRICE = "price";
 
     @Override
     public Book create(Book book) {
@@ -44,14 +47,13 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String request = "SELECT * FROM books WHERE id = ?";
         Book book = new Book();
-        Optional<Book> bookOptional = Optional.of(book);
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(request)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
+                String title = resultSet.getString(COLUMN_TITLE);
+                BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
                 book.setId(id);
                 book.setTitle(title);
                 book.setPrice(price);
@@ -59,7 +61,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return bookOptional;
+        return Optional.of(book);
     }
 
     @Override
@@ -70,9 +72,9 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(request)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
+                Long id = resultSet.getObject(COLUMN_ID, Long.class);
+                String title = resultSet.getString(COLUMN_TITLE);
+                BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
                 Book book = new Book();
                 book.setId(id);
                 book.setTitle(title);
