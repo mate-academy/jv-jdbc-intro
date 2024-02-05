@@ -102,14 +102,10 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book getResultSet(ResultSet executeQuery) {
-        try {
-            Long id = executeQuery.getObject("id", Long.class);
-            String title = executeQuery.getString("title");
-            BigDecimal price = executeQuery.getBigDecimal("price");
-            return new Book(id, title, price);
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can' find data from: " + executeQuery, e);
-        }
+    private Book getResultSet(ResultSet executeQuery) throws SQLException {
+        Long id = executeQuery.getObject("id", Long.class);
+        String title = executeQuery.getString("title");
+        BigDecimal price = executeQuery.getBigDecimal("price");
+        return new Book(id, title, price);
     }
 }
