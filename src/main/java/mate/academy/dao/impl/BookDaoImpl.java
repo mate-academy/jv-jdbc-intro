@@ -108,11 +108,13 @@ public class BookDaoImpl implements Dao<Book> {
 
             if (updatedRows >= REQUIRED_MINIMUM_OF_CHANGED_ROWS) {
                 return book;
+            } else {
+                throw new DataProcessingException("Book with id " + book.getId()
+                        + " wasn't found in the DB");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update a book with id " + book.getId(), e);
         }
-        return null;
     }
 
     @Override
