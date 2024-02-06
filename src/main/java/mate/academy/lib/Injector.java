@@ -41,14 +41,14 @@ public class Injector {
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> singleInterface : interfaces) {
                 if (singleInterface.equals(certainInterface)
-                        && clazz.isAnnotationPresent(Dao.class)) {
+                        && clazz.isAnnotationPresent(DaoImpl.class)) {
                     return clazz;
                 }
             }
         }
         throw new RuntimeException("Can't find class which implements "
                 + certainInterface.getName()
-                + " interface and has valid annotation (Dao or Service)");
+                + " interface and has valid annotation (DaoImpl or Service)");
     }
 
     private Object createInstance(Class<?> clazz) {
