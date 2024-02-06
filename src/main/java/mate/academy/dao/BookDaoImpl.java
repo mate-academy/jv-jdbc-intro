@@ -21,7 +21,7 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
 
         try (Connection conn = ConnectionUtil.getConn();
-             var statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
@@ -51,11 +51,10 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
 
         try (Connection conn = ConnectionUtil.getConn();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+                PreparedStatement statement = conn.prepareStatement(query)) {
 
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
                 book = getBookFromResultSet(resultSet);
             }
@@ -71,7 +70,8 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books";
 
         try (Connection conn = ConnectionUtil.getConn();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+                PreparedStatement statement = conn.prepareStatement(query)) {
+
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(getBookFromResultSet(resultSet));
@@ -89,7 +89,8 @@ public class BookDaoImpl implements BookDao {
                 () -> new DataProcessingException("Book you want to update is absent in table"));
 
         try (Connection conn = ConnectionUtil.getConn();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+                PreparedStatement statement = conn.prepareStatement(query)) {
+
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -110,9 +111,9 @@ public class BookDaoImpl implements BookDao {
         int affectedRows;
 
         try (Connection conn = ConnectionUtil.getConn();
-             PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setLong(1, id);
+                PreparedStatement statement = conn.prepareStatement(query)) {
 
+            statement.setLong(1, id);
             affectedRows = statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Exception when tried to delete row from DB", e);
