@@ -15,6 +15,14 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+
+    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Book(id, title, price);
+    }
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -46,12 +54,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = createBookFromResultSet(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -68,10 +71,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new Book(id, title, price);
+                Book book = createBookFromResultSet(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
