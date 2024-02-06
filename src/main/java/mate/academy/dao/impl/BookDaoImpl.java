@@ -50,8 +50,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return getOptionalBook(resultSet,
-                        "Can't get data about book by id: " + id);
+                return getOptionalBook(resultSet);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't connect to DB "
@@ -68,8 +67,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                booksList.add(getOptionalBook(resultSet,
-                        "Can't get data about book").orElseThrow());
+                booksList.add(getOptionalBook(resultSet).orElseThrow());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get any books", e);
@@ -101,7 +99,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             int updatedRows = statement.executeUpdate();
             return updatedRows > 0;
@@ -110,18 +108,15 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Optional<Book> getOptionalBook(ResultSet resultSet, String textException) {
-        try {
-            Long id = resultSet.getObject("id", Long.class);
-            String title = resultSet.getObject("title", String.class);
-            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-            Book currentBook = new Book();
-            currentBook.setId(id);
-            currentBook.setTitle(title);
-            currentBook.setPrice(price);
-            return Optional.of(currentBook);
-        } catch (SQLException e) {
-            throw new DataProcessingException(textException, e);
-        }
+    private Optional<Book> getOptionalBook(ResultSet resultSet)
+            throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getObject("title", String.class);
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        Book currentBook = new Book();
+        currentBook.setId(id);
+        currentBook.setTitle(title);
+        currentBook.setPrice(price);
+        return Optional.of(currentBook);
     }
 }
