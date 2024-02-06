@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.DaoImpl;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -31,7 +32,7 @@ public class BookDaoImpl implements Dao<Book> {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(
+                throw new DataProcessingException(
                         "Expected to insert at least one row, " + "but inserted 0 rows");
             }
 
@@ -41,7 +42,7 @@ public class BookDaoImpl implements Dao<Book> {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add a new book " + book, e);
+            throw new DataProcessingException("Can't add a new book " + book, e);
         }
         return book;
     }
@@ -57,10 +58,10 @@ public class BookDaoImpl implements Dao<Book> {
                 BigDecimal price = resultSet.getBigDecimal("price");
                 return Optional.of(new Book(id, title, price));
             } else {
-                return Optional.empty();
+                throw new DataProcessingException("Can't find a book by id " + id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't establish connection with the DB", e);
+            throw new DataProcessingException("Can't establish connection with the DB", e);
         }
     }
 
@@ -77,13 +78,13 @@ public class BookDaoImpl implements Dao<Book> {
                 booksList.add(new Book(id, title, price));
             }
             if (booksList.isEmpty()) {
-                throw new RuntimeException(
+                throw new DataProcessingException(
                         "The DB table \"books\" is empty. Add some elements first...");
             } else {
                 return booksList;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't establish connection with the DB", e);
+            throw new DataProcessingException("Can't establish connection with the DB", e);
         }
     }
 
@@ -103,7 +104,7 @@ public class BookDaoImpl implements Dao<Book> {
                 return new Book(id, title, price);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't update a book with id " + book.getId(), e);
         }
         return null;
     }
@@ -116,7 +117,7 @@ public class BookDaoImpl implements Dao<Book> {
             statement.setLong(1, id);
             updatedRows = statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't delete a book with id " + id, e);
         }
         return updatedRows > 0;
     }
