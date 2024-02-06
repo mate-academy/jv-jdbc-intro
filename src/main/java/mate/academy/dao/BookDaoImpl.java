@@ -1,14 +1,18 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.ConnectionUtil;
 import mate.academy.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -46,7 +50,7 @@ public class BookDaoImpl implements BookDao {
         Book book = null; // returned null if a result set empty
         String query = "SELECT * FROM books WHERE id = ?";
 
-        try(Connection conn = ConnectionUtil.getConn();
+        try (Connection conn = ConnectionUtil.getConn();
             PreparedStatement statement = conn.prepareStatement(query)) {
 
             statement.setLong(1, id);
@@ -66,7 +70,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books";
 
-        try(Connection conn = ConnectionUtil.getConn();
+        try (Connection conn = ConnectionUtil.getConn();
             PreparedStatement statement = conn.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
