@@ -1,4 +1,4 @@
-package mate.academy.dao;
+package mate.academy.dao.impl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.dao.Dao;
 import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.DaoImpl;
 import mate.academy.model.Book;
@@ -20,7 +21,7 @@ public class BookDaoImpl implements Dao<Book> {
     private static final String FIND_BY_ID_SQL = "SELECT * FROM books WHERE id = ?";
     private static final String FIND_ALL_SQL = "SELECT * FROM books";
     private static final String UPDATE_SQL = "UPDATE books SET title = ?,  price = ? WHERE id = ?";
-    private static final String DELETE_SQL = "DELETE books WHERE id = ?";
+    private static final String DELETE_SQL = "DELETE FROM books WHERE id = ?";
     private static final int FIRST_COLUMN_INDEX = 1;
     private static final int FIRST_PARAMETER_SQL = 1;
     private static final int SECOND_PARAMETER_SQL = 2;
@@ -103,13 +104,10 @@ public class BookDaoImpl implements Dao<Book> {
             statement.setString(FIRST_PARAMETER_SQL, book.getTitle());
             statement.setBigDecimal(SECOND_PARAMETER_SQL, book.getPrice());
             statement.setLong(THIRD_PARAMETER_SQL, book.getId());
-            ResultSet resultSet = statement.executeQuery();
+            int updatedRows = statement.executeUpdate();
 
-            if (resultSet.next()) {
-                Long id = resultSet.getLong(ID_COLUMN_LABEL);
-                String title = resultSet.getString(TITLE_COLUMN_LABEL);
-                BigDecimal price = resultSet.getBigDecimal(PRICE_COLUMN_LABEL);
-                return new Book(id, title, price);
+            if (updatedRows >= REQUIRED_MINIMUM_OF_CHANGED_ROWS) {
+                return book;
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update a book with id " + book.getId(), e);
