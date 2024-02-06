@@ -2,8 +2,10 @@ package mate.academy.dao;
 
 import java.util.List;
 import java.util.Optional;
+import mate.academy.lib.DaoImpl;
 import mate.academy.model.Book;
 
+@DaoImpl
 public class BookDaoImpl implements Dao<Book> {
     @Override
     public Book create(Book book) {
