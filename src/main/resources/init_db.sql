@@ -11,3 +11,7 @@ PRIMARY KEY (id));
 --Check if everything looks as expected;
 SELECT *
 FROM books;
+--To be able to work with java big decimal, alter table column "price".
+--It's now able to show prices up to 19 999 999,99;
+ALTER TABLE books
+MODIFY COLUMN price DECIMAL(10, 2);
