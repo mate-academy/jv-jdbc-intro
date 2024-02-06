@@ -21,10 +21,10 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
 
         try (Connection conn = ConnectionUtil.getConn();
-                PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                var statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-
             int affectedRows = statement.executeUpdate();
             if (affectedRows != 1) {
                 throw new DataProcessingException("Query must add only one row to the table");
