@@ -11,17 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
 import mate.academy.lib.Dao;
+import mate.academy.lib.DataProcessingException;
 import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
-    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getObject("id", Long.class);
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getBigDecimal("price");
-        return new Book(id, title, price);
-    }
 
     @Override
     public Book create(Book book) {
@@ -33,7 +27,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Inserted 0 rows");
+                throw new DataProcessingException("Inserted 0 rows", new SQLException());
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -109,5 +103,12 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete book", e);
         }
+    }
+
+    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Book(id, title, price);
     }
 }
