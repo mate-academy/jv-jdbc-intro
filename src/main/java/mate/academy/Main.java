@@ -11,23 +11,18 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-
         Book book = new Book();
         book.setTitle("Harry Potter");
         book.setPrice(BigDecimal.valueOf(15.6));
-
         Book createdBook = bookDao.create(book);
         Long createdBookId = createdBook.getId();
-
         Optional<Book> foundBookOptional = bookDao.findById(createdBookId);
 
         if (foundBookOptional.isPresent()) {
             Book foundBook = foundBookOptional.get();
-
             foundBook.setTitle("Updated Title");
             foundBook.setPrice(BigDecimal.valueOf(19.99));
             bookDao.update(foundBook);
-
             bookDao.deleteById(createdBookId);
         } else {
             System.out.println("Book not found");
