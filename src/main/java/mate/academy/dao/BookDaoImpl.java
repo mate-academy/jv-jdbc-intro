@@ -108,8 +108,8 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
         String title = resultSet.getString("title");
+        Long id = resultSet.getLong("id");
         BigDecimal price = resultSet.getBigDecimal("price");
         Book book = new Book();
         book.setId(id);
