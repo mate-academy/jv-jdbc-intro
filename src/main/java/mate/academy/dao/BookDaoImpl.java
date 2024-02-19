@@ -37,7 +37,6 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can not get a new book" + book, e);
         }
-
         return book;
     }
 
@@ -51,7 +50,6 @@ public class BookDaoImpl implements BookDao {
             if (resultSet.next()) {
                 return Optional.of(extractBookFromResultSet(resultSet));
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create a connection to the DB", e);
         }
@@ -77,7 +75,6 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, book.getTitle());
