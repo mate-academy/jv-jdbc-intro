@@ -1,0 +1,7 @@
+CREATE DATABASE `books_db`;
+CREATE TABLE `books` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `price` DECIMAL(10,0) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
