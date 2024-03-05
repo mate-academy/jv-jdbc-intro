@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.dao.BookDao;
-import mate.academy.dao.Dao;
+import mate.academy.dao.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
@@ -19,7 +19,7 @@ public class Main {
         secondBook.setTitle("Harry Potter");
         secondBook.setPrice(BigDecimal.valueOf(3000));
 
-        BookDao bookDao = (BookDao) injector.getInstance(Dao.class);
+        BookDaoImpl bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
         System.out.println("Insert Books");
         bookDao.create(firstBook);
         bookDao.create(secondBook);
