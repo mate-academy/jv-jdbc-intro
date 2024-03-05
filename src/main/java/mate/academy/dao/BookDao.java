@@ -48,43 +48,35 @@ public class BookDao implements Dao {
 
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(UPDATE_REQUEST,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_REQUEST)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update one row, "
-                        + "but updated 0 rows.");
+            if (affectedRows > 0) {
+                return book;
             }
-            return book;
+            throw new DataProcessingException("Expected to update one row, but updated 0 rows.");
         } catch (SQLException e) {
             throw new DataProcessingException("Cant update book: " + book,e);
         }
     }
 
     public Optional<Book> findById(Long id) {
-        Optional<Book> result = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(FIND_BY_ID_REQUEST)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return result = Optional.of(book);
+                Book book = getBookFromRequest(resultSet);
+                return Optional.of(book);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id: " + id, e);
         }
-        return result;
+        return Optional.empty();
     }
 
     public List<Book> findAll() {
@@ -95,13 +87,7 @@ public class BookDao implements Dao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = getBookFromRequest(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -119,5 +105,16 @@ public class BookDao implements Dao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by Id: " + id,e);
         }
+    }
+
+    private Book getBookFromRequest(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
