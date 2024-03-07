@@ -15,7 +15,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ? )";
@@ -40,7 +39,19 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        return Optional.ofNullable(get(id));
+        String query = "SELECT * FROM books WHERE id = ?";
+        Book foundBook = null;
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                foundBook = getBookFromQuery(id, resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get a book by id " + id, e);
+        }
+        return Optional.ofNullable(foundBook);
     }
 
     @Override
@@ -51,9 +62,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                bookList.add(new Book(resultSet.getObject("id", Long.class),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")));
+                bookList.add(getBookFromQuery(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books", e);
@@ -92,19 +101,16 @@ public class BookDaoImpl implements BookDao {
         return deletedRow > 0;
     }
 
-    private Book get(Long id) {
-        String query = "SELECT * FROM books WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return new Book(id, resultSet.getString("title"),
-                        resultSet.getBigDecimal("price"));
-            }
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't get a book by id " + id, e);
-        }
-        return null;
+    private Book getBookFromQuery(ResultSet resultSet) throws SQLException {
+        return new Book(resultSet.getObject("id", Long.class),
+                resultSet.getString("title"),
+                resultSet.getBigDecimal("price"));
     }
+
+    private Book getBookFromQuery(Long id, ResultSet resultSet) throws SQLException {
+        return new Book(id,
+                resultSet.getString("title"),
+                resultSet.getBigDecimal("price"));
+    }
+
 }
