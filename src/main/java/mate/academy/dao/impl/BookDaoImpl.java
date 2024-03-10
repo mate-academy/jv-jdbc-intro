@@ -1,16 +1,19 @@
 package mate.academy.dao.impl;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
-
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -24,12 +27,13 @@ public class BookDaoImpl implements BookDao {
             "UPDATE book SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_BOOK_QUERY =
             "DELETE FROM book WHERE id = ?";
+
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(
-                             CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(
+                                CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             int rowsAffected = preparedStatement.executeUpdate();
@@ -52,8 +56,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(FIND_BY_ID_QUERY)){
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(FIND_BY_ID_QUERY)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -69,7 +73,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_QUERY)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -88,14 +92,14 @@ public class BookDaoImpl implements BookDao {
             throw new IllegalArgumentException("Book's id can't be null");
         }
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(UPDATE_BOOK_QUERY)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(UPDATE_BOOK_QUERY)) {
 
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
             int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected < 1 ) {
+            if (rowsAffected < 1) {
                 throw new RuntimeException(
                         String.format("Book '%s' update was unsuccessful, rows affected = %d",
                                 book, rowsAffected));
@@ -110,12 +114,14 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BOOK_QUERY)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(DELETE_BOOK_QUERY)) {
             preparedStatement.setLong(1, id);
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't perform delete query: " + DELETE_BOOK_QUERY, e);
+            throw new DataProcessingException(
+                    "Can't perform delete query: " + DELETE_BOOK_QUERY, e);
         }
     }
 
