@@ -17,10 +17,10 @@ import mate.academy.lib.settings.Dao;
 public class BookDaoImpl implements BookDao {
 
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title,price) VALUES (?,?)";
+        String query = "INSERT INTO books (title,price) VALUES (?,?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
@@ -30,8 +30,6 @@ public class BookDaoImpl implements BookDao {
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     book.setId(generatedKeys.getLong(1));
-                } else {
-                    throw new DataProcessingException("Creating book failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
@@ -42,9 +40,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SElECT * FROM books WHERE id = ?";
+        String query = "SElECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setObject(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -60,9 +58,9 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM books";
+        String query = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     books.add(extractBookFromResultSet(resultSet));
@@ -76,12 +74,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ? , price = ? WHERE id = ?";
+        String query = "UPDATE books SET title = ? , price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setObject(2, book.getPrice());
-            preparedStatement.setObject(3, book.getId());
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setLong(3, book.getId());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
                 throw new DataProcessingException("Updating book failed, no rows affected.");
@@ -97,10 +95,10 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
+        String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setObject(1, id);
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {

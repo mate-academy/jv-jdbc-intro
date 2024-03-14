@@ -22,7 +22,6 @@ public class Main {
         Book newBook = new Book();
         newBook.setTitle("Test");
         newBook.setPrice(new BigDecimal("324"));
-        // Use setters or constructor to initialize field values
         Book createdBook = bookDao.create(newBook);
         System.out.println("Created book: " + createdBook);
     }
