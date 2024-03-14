@@ -18,6 +18,7 @@ public class BookDaoImpl implements BookDao {
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String PRICE = "price";
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
