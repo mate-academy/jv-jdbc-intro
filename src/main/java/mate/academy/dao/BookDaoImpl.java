@@ -15,6 +15,9 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String PRICE = "price";
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -108,9 +111,9 @@ public class BookDaoImpl implements BookDao {
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setTitle(resultSet.getString("title"));
-        book.setPrice(resultSet.getBigDecimal("price"));
-        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString(TITLE));
+        book.setPrice(resultSet.getBigDecimal(PRICE));
+        book.setId(resultSet.getObject(ID, Long.class));
         return book;
     }
 
