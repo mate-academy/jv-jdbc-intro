@@ -3,3 +3,4 @@ CREATE TABLE `books` (
  `title` VARCHAR(250),
  `price` DECIMAL,
  PRIMARY KEY (`id`));
+ 
