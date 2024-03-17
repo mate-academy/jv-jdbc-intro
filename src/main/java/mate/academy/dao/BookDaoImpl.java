@@ -16,10 +16,6 @@ import mate.academy.util.ConnectionUtil;
 @Dao
 public class BookDaoImpl implements BookDao {
 
-    public void createBook() {
-
-    }
-
     @Override
     public void create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
