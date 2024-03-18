@@ -17,6 +17,7 @@ import mate.academy.model.Book;
 @Dao
 public class BookDaoImpl implements BookDao {
     private static final String CREATE_BOOK = "INSERT INTO books (title, price) VALUES (?, ?)";
+    private static final String FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
     private static final String FIND_ALL = "SELECT * FROM books";
     private static final String UPDATE_BOOK = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_BOOK_BY_ID = "DELETE FROM books WHERE id = ?";
@@ -51,9 +52,20 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        return findAll().stream()
-                .filter(book -> book.getId().equals(id))
-                .findFirst();
+        query = FIND_BY_ID;
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, id);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String title = resultSet.getString(COLUMN_TITLE);
+                BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
+                return Optional.of(new Book(id, title, price));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't find book by id " + id, e);
+        }
     }
 
     @Override
