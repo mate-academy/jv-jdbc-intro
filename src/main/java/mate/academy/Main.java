@@ -26,7 +26,7 @@ public class Main {
                 "Slaving in Java",
                 BigDecimal.TEN
         );
-        // initialize field values using setters or constructor
+
         bookDao.create(bookToCreate);
         bookDao.create(extraBook);
         bookDao.findById(1L);
@@ -34,6 +34,5 @@ public class Main {
         Book updated = bookDao.update(bookToUpdate);
         bookDao.deleteById(1L);
         System.out.println(updated.equals(bookToUpdate) + " - update result");
-        // test other methods from BookDao
     }
 }
