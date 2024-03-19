@@ -7,13 +7,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import mate.academy.ConnectionUtil;
+import mate.academy.exceptions.DataProcessingException;
 
 public class DataBaseInitializer {
     public static void initializeDatabase() {
+        StringBuilder script = new StringBuilder();
         try (Connection connection = ConnectionUtil.getConnection();
                 BufferedReader reader = new BufferedReader(
                         new FileReader("src/main/resources/init_db.sql"))) {
-            StringBuilder script = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 script.append(line);
@@ -26,7 +27,8 @@ public class DataBaseInitializer {
                 System.out.println("Database initialized successfully");
             }
         } catch (SQLException | IOException e) {
-            e.printStackTrace();
+            throw new DataProcessingException("Failed to initialize DB for statement: "
+                    + script.toString());
         }
     }
 }
