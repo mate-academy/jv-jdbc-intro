@@ -5,8 +5,8 @@ import java.util.Objects;
 
 public final class Book {
     private Long id;
-    private final String title;
-    private final BigDecimal price;
+    private String title;
+    private BigDecimal price;
 
     public Book(String title, BigDecimal price) {
         this.title = title;
