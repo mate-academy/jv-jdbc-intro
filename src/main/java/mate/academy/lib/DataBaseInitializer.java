@@ -28,7 +28,7 @@ public class DataBaseInitializer {
             }
         } catch (SQLException | IOException e) {
             throw new DataProcessingException("Failed to initialize DB for statement: "
-                    + script.toString());
+                    + script);
         }
     }
 }
