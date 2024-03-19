@@ -16,11 +16,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final String CREATE_BOOK = "INSERT INTO books (title, price) VALUES (?, ?)";
-    private static final String FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
-    private static final String FIND_ALL = "SELECT * FROM books";
-    private static final String UPDATE_BOOK = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-    private static final String DELETE_BOOK_BY_ID = "DELETE FROM books WHERE id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_PRICE = "price";
@@ -29,7 +24,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        query = CREATE_BOOK;
+        query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                     PreparedStatement statement =
                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -52,15 +47,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        query = FIND_BY_ID;
+        query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
-                return Optional.of(new Book(id, title, price));
+                return Optional.of(getBook());
             }
             return Optional.empty();
         } catch (SQLException e) {
@@ -70,16 +63,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        query = FIND_ALL;
+        query = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getLong(COLUMN_ID);
-                String title = resultSet.getString(COLUMN_TITLE);
-                BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
-                books.add(new Book(id, title, price));
+                books.add(getBook());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find all books", e);
@@ -89,7 +79,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        query = UPDATE_BOOK;
+        query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                     PreparedStatement statement =
                         connection.prepareStatement(query)) {
@@ -109,7 +99,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        query = DELETE_BOOK_BY_ID;
+        query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -119,5 +109,12 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id " + id, e);
         }
+    }
+
+    private Book getBook() throws SQLException {
+        Long id = resultSet.getLong(COLUMN_ID);
+        String title = resultSet.getString(COLUMN_TITLE);
+        BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
+        return new Book(id, title, price);
     }
 }
