@@ -1,16 +1,18 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.ConnectionUtil;
 import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-
-import java.math.BigInteger;
-import java.sql.*;
-import java.util.ArrayList;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -18,14 +20,17 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String query = "INSERT INTO book (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection
-                     .prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert rows, but inserted 0 rows " +
-                        "for book: " + book.getTitle() + " " + book.getPrice());
+                throw new DataProcessingException("Expected to insert rows, but inserted 0 rows "
+                        + "for book: "
+                        + book.getTitle()
+                        + " "
+                        + book.getPrice());
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -34,8 +39,11 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Insertion from DB failed" +
-                    "for book: " + book.getTitle() + " " + book.getPrice(), e);
+            throw new DataProcessingException("Insertion from DB failed"
+                    + "for book: "
+                    + book.getTitle()
+                    + " "
+                    + book.getPrice(), e);
         }
 
         return book;
@@ -68,12 +76,12 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM book WHERE " +
-                "title IS NOT NULL " +
-                "AND price IS NOT NULL";
+        String query = "SELECT * FROM book WHERE "
+                + "title IS NOT NULL "
+                + "AND price IS NOT NULL";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection
-                     .prepareStatement(query)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(new Book(
@@ -95,15 +103,18 @@ public class BookDaoImpl implements BookDao {
         String updateQuery = "UPDATE book SET title = ?, price = ? WHERE id = ?";
         String selectQuery = "SELECT * FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement updateStatement = connection
-                     .prepareStatement(updateQuery)) {
+                PreparedStatement updateStatement = connection
+                        .prepareStatement(updateQuery)) {
             updateStatement.setString(1, book.getTitle());
             updateStatement.setObject(2, book.getPrice());
             updateStatement.setObject(3, book.getId());
             int affectedRows = updateStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update rows, but updated 0 rows " +
-                        "for book: " + book.getId() + " " + book.getTitle() + " " + book.getPrice());
+                throw new DataProcessingException("Expected to update rows, but updated 0 rows "
+                        + "for book: "
+                        + book.getId() + " "
+                        + book.getTitle() + " "
+                        + book.getPrice());
             }
 
             PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
@@ -116,8 +127,10 @@ public class BookDaoImpl implements BookDao {
                         resultSet.getObject("price", BigDecimal.class)
                 );
             } else {
-                throw new DataProcessingException("Failed to fetch updated record from DB" +
-                        "for book: " + book.getId() + " " + book.getTitle() + " " + book.getPrice());
+                throw new DataProcessingException("Failed to fetch updated record from DB"
+                        + "for book: " + book.getId() + " "
+                        + book.getTitle() + " "
+                        + book.getPrice());
             }
 
         } catch (SQLException e) {
@@ -125,16 +138,16 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-
     @Override
     public boolean deleteById(Long id) {
         String query = "DELETE FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-        PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to delete rows, but deleted 0 rows for id: " + id);
+                throw new DataProcessingException(
+                        "Expected to delete rows, but deleted 0 rows for id: " + id);
             }
 
         } catch (SQLException e) {
