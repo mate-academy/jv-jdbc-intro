@@ -1,10 +1,11 @@
 package mate.academy.model;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Objects;
 
 public class Book {
-    private Long id;
+    private BigInteger id;
     private String title;
     private BigDecimal price;
 
@@ -12,7 +13,7 @@ public class Book {
         // Default constructor
     }
 
-    public Book(long id, String title, BigDecimal price) {
+    public Book(BigInteger id, String title, BigDecimal price) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -23,11 +24,11 @@ public class Book {
         this.price = price;
     }
 
-    public Long getId() {
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 

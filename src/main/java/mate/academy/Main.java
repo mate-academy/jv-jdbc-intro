@@ -6,6 +6,7 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
@@ -18,12 +19,11 @@ public class Main {
                 BigDecimal.TEN
         );
         Book bookToUpdate = new Book(
-                1,
+                BigInteger.ONE,
                 "Writing in Java",
                 BigDecimal.TEN
         );
         Book extraBook = new Book(
-                -1,
                 "Slaving in Java",
                 BigDecimal.TEN
         );
