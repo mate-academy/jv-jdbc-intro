@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
+import mate.academy.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
@@ -26,7 +27,7 @@ public class BookDaoIpml implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Cant add a new row, cause its 0 rows");
+                throw new DataProcessingException("Cant add a new row, cause its 0 rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -34,7 +35,7 @@ public class BookDaoIpml implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create a new book: " + book, e);
+            throw new DataProcessingException("Cant create a new book: " + book, e);
         }
         return book;
     }
@@ -56,7 +57,7 @@ public class BookDaoIpml implements BookDao {
                 book.setPrice(price);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create a connection to the DB", e);
+            throw new DataProcessingException("Cant create a connection to the DB", e);
         }
         return null;
     }
@@ -81,7 +82,7 @@ public class BookDaoIpml implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create a connection to the DB", e);
+            throw new DataProcessingException("Cant create a connection to the DB", e);
         }
         return books;
     }
@@ -97,12 +98,12 @@ public class BookDaoIpml implements BookDao {
 
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
-                throw new IllegalArgumentException("No book with id " + book.getId()
+                throw new DataProcessingException("No book with id " + book.getId()
                         + " found to update");
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while updating book", e);
+            throw new DataProcessingException("Error occurred while updating book", e);
         }
     }
 
@@ -115,7 +116,8 @@ public class BookDaoIpml implements BookDao {
             int rowsDeleted = statement.executeUpdate();
             return rowsDeleted > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while deleting book with id " + id, e);
+            throw new DataProcessingException("Error occurred while deleting book with id "
+                    + id, e);
         }
     }
 }
