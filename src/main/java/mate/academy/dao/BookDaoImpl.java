@@ -48,12 +48,13 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(extractBookFromResultSet(resultSet));
+                return Optional.ofNullable(extractBookFromResultSet(resultSet));
+            } else {
+                return Optional.empty();
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create a connection to the DB", e);
         }
-        return Optional.empty();
     }
 
     @Override
