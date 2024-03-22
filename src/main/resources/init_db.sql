@@ -1,0 +1,5 @@
+CREATE TABLE books (
+id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+title varchar(250),
+price DECIMAL(10,2)
+);
