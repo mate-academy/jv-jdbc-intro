@@ -26,9 +26,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Creating book failed, no rows affected");
-            }
+            checkAffectedRows(affectedRows);
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     book.setId(resultSet.getObject(1, Long.class));
@@ -52,7 +50,6 @@ public class BookDaoImpl implements BookDao {
                     return Optional.of(parseResulToObj(resultSet));
                 }
             }
-
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id:" + id, e);
         }
@@ -86,9 +83,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affordRows = statement.executeUpdate();
-            if (affordRows < 1) {
-                throw new RuntimeException("Creating book failed, no rows affected");
-            }
+            checkAffectedRows(affordRows);
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     book.setId(resultSet.getObject("id", Long.class));
@@ -123,8 +118,14 @@ public class BookDaoImpl implements BookDao {
             book.setPrice(resultSet.getBigDecimal("price"));
             book.setTitle(resultSet.getString("title"));
         } catch (SQLException e) {
-            throw new RuntimeException("Can't parse result set to object" + resultSet, e);
+            throw new DataProcessingException("Can't parse result set to object" + resultSet, e);
         }
         return book;
+    }
+
+    private void checkAffectedRows(int affectedRows) {
+        if (affectedRows < 1) {
+            throw new DataProcessingException("Creating book failed, no rows affected");
+        }
     }
 }
