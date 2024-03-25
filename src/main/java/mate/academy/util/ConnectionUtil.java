@@ -7,14 +7,16 @@ import java.util.Properties;
 import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
+    private static final String USER_NAME = "root";
+    private static final String USER_PASSWORD = "1234";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/db_example";
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "1234");
+        DB_PROPERTIES.put("user", USER_NAME);
+        DB_PROPERTIES.put("password", USER_PASSWORD);
 
         try {
             Class.forName(JDBC_DRIVER);

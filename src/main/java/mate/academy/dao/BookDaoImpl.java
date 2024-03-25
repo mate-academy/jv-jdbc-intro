@@ -18,19 +18,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        final String createSqlOperation =
+        final String createQuery =
                 "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement
-                        = connection.prepareStatement(createSqlOperation,
+                        = connection.prepareStatement(createQuery,
                              Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert at least one row,"
-                        + " but inserted 0 rows");
-            }
+            validateAffectedRows(statement);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -44,11 +40,11 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        final String getSqlOperation =
+        final String getQuery =
                 "SELECT * FROM books WHERE id = (?)";
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement
-                        = connection.prepareStatement(getSqlOperation)) {
+                        = connection.prepareStatement(getQuery)) {
             statement.setLong(1, id);
             ResultSet generatedKeys = statement.executeQuery();
             if (generatedKeys.next()) {
@@ -62,10 +58,10 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        final String getAllSqlOperation = "SELECT * FROM books";
+        final String getAllQuery = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement
-                        = connection.prepareStatement(getAllSqlOperation)) {
+                        = connection.prepareStatement(getAllQuery)) {
             ResultSet generatedKeys = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (generatedKeys.next()) {
@@ -79,18 +75,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        final String updateSqlOperation =
+        final String updateQuery =
                 "UPDATE books SET title = (?), price = (?) WHERE id = (?)";
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement
-                        = connection.prepareStatement(updateSqlOperation)) {
+                        = connection.prepareStatement(updateQuery)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update one row, but updated 0 rows");
-            }
+            validateAffectedRows(statement);
         } catch (SQLException e) {
             throw new DataProcessingException("Can not update book: " + book, e);
         }
@@ -99,10 +92,10 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        final String deleteSqlOperation = "DELETE FROM books WHERE id = (?)";
+        final String deleteQuery = "DELETE FROM books WHERE id = (?)";
         try (Connection connection = ConnectionUtil.connect();
                 PreparedStatement statement
-                        = connection.prepareStatement(deleteSqlOperation)) {
+                        = connection.prepareStatement(deleteQuery)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
@@ -115,5 +108,13 @@ public class BookDaoImpl implements BookDao {
         return new Book(set.getObject(1, Long.class),
                 set.getString(2),
                 set.getBigDecimal(3));
+    }
+
+    private void validateAffectedRows(PreparedStatement statement) throws SQLException {
+        int affectedRows = statement.executeUpdate();
+        if (affectedRows < 1) {
+            throw new DataProcessingException("Expected to affect at least one row,"
+                    + " but 0 rows affected");
+        }
     }
 }
