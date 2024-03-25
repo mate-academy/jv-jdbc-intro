@@ -86,9 +86,7 @@ public class BookDaoImpl implements BookDao {
             checkAffectedRows(affordRows);
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
-                    book.setId(resultSet.getObject("id", Long.class));
-                    book.setTitle(resultSet.getString("title"));
-                    book.setPrice(resultSet.getBigDecimal("price"));
+                    parseResulToObj(resultSet);
                     return book;
                 }
             }
