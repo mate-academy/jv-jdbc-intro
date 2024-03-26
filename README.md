@@ -49,7 +49,7 @@ public class Book {
 ### Create custom exception
 `e.printStackTrace()` - is a bad practice! Let's create custom exception `DataProcessingException`
 and constructor with two parameters: `String message` and `Throwable ex`.  
-It should be extended from `RuntimeException`. You should rethrow this exception in `catch` block on dao layer.
+It should be extended from `RuntimeException`. You should rethrow this exception in `catch` block on mate.academy.lib.dao layer.
     
 #### DB connection error: 
 If you can't connect to your db because of this error: <br>
