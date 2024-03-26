@@ -17,7 +17,7 @@ public class Main {
         book.setPrice(new BigDecimal(45));
         bookDao.create(book);
 
-        bookDao.findById(1L);
+        bookDao.findById(book.getId());
 
         List<Book> bookDaoAll = bookDao.findAll();
 

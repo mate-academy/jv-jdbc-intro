@@ -54,12 +54,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                book.setTitle(title);
-                book.setPrice(price);
-                book.setId(id);
+                book = mapResultSetToBook(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can not create a connection to the DB", e);
@@ -76,15 +71,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-
+                Book book = mapResultSetToBook(resultSet);
                 bookList.add(book);
             }
         } catch (SQLException e) {
@@ -126,6 +113,22 @@ public class BookDaoImpl implements BookDao {
             int updatedRows = statement.executeUpdate();
 
             return updatedRows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Can not create a connection to the DB", e);
+        }
+    }
+
+    private Book mapResultSetToBook(ResultSet resultSet) {
+        try {
+            Long id = resultSet.getObject("id", Long.class);
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
         } catch (SQLException e) {
             throw new RuntimeException("Can not create a connection to the DB", e);
         }
