@@ -1,7 +1,6 @@
-USE test;
 CREATE TABLE books
 (
-    id    BIGINT PRIMARY KEY,
-    title VARCHAR(255),
-    price DECIMAL
+    id    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price BIGINT
 );
