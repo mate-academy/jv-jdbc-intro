@@ -16,9 +16,9 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    public static final String TITLE = "title";
-    public static final String PRICE = "price";
-    public static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String PRICE = "price";
+    private static final String ID = "id";
     private static final int MIN_AFFECTED_ROWS = 1;
 
     @Override
@@ -28,7 +28,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(insertQuery,
                         Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setString(MIN_AFFECTED_ROWS, book.getTitle());
+            statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
@@ -52,7 +52,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(findByIdQuery)) {
 
-            statement.setLong(MIN_AFFECTED_ROWS, id);
+            statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
@@ -89,7 +89,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(updateQuery)) {
 
-            statement.setString(MIN_AFFECTED_ROWS, book.getTitle());
+            statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
 
@@ -108,7 +108,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
 
-            statement.setLong(MIN_AFFECTED_ROWS, id);
+            statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
 
             return affectedRows > 0;
@@ -124,7 +124,7 @@ public class BookDaoImpl implements BookDao {
         return new Book(id, title, price);
     }
 
-    private static void checkRows(int affectedRows, String message) {
+    private void checkRows(int affectedRows, String message) {
         if (affectedRows < MIN_AFFECTED_ROWS) {
             throw new DataProcessingException(message);
         }
