@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS book_repository;
+
+USE book_repository;
+
+CREATE TABLE IF NOT EXISTS book
+(
+    id    BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255)  NOT NULL DEFAULT 'unknown',
+    price DECIMAL(10, 2) NOT NULL DEFAULT 0.00
+);
