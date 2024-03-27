@@ -10,12 +10,12 @@ import mate.academy.model.Book;
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
     private static final List<Book> books = List.of(
-            new Book(1l, "title1", BigDecimal.valueOf(234)),
-            new Book(2l, "title2", BigDecimal.valueOf(111)),
-            new Book(3l, "title3", BigDecimal.valueOf(212)),
-            new Book(4l, "title4", BigDecimal.valueOf(564)),
-            new Book(5l, "title5", BigDecimal.valueOf(222)),
-            new Book(6l, "title6", BigDecimal.valueOf(1567))
+            new Book(1L, "title1", BigDecimal.valueOf(234)),
+            new Book(2L, "title2", BigDecimal.valueOf(111)),
+            new Book(3L, "title3", BigDecimal.valueOf(212)),
+            new Book(4L, "title4", BigDecimal.valueOf(564)),
+            new Book(5L, "title5", BigDecimal.valueOf(222)),
+            new Book(6L, "title6", BigDecimal.valueOf(1567))
 
     );
 

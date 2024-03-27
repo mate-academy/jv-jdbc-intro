@@ -14,7 +14,8 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final String CREATE_QUERY = "INSERT INTO books (id, title, price) VALUES (?, ?, ?)";
+    private static final String CREATE_QUERY =
+            "INSERT INTO books (id, title, price) VALUES (?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
@@ -65,7 +66,9 @@ public class BookDaoImpl implements BookDao {
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_QUERY);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                books.add(new Book(resultSet.getLong("id"), resultSet.getString("title"), resultSet.getBigDecimal("price")));
+                books.add(new Book(resultSet.getLong("id"),
+                        resultSet.getString("title"),
+                        resultSet.getBigDecimal("price")));
             }
             return books;
         } catch (SQLException e) {
