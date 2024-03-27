@@ -20,7 +20,7 @@ public class Main {
 
         Book updateBook = bookDao.findById(5L)
                 .orElseThrow(() -> new IllegalArgumentException("Book not found"));
-        updateBook.setPrice(BigDecimal.valueOf(99.99));
+        updateBook.setPrice(BigDecimal.valueOf(100));
         bookDao.update(updateBook);
 
         bookDao.deleteById(6L);
