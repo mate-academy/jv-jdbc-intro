@@ -1,0 +1,3 @@
+CREATE DATABASE book;
+USE book;
+CREATE TABLE books ( id BIGINT PRIMARY KEY, title VARCHAR(255), price INT );
