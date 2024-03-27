@@ -23,34 +23,28 @@ public class Main {
         bookHobbit.setPrice(BigDecimal.valueOf(120.0));
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        // Create
         //bookDao.create(bookTomSoyer);
         //bookDao.create(bookHarryPotter);
 
-        // Show all
         System.out.println("\nShow all");
         List<Book> books = bookDao.findAll();
         for (Book book : books) {
             System.out.println(book);
         }
 
-        // Show by id
         System.out.println("\nShow by id");
         System.out.println("Book1: " + bookDao.findById(17L).get());
         System.out.println("Book2: " + bookDao.findById(18L).get());
 
-        // Update the price
         Book updatedBook = bookDao.findById(17L)
                 .orElseThrow(() -> new IllegalArgumentException("Book not found"));
         updatedBook.setPrice(BigDecimal.valueOf(200.0));
         bookDao.update(updatedBook);
 
-        // Show by id
         System.out.println("\nShow by id:");
         System.out.println("Book1: " + bookDao.findById(1L));
         System.out.println("Book2: " + bookDao.findById(17L));
 
-        // DeleteById
         System.out.println("\nDelete by id:");
         bookDao.deleteById(18L);
         System.out.println("\nShow all");
@@ -58,6 +52,5 @@ public class Main {
         for (Book book : books2) {
             System.out.println(book);
         }
-
     }
 }
