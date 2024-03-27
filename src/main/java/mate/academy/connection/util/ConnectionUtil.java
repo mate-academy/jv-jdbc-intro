@@ -1,4 +1,4 @@
-package mate.academy.connectionUtil;
+package mate.academy.connection.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,15 +14,14 @@ public class ConnectionUtil {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "715914qQ()");
-
-        try {
-            Class.forName(DRIVER_NAME);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        try {
+            Class.forName(DRIVER_NAME);
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,3 +1,4 @@
+USE test;
 CREATE TABLE books
 (
     id    BIGINT AUTO_INCREMENT PRIMARY KEY,
