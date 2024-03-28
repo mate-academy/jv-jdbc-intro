@@ -71,8 +71,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(getBookFromResultSet(generatedKeys));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error appeared while trying to find a book"
-                    + "It could be problem with a connection to the DB or table itself", e);
+            throw new DataProcessingException("Can`t find any books from table", e);
         }
         return books;
     }
