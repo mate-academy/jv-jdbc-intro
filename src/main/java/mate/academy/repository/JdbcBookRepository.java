@@ -103,14 +103,16 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
+        int rowsEffected;
         try (Connection conn = ConnectionUtil.getConnection();
                 PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, id);
-            statement.executeUpdate();
+            rowsEffected = statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Deleting failed ", e);
         }
+        return rowsEffected == 1;
     }
 }

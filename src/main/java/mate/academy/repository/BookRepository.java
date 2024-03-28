@@ -13,5 +13,5 @@ public interface BookRepository {
 
     Optional<Book> updateById(Book book);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 }
