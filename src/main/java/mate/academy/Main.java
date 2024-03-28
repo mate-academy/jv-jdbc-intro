@@ -20,7 +20,6 @@ public class Main {
         System.out.println("Find all books " + bookDao.findAll());
         System.out.println("Find by id " + bookDao.findById(firstBook.getId()).get());
 
-
         Book book = bookDao.findById(firstBook.getId()).get();
         book.setTitle("Taypen");
         bookDao.update(book);
