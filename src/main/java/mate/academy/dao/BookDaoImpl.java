@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(MIN_AFFECTED_ROWS, Long.class);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
