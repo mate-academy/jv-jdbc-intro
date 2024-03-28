@@ -12,7 +12,6 @@ public class UtilConnection {
     private static final String LOGIN = "root";
     private static final String PASSWORD = "root";
 
-
     static {
         PROPERTIES = new Properties();
         PROPERTIES.put("user", LOGIN);
