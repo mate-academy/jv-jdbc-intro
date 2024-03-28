@@ -117,7 +117,7 @@ public class BookDaoImpl implements BookDao {
         return new Book(id, title, price);
     }
 
-    private static void validateInsertionResult(int affectedRows) {
+    private void validateInsertionResult(int affectedRows) {
         if (affectedRows < 1) {
             throw new DataProcessingException(
                     "Expected to insert at least one row but inserted: " + affectedRows);

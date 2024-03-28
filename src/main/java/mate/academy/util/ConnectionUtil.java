@@ -9,14 +9,14 @@ import mate.academy.exception.DataProcessingException;
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/books";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String USERNAME = "root";
+    private static final String USERNAME = "user";
     private static final String PASSWORD = "password";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", USERNAME);
-        DB_PROPERTIES.put("password", PASSWORD);
+        DB_PROPERTIES.put(USERNAME, "root");
+        DB_PROPERTIES.put(PASSWORD, "password");
 
         try {
             Class.forName(DRIVER);
