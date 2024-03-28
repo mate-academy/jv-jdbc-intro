@@ -10,12 +10,12 @@ import mate.academy.model.Book;
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
     private static final List<Book> books = List.of(
-            new Book(1L, "title1", BigDecimal.valueOf(234)),
-            new Book(2L, "title2", BigDecimal.valueOf(111)),
-            new Book(3L, "title3", BigDecimal.valueOf(212)),
-            new Book(4L, "title4", BigDecimal.valueOf(564)),
-            new Book(5L, "title5", BigDecimal.valueOf(222)),
-            new Book(6L, "title6", BigDecimal.valueOf(1567))
+            new Book("title1", BigDecimal.valueOf(234)),
+            new Book("title2", BigDecimal.valueOf(111)),
+            new Book( "title3", BigDecimal.valueOf(212)),
+            new Book( "title4", BigDecimal.valueOf(564)),
+            new Book( "title5", BigDecimal.valueOf(222)),
+            new Book( "title6", BigDecimal.valueOf(1567))
 
     );
 
@@ -27,7 +27,7 @@ public class Main {
         }
 
         //update
-        Book bookToUpdate = books.get(0);
+        Book bookToUpdate = books.get(3);
         bookToUpdate.setPrice(BigDecimal.valueOf(666));
         bookToUpdate.setTitle("Clean Code");
         bookDao.update(bookToUpdate);
