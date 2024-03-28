@@ -22,11 +22,15 @@ public class ConnectionUtil {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't load driver: " + driver, e);
+            throw new RuntimeException("Can't load JDBC driver: " + driver, e);
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't connect to DB.", e);
+        }
     }
 }

@@ -14,8 +14,10 @@ public class Main {
         addTestBooksToTheDB(10);
         Book bookInDB = bookDao.findById(4L).get();
         System.out.println(bookInDB);
+
         Book updatedBookInDB = updateBook(bookInDB, "Harry Potter 1", 875);
         System.out.println(updatedBookInDB);
+
         List<Book> books = bookDao.findAll();
         System.out.println(books);
         bookDao.deleteById(2L);
