@@ -16,12 +16,15 @@ import mate.academy.util.DatabaseConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_PRICE = "price";
 
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO books (title, price) VALUES(?, ?);";
+        String insertQuery = "INSERT INTO books (title, price) VALUES(?, ?);";
         try (Connection connection = DatabaseConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query,
+                PreparedStatement statement = connection.prepareStatement(insertQuery,
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
@@ -40,26 +43,26 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String query = "SELECT * FROM books WHERE id = ?;";
+        String selectByIdQuery = "SELECT * FROM books WHERE id = ?;";
         try (Connection connection = DatabaseConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(selectByIdQuery)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Finding book failed: id " + id, e);
+            throw new DataProcessingException("Finding book by id failed: id " + id, e);
         }
         return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
-        String query = "SELECT * FROM books;";
+        String selectAllQuery = "SELECT * FROM books;";
         List<Book> books = new ArrayList<>();
         try (Connection connection = DatabaseConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(selectAllQuery)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(mapToBook(resultSet));
@@ -72,9 +75,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
+        String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
         try (Connection connection = DatabaseConnectionUtil.getConnection();
-                   PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(updateQuery)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -89,18 +92,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String query = "DELETE FROM books WHERE id = ?;";
+        String deleteByIdQuery = "DELETE FROM books WHERE id = ?;";
         try (Connection connection = DatabaseConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(deleteByIdQuery)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                return false;
-            }
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Deleting book failed: id " + id, e);
         }
-        return true;
     }
 
     private void checkUpdate(int affectedRows, String errorMessage) {
@@ -110,9 +110,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapToBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getBigDecimal("price");
+        Long id = resultSet.getLong(COLUMN_ID);
+        String title = resultSet.getString(COLUMN_TITLE);
+        BigDecimal price = resultSet.getBigDecimal(COLUMN_PRICE);
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);

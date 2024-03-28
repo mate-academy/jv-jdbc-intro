@@ -12,15 +12,22 @@ public class Main {
         Book book = new Book();
         book.setTitle("Nice book");
         book.setPrice(new BigDecimal(300));
+
         BookService bookService = (BookService) injector.getInstance(BookService.class);
+
         bookService.create(book);
         bookService.create(book);
         bookService.create(book);
+
         bookService.get(book.getId());
+
         bookService.delete(book.getId() - 1);
+
         book.setTitle("Alpha Omega");
         book.setPrice(new BigDecimal(150));
+
         bookService.update(book);
+
         System.out.println(bookService.findAll());
     }
 }
