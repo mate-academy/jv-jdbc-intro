@@ -18,14 +18,15 @@ public class Main {
         bookDao.create(secondBook);
 
         System.out.println("Find all books " + bookDao.findAll());
-        System.out.println("Find by id " + bookDao.findById(3L).get());
+        System.out.println("Find by id " + bookDao.findById(firstBook.getId()).get());
 
-        Book book = bookDao.findById(3L).get();
+
+        Book book = bookDao.findById(firstBook.getId()).get();
         book.setTitle("Taypen");
         bookDao.update(book);
-        System.out.println("New Title " + bookDao.findById(3L).get());
+        System.out.println("New Title " + bookDao.findById(firstBook.getId()).get());
 
-        System.out.println("Delete by id " + bookDao.deleteById(2L));
+        System.out.println("Delete by id " + bookDao.deleteById(secondBook.getId()));
         System.out.println("Remaining books " + bookDao.findAll());
     }
 }
