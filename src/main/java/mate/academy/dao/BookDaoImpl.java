@@ -72,7 +72,9 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 var statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
-            books = parseResultSetToBooks(resultSet);
+            while (resultSet.next()) {
+                books.add(extractBookFromResultSet(resultSet));
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Error while finding all books", e);
         }
@@ -113,15 +115,11 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private static List<Book> parseResultSetToBooks(ResultSet resultSet) throws SQLException {
-        List<Book> books = new ArrayList<>();
+    private Book extractBookFromResultSet(ResultSet resultSet) throws SQLException {
+        long id = resultSet.getLong(ID);
+        String title = resultSet.getString(TITLE);
+        BigDecimal price = resultSet.getBigDecimal(PRICE);
 
-        while (resultSet.next()) {
-            long id = resultSet.getLong(ID);
-            String title = resultSet.getString(TITLE);
-            BigDecimal price = resultSet.getBigDecimal(PRICE);
-            books.add(new Book(id, title, price));
-        }
-        return books;
+        return new Book(id, title, price);
     }
 }
