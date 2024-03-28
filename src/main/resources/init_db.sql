@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS book (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price BIGINT NOT NULL,
+    year INT
+);
