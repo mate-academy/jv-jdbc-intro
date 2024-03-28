@@ -15,7 +15,9 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private ResultSet generatedKeys;
+    private static final String ID_ROW = "id";
+    private static final String TITLE_ROW = "title";
+    private static final String PRICE_ROW = "price";
 
     @Override
     public Book create(Book book) {
@@ -30,13 +32,13 @@ public class BookDaoImpl implements BookDao {
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to add at least 1 book");
             }
-            generatedKeys = statement.getGeneratedKeys();
+            ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1,Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Unable to create data for book" + book,e);
+            throw new DataProcessingException("Unable to add book to database" + book,e);
         }
         return book;
     }
@@ -47,7 +49,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(findByIdQuery)) {
             statement.setLong(1, id);
-            generatedKeys = statement.executeQuery();
+            ResultSet generatedKeys = statement.executeQuery();
             if (generatedKeys.next()) {
                 Book book = getBookFromResultSet(generatedKeys);
                 return Optional.of(book);
@@ -64,12 +66,13 @@ public class BookDaoImpl implements BookDao {
         String findAllQuery = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(findAllQuery)) {
-            generatedKeys = statement.executeQuery();
+            ResultSet generatedKeys = statement.executeQuery();
             while (generatedKeys.next()) {
                 books.add(getBookFromResultSet(generatedKeys));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cant create a connection to the DB", e);
+            throw new DataProcessingException("Error appeared while trying to find a book"
+                    + "It could be problem with a connection to the DB or table itself", e);
         }
         return books;
     }
@@ -102,15 +105,11 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book getBookFromResultSet(ResultSet generatedKeys) {
-        try {
-            Book book = new Book();
-            book.setId(generatedKeys.getObject("id", Long.class));
-            book.setTitle(generatedKeys.getString("title"));
-            book.setPrice(generatedKeys.getBigDecimal("price"));
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can not retrieve data from result set", e);
-        }
+    private Book getBookFromResultSet(ResultSet generatedKeys) throws SQLException {
+        Book book = new Book();
+        book.setId(generatedKeys.getObject(ID_ROW, Long.class));
+        book.setTitle(generatedKeys.getString(TITLE_ROW));
+        book.setPrice(generatedKeys.getBigDecimal(PRICE_ROW));
+        return book;
     }
 }

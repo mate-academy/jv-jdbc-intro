@@ -11,13 +11,15 @@ public class ConnectionUtil {
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String USER_NAME = "root";
     private static final String USER_PASSWORD = "12345678";
+    private static final String FILED_USER = "user";
+    private static final String FILED_PASSWORD = "password";
     private static final Properties DB_PROPERTIES;
 
     static {
 
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", USER_NAME);
-        DB_PROPERTIES.put("password", USER_PASSWORD);
+        DB_PROPERTIES.put(FILED_USER, USER_NAME);
+        DB_PROPERTIES.put(FILED_PASSWORD, USER_PASSWORD);
 
         try {
             Class.forName(JDBC_DRIVER);
