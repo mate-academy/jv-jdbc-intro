@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +34,7 @@ public class BookDaoImpl implements BookDao {
             checkAffectedRows(statement.executeUpdate());
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getLong(1);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -76,7 +77,9 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            checkAffectedRows(statement.executeUpdate());
+
+            int affectedRows = statement.executeUpdate();
+            checkAffectedRows(affectedRows);
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to update the book " + book, e);
@@ -95,15 +98,15 @@ public class BookDaoImpl implements BookDao {
 
     private Book parseBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book newBook = new Book();
-        newBook.setId(resultSet.getLong(ID_COLUMN));
-        newBook.setTitle(resultSet.getString(TITLE_COLUMN));
-        newBook.setPrice(resultSet.getBigDecimal(PRICE_COLUMN));
+        newBook.setId(resultSet.getObject(ID_COLUMN, Long.class));
+        newBook.setTitle(resultSet.getObject(TITLE_COLUMN, String.class));
+        newBook.setPrice(resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
         return newBook;
     }
 
-    private void checkAffectedRows(int rows) {
+    private void checkAffectedRows(int rows) throws SQLException {
         if (rows < MIN_AFFECTED_ROWS) {
-            throw new DataProcessingException();
+            throw new SQLException();
         }
     }
 

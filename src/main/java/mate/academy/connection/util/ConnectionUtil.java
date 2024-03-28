@@ -13,7 +13,7 @@ public class ConnectionUtil {
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "715914qQ()");
+        DB_PROPERTIES.put("password", "");
     }
 
     public static Connection getConnection() throws SQLException {
