@@ -1,32 +1,34 @@
 package mate.academy;
 
+import mate.academy.dao.BookDao;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
+
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Properties dbProperties = new Properties();
-            dbProperties.put("user","root");
-            dbProperties.put("password","12345678");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
-                        dbProperties);
-            String sql = "SELECT * FROM car WHERE id = ?";
-            PreparedStatement statment = connection.prepareStatement(sql);
-            statment.setLong(1,1L);
-            ResultSet resultSet = statment.executeQuery();
-            if (resultSet.next()) {
+    private static final Injector injector = Injector.getInstance("mate.academy");
 
-                Long id = resultSet.getObject("id", Long.class);
-                String model = resultSet.getString("model");
-                Integer year = resultSet.getObject("year", Integer.class);
-                System.out.println(id + model + year);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot load jdbc driver", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Connection to DB failed", e);
-    }
+    public static void main(String[] args) {
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+
+        Book firstBook = new Book("The Chronical Of Amber", new BigDecimal("10.99"));
+        bookDao.create(firstBook);
+
+        Book secondBook = new Book("Shogun",new BigDecimal("9.02"));
+        bookDao.create(secondBook);
+
+        System.out.println(bookDao.findAll());
+        System.out.println(bookDao.findById(1L).get());
+
+        Book book = bookDao.findById(1L).get();
+        book.setTitle("Updated Title");
+        bookDao.update(book);
+        System.out.println(bookDao.findById(1L).get());
+
+        System.out.println(bookDao.deleteById(1L));
+        System.out.println(bookDao.findAll());
     }
 }
