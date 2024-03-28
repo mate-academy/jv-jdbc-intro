@@ -91,9 +91,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String query = "DELETE FROM books WHERE id = ?";
+        String deleteQuery = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
