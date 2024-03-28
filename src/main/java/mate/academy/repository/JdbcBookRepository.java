@@ -1,10 +1,5 @@
 package mate.academy.repository;
 
-import mate.academy.ConnectionUtil;
-import mate.academy.lib.Dao;
-import mate.academy.lib.DataProcessingException;
-import mate.academy.models.Book;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.ConnectionUtil;
+import mate.academy.lib.Dao;
+import mate.academy.lib.DataProcessingException;
+import mate.academy.models.Book;
 
 @Dao
 public class JdbcBookRepository implements BookRepository {
@@ -20,8 +19,8 @@ public class JdbcBookRepository implements BookRepository {
     public Book save(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql,
-                     PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    PreparedStatement statement = conn.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
@@ -44,7 +43,7 @@ public class JdbcBookRepository implements BookRepository {
     public Optional<Book> findById(Long id) {
         String sql = "SELECT id, title, price FROM books WHERE id = ?";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, id);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
@@ -59,15 +58,13 @@ public class JdbcBookRepository implements BookRepository {
         return Optional.empty();
     }
 
-
-
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT id, title, price FROM books";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
                 books.add(new Book(rs.getLong("id"),
                         rs.getString("title"),
@@ -83,9 +80,8 @@ public class JdbcBookRepository implements BookRepository {
     public Optional<Book> updateById(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql,
-                    PreparedStatement.RETURN_GENERATED_KEYS))
-         {
+                PreparedStatement statement = connection.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -110,7 +106,7 @@ public class JdbcBookRepository implements BookRepository {
     public void deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
