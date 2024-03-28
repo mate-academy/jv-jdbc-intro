@@ -8,6 +8,7 @@ import java.util.Properties;
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final Properties DB_PROPERTIES;
+
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
@@ -18,6 +19,7 @@ public class ConnectionUtil {
             throw new RuntimeException("Can`t load JDBC driver", e);
         }
     }
+
     public static Connection getConnection(String sql) throws SQLException {
         return DriverManager.getConnection(DB_URL,DB_PROPERTIES);
     }

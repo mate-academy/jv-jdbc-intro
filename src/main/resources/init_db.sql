@@ -1,6 +1,6 @@
 CREATE TABLE `books` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(50),
-    `price` DECIMAL(10,2),
+    `bookTitle` VARCHAR(50),
+    `price` BIGINT,
     PRIMARY KEY (`id`)
 );
