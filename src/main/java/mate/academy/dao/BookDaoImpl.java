@@ -17,17 +17,17 @@ public class BookDaoImpl implements BookDao {
     private static final String ID_COLUMN = "id";
     private static final String TITLE_COLUMN = "title";
     private static final String PRICE_COLUMN = "price";
-    private static final String CREATE_SQL = "INSERT INTO books(title, price) VALUES(?, ?)";
-    private static final String FIND_BY_ID_SQL = "SELECT * FROM books WHERE id = ?";
-    private static final String FIND_ALL_SQL = "SELECT * FROM books";
-    private static final String UPDATE_SQL = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-    private static final String DELETE_BY_ID_SQL = "DELETE FROM books WHERE id = ?";
+    private static final String CREATE_QUERY = "INSERT INTO books(title, price) VALUES(?, ?)";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM books";
+    private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETE_BY_ID_QUERY = "DELETE FROM books WHERE id = ?";
     private static final int MIN_AFFECTED_ROWS = 1;
 
     @Override
     public Book create(Book book) {
         try (PreparedStatement statement = ConnectionUtil.getConnection()
-                        .prepareStatement(CREATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                        .prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             checkAffectedRows(statement.executeUpdate());
@@ -44,7 +44,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        try (PreparedStatement statement = createStatement(FIND_BY_ID_SQL)) {
+        try (PreparedStatement statement = createStatement(FIND_BY_ID_QUERY)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -58,7 +58,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        try (PreparedStatement statement = createStatement(FIND_ALL_SQL)) {
+        try (PreparedStatement statement = createStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -72,7 +72,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        try (PreparedStatement statement = createStatement(UPDATE_SQL)) {
+        try (PreparedStatement statement = createStatement(UPDATE_QUERY)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        try (PreparedStatement statement = createStatement(DELETE_BY_ID_SQL)) {
+        try (PreparedStatement statement = createStatement(DELETE_BY_ID_QUERY)) {
             statement.setLong(1, id);
             return statement.executeUpdate() >= MIN_AFFECTED_ROWS;
         } catch (SQLException e) {
