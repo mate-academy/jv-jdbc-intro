@@ -9,13 +9,15 @@ public class UtilConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/book";
     private static final Properties PROPERTIES;
     private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
-    private static final String LOGIN = "root";
-    private static final String PASSWORD = "root";
+    private static final String USER = "user";
+    private static final String PASSWORD = "password";
+    private static final String USER_VALUE = "root";
+    private static final String PASSWORD_VALUE = "root";
 
     static {
         PROPERTIES = new Properties();
-        PROPERTIES.put("user", LOGIN);
-        PROPERTIES.put("password", PASSWORD);
+        PROPERTIES.put(USER, USER_VALUE);
+        PROPERTIES.put(PASSWORD, PASSWORD_VALUE);
     }
 
     public static Connection getConnection() {

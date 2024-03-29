@@ -20,6 +20,9 @@ public class BookDaoImpl implements BookDao {
     private static final String FIND_ALL_QUERY = "SELECT * FROM books";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
+    private static final String ID_LABEL = "id";
+    private static final String TITLE_LABEL = "title";
+    private static final String PRICE_LABEL = "price";
 
     @Override
     public Book create(Book book) {
@@ -31,7 +34,7 @@ public class BookDaoImpl implements BookDao {
             checkInsertedRows(preparedStatement.executeUpdate());
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                Long id = resultSet.getLong(1);
+                Long id = resultSet.getObject(1, Long.class);
                 book.setId(id);
             }
             return book;
@@ -47,8 +50,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(new Book(id, resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")));
+                return Optional.of(createBook(resultSet));
             } else {
                 return Optional.empty();
             }
@@ -64,9 +66,7 @@ public class BookDaoImpl implements BookDao {
             List<Book> books = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                books.add(new Book(resultSet.getLong("id"),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")));
+                books.add(createBook(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -107,5 +107,12 @@ public class BookDaoImpl implements BookDao {
         if (insertedRows < 1) {
             throw new RuntimeException("Expected at least one row to insert");
         }
+    }
+
+    private Book createBook(ResultSet resultSet) throws SQLException {
+        return new Book(
+                resultSet.getLong(ID_LABEL),
+                resultSet.getString(TITLE_LABEL),
+                resultSet.getBigDecimal(PRICE_LABEL));
     }
 }
