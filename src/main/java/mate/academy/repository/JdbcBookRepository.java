@@ -27,10 +27,10 @@ public class JdbcBookRepository implements BookRepository {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
-            wasUpdateSuccessful(statement);
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                book.setId(generatedKeys.getLong(1));
+            checkIfUpdateSuccessful(statement.executeUpdate());
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                book.setId(resultSet.getObject(1, Long.class));
             } else {
                 throw new SQLException("Creating book failed, no ID obtained.");
             }
@@ -49,9 +49,8 @@ public class JdbcBookRepository implements BookRepository {
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(getBookFromResultSet(rs));
-                } else {
-                    return Optional.empty();
                 }
+                return Optional.empty();
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find ", e);
@@ -84,7 +83,7 @@ public class JdbcBookRepository implements BookRepository {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
 
-            wasUpdateSuccessful(statement);
+            checkIfUpdateSuccessful(statement.executeUpdate());
         } catch (SQLException e) {
             throw new RuntimeException("Could not update by id " + book.getId() + " ", e);
         }
@@ -97,7 +96,7 @@ public class JdbcBookRepository implements BookRepository {
         try (Connection conn = ConnectionUtil.getConnection();
                 PreparedStatement statement = conn.prepareStatement(sqlDeleteById)) {
             statement.setLong(1, id);
-            return wasUpdateSuccessful(statement);
+            return checkIfUpdateSuccessful(statement.executeUpdate());
         } catch (SQLException e) {
             throw new DataProcessingException("Deleting by id " + id + " failed ", e);
         }
@@ -105,13 +104,16 @@ public class JdbcBookRepository implements BookRepository {
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getLong(COLUMN_ID));
+        book.setId(resultSet.getObject(COLUMN_ID, Long.class));
         book.setTitle(resultSet.getString(COLUMN_TITLE));
         book.setPrice(resultSet.getBigDecimal(COLUMN_PRICE));
         return book;
     }
 
-    private boolean wasUpdateSuccessful(PreparedStatement statement) throws SQLException {
-        return statement.executeUpdate() > 0;
+    private boolean checkIfUpdateSuccessful(int affectedRows) throws SQLException {
+        if (affectedRows <= 0) {
+            throw new SQLException("No affected rows");
+        }
+        return true;
     }
 }
