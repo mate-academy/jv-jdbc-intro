@@ -25,7 +25,8 @@ public class BookDaoImpl implements BookDao {
         String insertSqlQuery = "INSERT INTO book (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                        connection.prepareStatement(insertSqlQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(insertSqlQuery,
+                                Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             checkAffectedRows(statement.executeUpdate());
@@ -92,7 +93,8 @@ public class BookDaoImpl implements BookDao {
         String deleteSqlQuery = "DELETE FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                        connection.prepareStatement(deleteSqlQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(deleteSqlQuery,
+                                Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;

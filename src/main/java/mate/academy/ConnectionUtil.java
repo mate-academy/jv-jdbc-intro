@@ -30,7 +30,7 @@ public class ConnectionUtil {
         try {
             return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get connection to DB ", e );
+            throw new RuntimeException("Can't get connection to DB ", e);
         }
     }
 }
