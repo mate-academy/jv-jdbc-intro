@@ -12,12 +12,13 @@ public class ConnectionUtil {
     private static final String USER = "user";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
+    private static final String PASS_WORD = "password";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.setProperty(USER, USERNAME);
-        DB_PROPERTIES.setProperty(PASSWORD, PASSWORD);
+        DB_PROPERTIES.setProperty(PASSWORD, PASS_WORD);
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
@@ -25,7 +26,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't get connection to DB ", e );
+        }
     }
 }
