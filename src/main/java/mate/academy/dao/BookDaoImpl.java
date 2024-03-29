@@ -37,7 +37,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
             return book;
@@ -53,7 +53,7 @@ public class BookDaoImpl implements BookDao {
                  PreparedStatement statement = connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
+                Long id = resultSet.getObject("id", Long.class);
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
                 response.add(new Book(id, title, price));
@@ -89,11 +89,10 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
+            if (rowsUpdated < 1) {
                 throw new DataProcessingException("Failed to update book, no rows were affected");
             }
-            return findById(book.getId()).orElseThrow(
-                    () -> new DataProcessingException("Update fail for book: " + book));
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException(ERROR + " updating - " + book, e);
         }

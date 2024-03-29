@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.exceptions.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/bookstore?serverTimezone=UTC";
@@ -21,7 +22,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't connect to database", e);
+        }
     }
 }
