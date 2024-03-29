@@ -17,7 +17,7 @@ public class Main {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         for (int i = 1; i < BOOK_AMOUNT + 1; i++) {
-            books.add(new Book((long) i, "book" + i ,BigDecimal.valueOf(i)));
+            books.add(new Book((long) i, "book" + i, BigDecimal.valueOf(i)));
         }
         for (Book book : books) {
             bookDao.create(book);
