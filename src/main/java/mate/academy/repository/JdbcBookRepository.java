@@ -14,19 +14,20 @@ import mate.academy.models.Book;
 
 @Dao
 public class JdbcBookRepository implements BookRepository {
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_PRICE = "price";
 
     @Override
     public Book save(Book book) {
-        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
+        String sqlInsert = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection conn = ConnectionUtil.getConnection();
-                    PreparedStatement statement = conn.prepareStatement(sql,
+                    PreparedStatement statement = conn.prepareStatement(sqlInsert,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
-            if (statement.executeUpdate() == 0) {
-                throw new SQLException("No rows affected");
-            }
+            wasUpdateSuccessful(statement);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 book.setId(generatedKeys.getLong(1));
@@ -41,34 +42,31 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT id, title, price FROM books WHERE id = ?";
+        String sqlSelectById = "SELECT id, title, price FROM books WHERE id = ?";
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+                PreparedStatement statement = conn.prepareStatement(sqlSelectById)) {
             statement.setLong(1, id);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(new Book(rs.getLong("id"),
-                            rs.getString("title"),
-                            rs.getBigDecimal("price")));
+                    return Optional.of(getBookFromResultSet(rs));
+                } else {
+                    return Optional.empty();
                 }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find ", e);
         }
-        return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT id, title, price FROM books";
+        String sqlSelectAll = "SELECT id, title, price FROM books";
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql);
+                PreparedStatement statement = conn.prepareStatement(sqlSelectAll);
                 ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
-                books.add(new Book(rs.getLong("id"),
-                        rs.getString("title"),
-                        rs.getBigDecimal("price")));
+                books.add(getBookFromResultSet(rs));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find all", e);
@@ -77,42 +75,43 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     @Override
-    public Optional<Book> updateById(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    public Book updateById(Book book) {
+        String sqlUpdateById = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
+                PreparedStatement statement = connection.prepareStatement(sqlUpdateById,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
 
-            if (statement.executeUpdate() == 0) {
-                throw new SQLException("No rows affected");
-            }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return Optional.of(new Book(generatedKeys.getLong("id"),
-                        generatedKeys.getString("title"),
-                        generatedKeys.getBigDecimal("price")));
-            }
-
+            wasUpdateSuccessful(statement);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could not update by id " + book.getId() + " ", e);
         }
-        return Optional.empty();
+        return book;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
-        int rowsEffected;
+        String sqlDeleteById = "DELETE FROM books WHERE id = ?";
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+                PreparedStatement statement = conn.prepareStatement(sqlDeleteById)) {
             statement.setLong(1, id);
-            rowsEffected = statement.executeUpdate();
+            return wasUpdateSuccessful(statement);
         } catch (SQLException e) {
-            throw new DataProcessingException("Deleting failed ", e);
+            throw new DataProcessingException("Deleting by id " + id + " failed ", e);
         }
-        return rowsEffected == 1;
+    }
+
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong(COLUMN_ID));
+        book.setTitle(resultSet.getString(COLUMN_TITLE));
+        book.setPrice(resultSet.getBigDecimal(COLUMN_PRICE));
+        return book;
+    }
+
+    private boolean wasUpdateSuccessful(PreparedStatement statement) throws SQLException {
+        return statement.executeUpdate() > 0;
     }
 }

@@ -7,14 +7,12 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/Books";
-    private static final String USER_NAME = "root";
-    private static final String USER_PASSWORD = "TelegramBOT";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", USER_NAME);
-        DB_PROPERTIES.put("password", USER_PASSWORD);
+        DB_PROPERTIES.put("user", "root");
+        DB_PROPERTIES.put("password", "TelegramBOT");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

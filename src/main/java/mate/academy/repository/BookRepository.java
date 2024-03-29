@@ -11,7 +11,7 @@ public interface BookRepository {
 
     List<Book> findAll();
 
-    Optional<Book> updateById(Book book);
+    Book updateById(Book book);
 
     boolean deleteById(Long id);
 }
