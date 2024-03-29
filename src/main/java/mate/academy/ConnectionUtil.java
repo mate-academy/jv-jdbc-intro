@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String driver = "com.mysql.cj.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL =
             "jdbc:mysql://localhost:3306/jdcb-intro?serverTimezone=UTC";
     private static final String USER = "user";
@@ -19,9 +19,9 @@ public class ConnectionUtil {
         DB_PROPERTIES.setProperty(USER, USERNAME);
         DB_PROPERTIES.setProperty(PASSWORD, PASSWORD);
         try {
-            Class.forName(driver);
+            Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't load JDBC driver: " + driver, e);
+            throw new RuntimeException("Can't load JDBC driver: " + DRIVER, e);
         }
     }
 
