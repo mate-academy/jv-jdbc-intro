@@ -12,13 +12,13 @@ public class ConnectionUtil {
     private static final String USER = "user";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    private static final String PASS_WORD = "password";
+    private static final String PASSWORD_VALUE = "password";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.setProperty(USER, USERNAME);
-        DB_PROPERTIES.setProperty(PASSWORD, PASS_WORD);
+        DB_PROPERTIES.setProperty(PASSWORD, PASSWORD_VALUE);
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
