@@ -21,7 +21,10 @@ public class BookDaoImpl implements BookDao {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM books WHERE id = ?";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-    private static final String ERROR = "Can't create connection to the db while";
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String PRICE = "price";
+    private static final String ERROR = "Can not complete ";
 
     @Override
     public Book create(Book book) {
@@ -53,10 +56,7 @@ public class BookDaoImpl implements BookDao {
                  PreparedStatement statement = connection.prepareStatement(FIND_ALL_QUERY)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                response.add(new Book(id, title, price));
+                response.add(getBook(resultSet));
             }
             return response;
         } catch (SQLException e) {
@@ -71,9 +71,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                return Optional.of(new Book(id, title, price));
+                return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(ERROR + " finding by id = " + id, e);
@@ -108,5 +106,12 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new RuntimeException(ERROR + " deleting - " + book, e);
         }
+    }
+
+    private Book getBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong(ID);
+        String title = resultSet.getString(TITLE);
+        BigDecimal price = resultSet.getBigDecimal(PRICE);
+        return new Book(id, title, price);
     }
 }

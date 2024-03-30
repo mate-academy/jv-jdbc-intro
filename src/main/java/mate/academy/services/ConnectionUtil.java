@@ -8,17 +8,24 @@ import mate.academy.exceptions.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/bookstore?serverTimezone=UTC";
+    private static final String LOGIN_VALUE = "root";
+    private static final String LOGIN_KEY = "user";
+    private static final String PASSWORD_VALUE = "---SQLdno12";
+    private static final String PASSWORD_KEY = "password";
+    private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
+    private static final String DRIVER_ERROR = "Can't load JDBC driver";
+    private static final String CONNECTION_ERROR = "Can't connect to database";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "---SQLdno12");
+        DB_PROPERTIES.put(LOGIN_KEY, LOGIN_VALUE);
+        DB_PROPERTIES.put(PASSWORD_KEY, PASSWORD_VALUE);
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DRIVER_NAME);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't load JDBC driver", e);
+            throw new RuntimeException(DRIVER_ERROR, e);
         }
     }
 
@@ -26,7 +33,7 @@ public class ConnectionUtil {
         try {
             return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't connect to database", e);
+            throw new DataProcessingException(CONNECTION_ERROR, e);
         }
     }
 }
