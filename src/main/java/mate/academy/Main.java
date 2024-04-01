@@ -12,17 +12,21 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+
         Book bookJava = new Book();
         bookJava.setTitle("Java");
         bookJava.setPrice(BigDecimal.valueOf(350.00));
         bookDao.create(bookJava);
+
         Book bookHistory = new Book();
         bookHistory.setTitle("History");
         bookHistory.setPrice(BigDecimal.valueOf(350.00));
         bookDao.create(bookHistory);
+
         Optional<Book> optional = bookDao.findById(3L);
         Book book = optional.get();
         System.out.println(book);
+
         List<Book> list = bookDao.findAll();
         System.out.println(list);
         bookDao.deleteById(1L);
