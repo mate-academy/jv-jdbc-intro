@@ -25,22 +25,27 @@ public class BookDaoImpl implements BookDao {
     private static final String TITLE = "title";
     private static final String PRICE = "price";
     private static final String ERROR = "Can not complete ";
+    private static final int TITLE_INDEX = 1;
+    private static final int PRICE_INDEX = 2;
+    private static final int ID_INDEX_UPDATE = 3;
+    private static final int ID_INDEX_COMMON = 1;
+    private static final int MINIMAL_ROWS_TO_CHANGE = 1;
 
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection
+                 PreparedStatement statement = connection
                         .prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows < MINIMAL_ROWS_TO_CHANGE) {
                 throw new DataProcessingException("Failed to create book "
                         + book + " no rows were affected");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
+                Long id = generatedKeys.getObject(ID_INDEX_COMMON, Long.class);
                 book.setId(id);
             }
             return book;
@@ -68,7 +73,7 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX_COMMON, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(getBook(resultSet));
@@ -83,11 +88,11 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY);) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, book.getId());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
+            statement.setLong(ID_INDEX_UPDATE, book.getId());
             int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated < 1) {
+            if (rowsUpdated < MINIMAL_ROWS_TO_CHANGE) {
                 throw new DataProcessingException("Failed to update book, no rows were affected");
             }
             return book;
@@ -99,8 +104,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean delete(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
-            statement.setLong(1, book.getId());
+                 PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
+            statement.setLong(ID_INDEX_COMMON, book.getId());
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -109,7 +114,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book getBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong(ID);
+        Long id = resultSet.getObject(ID, Long.class);
         String title = resultSet.getString(TITLE);
         BigDecimal price = resultSet.getBigDecimal(PRICE);
         return new Book(id, title, price);
