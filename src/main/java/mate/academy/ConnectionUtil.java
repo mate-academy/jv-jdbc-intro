@@ -7,12 +7,14 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/Books";
+    private static final String USER = "user";
+    private static final String PASSWORD = "password";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "TelegramBOT");
+        DB_PROPERTIES.put(USER, "root");
+        DB_PROPERTIES.put(PASSWORD, "TelegramBOT");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -25,8 +27,7 @@ public class ConnectionUtil {
         try {
             return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't establish connection ", e);
+            throw new RuntimeException("Can't establish connection", e);
         }
     }
-    
 }

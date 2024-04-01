@@ -32,7 +32,7 @@ public class JdbcBookRepository implements BookRepository {
             if (resultSet.next()) {
                 book.setId(resultSet.getObject(1, Long.class));
             } else {
-                throw new SQLException("Creating book failed, no ID obtained.");
+                throw new RuntimeException("Creating book failed, no ID obtained.");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Saving failed ", e);
@@ -53,7 +53,7 @@ public class JdbcBookRepository implements BookRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find ", e);
+            throw new DataProcessingException("Can't find book by id " + id, e);
         }
     }
 
@@ -85,7 +85,7 @@ public class JdbcBookRepository implements BookRepository {
 
             checkIfUpdateSuccessful(statement.executeUpdate());
         } catch (SQLException e) {
-            throw new RuntimeException("Could not update by id " + book.getId() + " ", e);
+            throw new RuntimeException("Could not update book by id " + book.getId(), e);
         }
         return book;
     }
@@ -110,9 +110,9 @@ public class JdbcBookRepository implements BookRepository {
         return book;
     }
 
-    private boolean checkIfUpdateSuccessful(int affectedRows) throws SQLException {
+    private boolean checkIfUpdateSuccessful(int affectedRows) {
         if (affectedRows <= 0) {
-            throw new SQLException("No affected rows");
+            throw new RuntimeException("No affected rows");
         }
         return true;
     }
