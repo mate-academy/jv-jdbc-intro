@@ -7,8 +7,8 @@ import java.util.Properties;
 import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
-    private static final String DB_PATH = "jdbc;mysql://localhost:3306/books";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String DB_PATH = "jdbc:mysql://localhost:3306/jdbc";
     private static final String USER = "root";
     private static final String PASSWORD = "MySQL1234";
     private static final Properties PROPERTIES;
@@ -25,7 +25,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_PATH, PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_PATH, PROPERTIES);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Failed to establish database connection", e);
+        }
     }
 }
