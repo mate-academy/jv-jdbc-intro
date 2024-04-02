@@ -1,6 +1,8 @@
 package mate.academy;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -11,19 +13,26 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book mainCamp = new Book();
-        mainCamp.setTitle("Main Camp");
-        mainCamp.setPrice(BigDecimal.valueOf(19.99));
-        bookDao.create(mainCamp);
-
         Book lordOfTheRing = new Book();
         lordOfTheRing.setTitle("Lord of the ring");
-        lordOfTheRing.setPrice(BigDecimal.valueOf(20.50));
+        lordOfTheRing.setPrice(BigDecimal.valueOf(21.5));
         bookDao.create(lordOfTheRing);
 
-        bookDao.findAll();
-        bookDao.findById(1L);
-        bookDao.update(lordOfTheRing).setPrice(BigDecimal.valueOf(40));
+        Book mainCamp = new Book();
+        mainCamp.setTitle("Main camp");
+        mainCamp.setPrice(BigDecimal.valueOf(20.0));
+        bookDao.create(mainCamp);
+
+        Optional<Book> bookById = bookDao.findById(1L);
+        System.out.println(bookById);
+
+        List<Book> allBooks = bookDao.findAll();
+        System.out.println(allBooks);
+
+        Book updatedBook = bookDao.update(mainCamp);
+        updatedBook.setPrice(BigDecimal.valueOf(50.5));
+        System.out.println(updatedBook);
+
         bookDao.deleteById(1L);
     }
 }
