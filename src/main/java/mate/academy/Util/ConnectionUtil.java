@@ -7,8 +7,8 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     public static final String DB_URL = "jdbc:mysql://localhost:3306/book_schema";
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final Properties DB_PROPERTIES;
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
     static {
         DB_PROPERTIES = new Properties();
