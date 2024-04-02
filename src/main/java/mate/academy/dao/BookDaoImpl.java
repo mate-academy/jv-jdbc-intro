@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(COLUMN_PRICE, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            checkChanges(affectedRows, book);
+            isUpdated(affectedRows, book);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(COLUMN_TITLE, Long.class);
@@ -55,12 +55,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(COLUMN_TITLE, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                long columnId = resultSet.getObject(ID, Long.class);
-                BigDecimal columnPrice = resultSet.getObject(PRICE, BigDecimal.class);
-                String columnTitle = resultSet.getString(TITLE);
-                book.setTitle(columnTitle);
-                book.setPrice(columnPrice);
-                book.setId(columnId);
+                mapToBook(resultSet);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get a book by id " + id, e);
@@ -77,12 +72,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book book = new Book();
-                long columnId = resultSet.getObject(ID, Long.class);
-                Object columnPrice = resultSet.getObject(PRICE);
-                String columnTitle = resultSet.getString(TITLE);
-                book.setPrice((BigDecimal) columnPrice);
-                book.setTitle(columnTitle);
-                book.setId(columnId);
+                book = mapToBook(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -101,7 +91,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(COLUMN_ID, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            checkChanges(affectedRows, book);
+            isUpdated(affectedRows, book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update a book: " + book, e);
         }
@@ -122,12 +112,27 @@ public class BookDaoImpl implements BookDao {
         return affectedRows > 0;
     }
 
-    private boolean checkChanges(int affectedRows, Book book) {
+    private boolean isUpdated(int affectedRows, Book book) {
         if (affectedRows < 1) {
             throw new DataProcessingException(
                     "Expected to update at least one row, but updated nothing: "
                             + book);
         }
         return true;
+    }
+
+    private Book mapToBook(ResultSet resultSet) {
+        Book book = new Book();
+        try {
+            long columnId = resultSet.getObject(ID, Long.class);
+            Object columnPrice = resultSet.getObject(PRICE);
+            String columnTitle = resultSet.getString(TITLE);
+            book.setPrice((BigDecimal) columnPrice);
+            book.setTitle(columnTitle);
+            book.setId(columnId);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can`t get result from DB");
+        }
+        return book;
     }
 }
