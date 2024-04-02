@@ -1,4 +1,4 @@
-package mate.academy.DAO;
+package mate.academy.dao;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -24,7 +24,8 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getconnection();
-             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection
+                     .prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
