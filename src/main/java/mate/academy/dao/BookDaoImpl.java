@@ -15,6 +15,7 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int MIN_AFFECTED_ROWS_COUNT = 1;
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String PRICE = "price";
@@ -30,10 +31,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setInt(2, book.getPrice().intValue());
 
             int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Excepted to insert at least 1 row. "
-                        + "But inserted 0 rows.");
-            }
+            checkAffectedRowsNumber(affectedRows);
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -57,11 +55,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Long id = resultSet.getObject(ID, Long.class);
-                String title = resultSet.getString(TITLE);
-                int price = resultSet.getInt(PRICE);
-
-                books.add(new Book(id, title, price));
+                books.add(parseBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all book instances.", e);
@@ -79,9 +73,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String title = resultSet.getString(TITLE);
-                int price = resultSet.getInt(PRICE);
-                return Optional.of(new Book(id, title, price));
+                return Optional.of(parseBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id. ID=" + id, e);
@@ -100,12 +92,9 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(3, book.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("Excepted to change at least 1 row. "
-                        + "But changed 0 rows.");
-            }
+            checkAffectedRowsNumber(affectedRows);
         } catch (SQLException e) {
-            throw new DataProcessingException("Exception, unavailable to "
+            throw new DataProcessingException("Unable to "
                     + "update data in DB. Parameters: Book="
                     + book.toString(), e);
         }
@@ -121,7 +110,27 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Unable to delete book from DB. "
+                    + "Book id = " + id, e);
+        }
+    }
+
+    private void checkAffectedRowsNumber(int number) {
+        if (number < MIN_AFFECTED_ROWS_COUNT) {
+            throw new DataProcessingException("Excepted to change at least 1 row. "
+                    + "But changed 0 rows.");
+        }
+    }
+
+    private Book parseBook(ResultSet requestResult) {
+        try {
+            Long id = requestResult.getObject(ID, Long.class);
+            String title = requestResult.getString(TITLE);
+            int price = requestResult.getInt(PRICE);
+            return new Book(id, title, price);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't parse book "
+                    + "data from resultSet", e);
         }
     }
 }

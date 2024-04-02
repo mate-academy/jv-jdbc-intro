@@ -10,13 +10,15 @@ public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/books_storage";
     private static final String DRIVER_URL = "com.mysql.cj.jdbc.Driver";
     private static final Properties DB_PROPERTIES;
-    private static final String USER = "root";
-    private static final String PASSWORD = "55555Qwz!";
+    private static final String USER = "user";
+    private static final String USER_NAME = "root";
+    private static final String PASSWORD = "password";
+    private static final String PASSWORD_REALIZATION = "55555Qwz!";
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", USER);
-        DB_PROPERTIES.put("password", PASSWORD);
+        DB_PROPERTIES.put(USER, USER_NAME);
+        DB_PROPERTIES.put(PASSWORD, PASSWORD_REALIZATION);
 
         try {
             Class.forName(DRIVER_URL);
@@ -25,7 +27,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Unable get connection to DB", e);
+        }
     }
 }

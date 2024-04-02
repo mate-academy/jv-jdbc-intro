@@ -4,6 +4,6 @@ USE `books_storage`;
 
 CREATE TABLE IF NOT EXISTS books (
    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-   title VARCHAR(50),
+   title VARCHAR(255),
    price INT
 );
