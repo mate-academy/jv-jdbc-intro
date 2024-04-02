@@ -20,7 +20,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.createBook,
+                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.CREATE_BOOK,
                         Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, book.getTitle());
             pstmt.setBigDecimal(2, book.getPrice());
@@ -41,7 +41,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.getBookById)) {
+                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.GET_BOOK_BY_ID)) {
             pstmt.setLong(1, id);
             ResultSet rset = pstmt.executeQuery();
             if (rset.next()) {
@@ -57,7 +57,7 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.getAllBooks)) {
+                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.GET_ALL_BOOKS)) {
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
                 books.add(getBook(rset));
@@ -71,7 +71,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.updateBook)) {
+                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.UPDATE_BOOK)) {
             pstmt.setString(1, book.getTitle());
             pstmt.setBigDecimal(2, book.getPrice());
             pstmt.setLong(3, book.getId());
@@ -88,7 +88,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection conn = ConnectionUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.deleteBook)) {
+                PreparedStatement pstmt = conn.prepareStatement(SqlQueries.DELETE_BOOK)) {
             pstmt.setLong(1, id);
             int deletedRows = pstmt.executeUpdate();
             return deletedRows > 0;
