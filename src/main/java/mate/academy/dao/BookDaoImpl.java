@@ -16,6 +16,14 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String TITLE = "title";
+    private static final String PRICE = "price";
+    private static final int TITLE_INDEX = 1;
+    private static final int ID_INDEX = 1;
+
+    private static final int PRICE_INDEX = 2;
+    private static final int MIN_AFFECTED_ROWS = 1;
+
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
 
@@ -23,14 +31,15 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement =
                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
             int affectedRows = statement.executeUpdate();
             validateAffectedRows(affectedRows);
 
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
-                book = new Book(resultSet.getLong(1), book.getTitle(), book.getPrice());
+                Long id = resultSet.getObject(ID_INDEX, Long.class);
+                book.setId(id);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create this book: " + book, e);
@@ -43,15 +52,12 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book(id, title, price);
-                return Optional.of(book);
+                Book book = parseBook(resultSet);
+                return Optional.ofNullable(book);
             }
             return Optional.empty();
         } catch (SQLException e) {
@@ -67,9 +73,8 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
 
             ResultSet resultSet = statement.executeQuery();
-
             while (resultSet.next()) {
-                listOfBooks.add(getBook(resultSet));
+                listOfBooks.add(parseBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books from DB", e);
@@ -81,8 +86,8 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
             statement.setLong(3, book.getId());
 
             validateAffectedRows(statement.executeUpdate());
@@ -97,25 +102,25 @@ public class BookDaoImpl implements BookDao {
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_INDEX, id);
             int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return affectedRows >= MIN_AFFECTED_ROWS;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id: " + id, e);
         }
     }
 
     private static void validateAffectedRows(int affectedRows) {
-        if (affectedRows < 1) {
+        if (affectedRows < MIN_AFFECTED_ROWS) {
             throw new RuntimeException(
                     "Expected that at least 1 row will be changed, now: " + affectedRows);
         }
     }
 
-    private static Book getBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getBigDecimal("price");
+    private static Book parseBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject(ID_INDEX, Long.class);
+        String title = resultSet.getString(TITLE);
+        BigDecimal price = resultSet.getBigDecimal(PRICE);
 
         return new Book(id, title, price);
     }

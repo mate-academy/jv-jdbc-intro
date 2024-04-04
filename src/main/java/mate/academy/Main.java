@@ -11,11 +11,11 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book book1 = new Book("Book #1", BigDecimal.valueOf(10));
-        book1 = bookDao.create(book1);
-        System.out.println("New book was created: " + book1);
+        Book book = new Book("Book #1", BigDecimal.valueOf(10));
+        book = bookDao.create(book);
+        System.out.println("New book was created: " + book);
 
-        Long bookId = book1.getId();
+        Long bookId = book.getId();
         Book bookForUpdate = new Book(bookId, "New book", BigDecimal.valueOf(123));
 
         System.out.println("Book #1 was updated: " + bookDao.update(bookForUpdate));
