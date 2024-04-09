@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    public static final String DB_URL = "jdbc:mysql://localhost:3306/books_db";
-    public static final Properties DB_PROPERTIES;
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/books_db";
+    private static final Properties DB_PROPERTIES;
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    public static final String USER_NAME = "root";
-    public static final String USER_PASSWORD = "Qwerty";
+    private static final String USER_NAME = "root";
+    private static final String USER_PASSWORD = "Qwerty";
 
     static {
         DB_PROPERTIES = new Properties();
