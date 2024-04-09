@@ -6,7 +6,7 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
-    public static final Injector injector = Injector.getInstance("mate.academy.DAO");
+    public static final Injector injector = Injector.getInstance("mate.academy.dao");
     public static final String BOOK_NAME = "Dune";
     public static final int PRICE = 100;
 
