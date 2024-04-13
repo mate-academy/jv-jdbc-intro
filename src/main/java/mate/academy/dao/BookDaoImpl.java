@@ -53,7 +53,10 @@ public class BookDaoImpl implements BookDao {
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
 
-                Book book = new Book(id, title, price);
+                Book book = new Book();
+                book.setId(id);
+                book.setTitle(title);
+                book.setPrice(price);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -74,7 +77,11 @@ public class BookDaoImpl implements BookDao {
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
 
-                books.add(new Book(id, title, price));
+                Book book = new Book();
+                book.setId(id);
+                book.setTitle(title);
+                book.setPrice(price);
+                books.add(book);
             }
             return books;
         } catch (SQLException e) {

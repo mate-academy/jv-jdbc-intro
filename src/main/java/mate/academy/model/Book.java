@@ -10,7 +10,7 @@ public class Book {
     public Book() {
     }
 
-    public Book(Long id, String title, BigDecimal price) {
+    public Book(String title, BigDecimal price) {
         this.id = id;
         this.title = title;
         this.price = price;
