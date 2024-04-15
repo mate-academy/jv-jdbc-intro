@@ -50,13 +50,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = parsingResultSet(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -73,14 +67,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = parsingResultSet(resultSet);
                 books.add(book);
             }
             return books;
@@ -115,5 +102,17 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete a book where id: " + id, e);
         }
+    }
+
+    private Book parsingResultSet(ResultSet resultSet) throws SQLException {
+        long id = resultSet.getLong("id");
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
