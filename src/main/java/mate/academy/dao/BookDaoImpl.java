@@ -15,21 +15,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private Book fromDbToObj(ResultSet resultSet) {
-        try {
-            Long bookId = resultSet.getObject("ID", Long.class);
-            String bookTitle = resultSet.getString("TITLE");
-            BigDecimal bookPrice = resultSet.getObject("PRICE", BigDecimal.class);
-            Book book = new Book();
-            book.setId(bookId);
-            book.setTitle(bookTitle);
-            book.setPrice(bookPrice);
-            return book;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
-        }
-    }
-
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books(TITLE,PRICE) VALUES(?,?)";
@@ -62,7 +47,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1,id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(fromDbToObj(resultSet));
+                return Optional.of(parseResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create connection to the DB", e);
@@ -78,7 +63,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                books.add(fromDbToObj(resultSet));
+                books.add(parseResultSet(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -121,6 +106,21 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can not create connection to the DB", e);
+        }
+    }
+
+    private Book parseResultSet(ResultSet resultSet) {
+        try {
+            Long bookId = resultSet.getObject("ID", Long.class);
+            String bookTitle = resultSet.getString("TITLE");
+            BigDecimal bookPrice = resultSet.getObject("PRICE", BigDecimal.class);
+            Book book = new Book();
+            book.setId(bookId);
+            book.setTitle(bookTitle);
+            book.setPrice(bookPrice);
+            return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create connection to the DB", e);
         }

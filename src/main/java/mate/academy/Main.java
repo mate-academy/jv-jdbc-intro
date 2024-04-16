@@ -24,12 +24,12 @@ public class Main {
         System.out.println(bookDao.create(book2));
         System.out.println(bookDao.create(book3));
         //reading from DB
-        System.out.println(bookDao.findById(1L));
+        System.out.println(bookDao.findById(book1.getId()));
         bookDao.findAll().stream().forEach(System.out::println);
         //updating data
         book3.setPrice(BigDecimal.valueOf(89.99));
         System.out.println(bookDao.update(book3));
         //deleting book from DB
-        System.out.println(bookDao.deleteById(1L));
+        System.out.println(bookDao.deleteById(book1.getId()));
     }
 }
