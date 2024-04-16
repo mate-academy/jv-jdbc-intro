@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(bookId);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Can not add book " + book, e);
         }
         return book;
     }
@@ -50,9 +50,9 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(parseResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Can not get element by book id " + id, e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Can not get all books " + books, e);
         }
     }
 
@@ -94,7 +94,7 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Can not update book" + book, e);
         }
     }
 
@@ -107,7 +107,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Can not delete a book by id " + id, e);
         }
     }
 
@@ -122,7 +122,7 @@ public class BookDaoImpl implements BookDao {
             book.setPrice(bookPrice);
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Can not parse resultset " + resultSet, e);
         }
     }
 }
