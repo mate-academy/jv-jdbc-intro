@@ -15,20 +15,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Dao
-public class BookDaoImpl implements BookDao{
+public class BookDaoImpl implements BookDao {
 
     private static final int ID_COLUMN = 1;
     private static final int TITLE_COLUMN = 2;
-    private static  final int PRICE_COLUMN = 3;
+    private static final int PRICE_COLUMN = 3;
     private static final int MIN_EXECUTE_UPDATE = 1;
     private static final String ID = "id";
-    private final static String TITLE = "title";
-    private final static String PRICE = "price";
+    private static final String TITLE = "title";
+    private static final String PRICE = "price";
 
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title,price) VALUES (?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection();
+                try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(TITLE_COLUMN, book.getTitle());
             statement.setBigDecimal(PRICE_COLUMN, book.getPrice());
@@ -41,14 +41,13 @@ public class BookDaoImpl implements BookDao{
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create book", e);
         }
-
         return book;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
-        try(Connection connection = ConnectionUtil.getConnection();
+                try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(ID_COLUMN, id);
             ResultSet resultSet = statement.executeQuery();
@@ -68,7 +67,7 @@ public class BookDaoImpl implements BookDao{
     public List<Book> findAll() {
         String query = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
-        try(Connection connection = ConnectionUtil.getConnection();
+                try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -87,7 +86,7 @@ public class BookDaoImpl implements BookDao{
     @Override
     public Book update(Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-        try(Connection connection = ConnectionUtil.getConnection();
+                try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(ID_COLUMN, book.getId());
             statement.setString(TITLE_COLUMN, book.getTitle());
