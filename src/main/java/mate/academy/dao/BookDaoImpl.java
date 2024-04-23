@@ -40,6 +40,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create book", e);
         }
+
         return book;
     }
 
