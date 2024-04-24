@@ -1,4 +1,4 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,11 +19,15 @@ public class ConnectionUtil {
         try {
             Class.forName(DB_TYPE_DRIVER_NAME);
         } catch (ClassNotFoundException e) {
-            throw new DataProcessingException("Can not connect to database", e);
+            throw new RuntimeException("Can't load JBDC driver", e);
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new RuntimeException("Can not connect to database", e);
+        }
     }
 }
