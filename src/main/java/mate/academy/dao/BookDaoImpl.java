@@ -52,10 +52,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(ID_COLUMN, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(TITLE);
-                BigDecimal price = BigDecimal.valueOf(resultSet.getInt(PRICE));
-                Book book = new Book(id, title, price);
-                return Optional.of(book);
+               return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot book with id" + id, e);
@@ -71,11 +68,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String title = resultSet.getString(TITLE_COLUMN);
-                BigDecimal price = resultSet.getBigDecimal(PRICE_COLUMN);
-                Long id = resultSet.getObject(ID, Long.class);
-                Book book = new Book(id, title, price);
-                books.add(book);
+                 books.add(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find all books", e);
@@ -97,10 +90,9 @@ public class BookDaoImpl implements BookDao {
                 throw new DataProcessingException("Cannot update book with id"
                         + book.getId(), null);
             }
-
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot update book with id"
-                    + book.getId(), e);
+            throw new DataProcessingException("Expected to update at least 1 row, " +
+                    "but 0 was updated." + book.getId(), e);
         }
     }
 
@@ -113,7 +105,15 @@ public class BookDaoImpl implements BookDao {
             int executeUpdate = statement.executeUpdate();
             return executeUpdate > MIN_EXECUTE_UPDATE;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Cannot delete book with id" + id, e);
         }
+    }
+
+    public Book getBook(ResultSet resultSet) throws SQLException {
+        String title = resultSet.getString(TITLE);
+        BigDecimal price = resultSet.getBigDecimal(PRICE);
+        Long id = resultSet.getObject(ID, Long.class);
+        Book book = new Book(id, title, price);
+        return book;
     }
 }
