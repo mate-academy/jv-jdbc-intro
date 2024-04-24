@@ -52,7 +52,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(ID_COLUMN, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-               return Optional.of(getBook(resultSet));
+                return Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot book with id" + id, e);
@@ -68,7 +68,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                 books.add(getBook(resultSet));
+                books.add(getBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find all books", e);
@@ -91,8 +91,8 @@ public class BookDaoImpl implements BookDao {
                         + book.getId(), null);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Expected to update at least 1 row, " +
-                    "but 0 was updated." + book.getId(), e);
+            throw new DataProcessingException("Expected to update at least 1 row, "
+                    + "but 0 was updated." + book.getId(), e);
         }
     }
 
