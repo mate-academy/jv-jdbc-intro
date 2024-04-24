@@ -7,10 +7,6 @@ public class Book {
     private String title;
     private BigDecimal price;
 
-    public Book() {
-
-    }
-
     public Book(String title, BigDecimal price) {
         this.title = title;
         this.price = price;
