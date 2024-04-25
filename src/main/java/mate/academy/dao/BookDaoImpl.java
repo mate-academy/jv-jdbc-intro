@@ -87,8 +87,8 @@ public class BookDaoImpl implements BookDao {
             if (statement.executeUpdate() > MIN_EXECUTE_UPDATE) {
                 return book;
             } else {
-                throw new DataProcessingException("Expected to update at least 1 row," +
-                        " but 0 was updated."
+                throw new DataProcessingException("Expected to update at least 1 row,"
+                        + " but 0 was updated."
                         + book.getId(), null);
             }
         } catch (SQLException e) {
