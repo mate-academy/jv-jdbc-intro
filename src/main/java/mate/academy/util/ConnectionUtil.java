@@ -25,7 +25,7 @@ public class ConnectionUtil {
         try {
             Class.forName(CONNECTION_TO_DRIVER);
         } catch (ClassNotFoundException ex) {
-            throw new DataProcessingException("Can't conecting to the driver", ex);
+            throw new RuntimeException("Can't connecting to the driver", ex);
         }
     }
 

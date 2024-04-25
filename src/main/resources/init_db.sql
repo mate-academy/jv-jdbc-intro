@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `books` (
-    `id` INT NOT NULL AUTO_INCREMENT,
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
-    `price` INT NOT NULL,
+    `price` BIGINT NOT NULL,
     PRIMARY KEY (`id`)
 )

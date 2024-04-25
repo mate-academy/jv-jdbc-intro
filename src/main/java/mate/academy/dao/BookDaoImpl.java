@@ -1,10 +1,7 @@
 package mate.academy.dao;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +12,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     private static final int ID_COLUMN = 1;
     private static final int TITLE_COLUMN = 2;
     private static final int PRICE_COLUMN = 3;
@@ -28,7 +24,8 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String query = "INSERT INTO books (title,price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement =
+                        Aconnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_COLUMN, book.getTitle());
             statement.setBigDecimal(PRICE_COLUMN, book.getPrice());
             if (statement.executeUpdate() > MIN_EXECUTE_UPDATE) {
