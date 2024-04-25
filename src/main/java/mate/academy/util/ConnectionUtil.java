@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import mate.academy.exeptions.DataProcessingException;
 
 public class ConnectionUtil {
     private static final String DB_URL
