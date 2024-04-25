@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title,price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                        Aconnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_COLUMN, book.getTitle());
             statement.setBigDecimal(PRICE_COLUMN, book.getPrice());
             if (statement.executeUpdate() > MIN_EXECUTE_UPDATE) {
