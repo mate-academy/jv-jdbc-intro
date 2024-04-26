@@ -14,9 +14,10 @@ public class Main {
         book.setTitle("Lord Of The Rings: The Fellowship Of The Ring");
         book.setPrice(BigDecimal.valueOf(500));
         //create
-        System.out.println(bookDao.save(book));
+        book = bookDao.save(book);
+        System.out.println(book);
         //read
-        System.out.println(bookDao.findById(1L));
+        System.out.println(bookDao.findById(book.getId()));
         System.out.println(bookDao.findAll());
         //update
         book.setTitle("Lord Of The Rings: The Two Towers");
