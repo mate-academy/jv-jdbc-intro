@@ -52,9 +52,9 @@ public class BookDaoImpl implements BookDao {
             } else {
                 throw new DataProcessingException("Expected not empty result.");
             }
-            return Optional.of(book);
+            return Optional.ofNullable(book);
         } catch (SQLException e) {
-            return Optional.empty();
+            throw new DataProcessingException("Can not get book by id ." + id, e);
         }
     }
 
