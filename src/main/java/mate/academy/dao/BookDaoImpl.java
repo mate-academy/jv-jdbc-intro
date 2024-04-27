@@ -46,21 +46,28 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(selectQuery)) {
             statement.setLong(1, id);
 
-            book = parseBook(statement.executeQuery());
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                book = parseBook(resultSet);
+            } else {
+                throw new DataProcessingException("Expected not empty result.");
+            }
+            return Optional.of(book);
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find book by id " + id, e);
+            return Optional.empty();
         }
-        return Optional.of(book);
     }
 
     @Override
     public List<Book> findAll() {
-        List<Book> bookList;
+        List<Book> bookList = new ArrayList<>();
         String selectAllQuery = "SELECT * FROM book";
         try (Connection connection = ConnectionUtil.getConnection();
                 Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(selectAllQuery);
-            bookList = parseAllBooks(resultSet);
+            while (resultSet.next()) {
+                bookList.add(parseBook(resultSet));
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not get all books", e);
         }
@@ -105,26 +112,9 @@ public class BookDaoImpl implements BookDao {
 
     private Book parseBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        if (resultSet.next()) {
-            book.setId(resultSet.getLong(1));
-            book.setTitle(resultSet.getString(2));
-            book.setPrice(resultSet.getBigDecimal(3));
-        } else {
-            throw new DataProcessingException("Expected not empty result.");
-        }
+        book.setId(resultSet.getLong(1));
+        book.setTitle(resultSet.getString(2));
+        book.setPrice(resultSet.getBigDecimal(3));
         return book;
-    }
-
-    private List<Book> parseAllBooks(ResultSet resultSet) throws SQLException {
-        List<Book> bookList = new ArrayList<>();
-        Book book;
-        while (resultSet.next()) {
-            book = new Book();
-            book.setId(resultSet.getLong(1));
-            book.setTitle(resultSet.getString(2));
-            book.setPrice(resultSet.getBigDecimal(3));
-            bookList.add(book);
-        }
-        return bookList;
     }
 }
