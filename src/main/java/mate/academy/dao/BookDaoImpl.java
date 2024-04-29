@@ -16,12 +16,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static void checkAffectedRows(int affectedRows) {
-        if (affectedRows < 1) {
-            throw new RuntimeException("Expected to update at least one row");
-        }
-    }
-
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -122,6 +116,12 @@ public class BookDaoImpl implements BookDao {
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Result set is empty", e);
+        }
+    }
+
+    private static void checkAffectedRows(int affectedRows) {
+        if (affectedRows < 1) {
+            throw new RuntimeException("Expected to update at least one row");
         }
     }
 }
