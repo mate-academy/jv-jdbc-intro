@@ -14,16 +14,17 @@ public class Main {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
         book.setPrice(BigDecimal.valueOf(548));
-        book.setTitle("The Witcher. 1. The Last Wish");
+        book.setTitle("The Witcher.");
         bookDao.create(book);
         System.out.println(bookDao.findById(6L).orElseThrow(()
                 -> new RuntimeException("Can`t find book with id " + 1L)));
         List<Book> books = bookDao.findAll();
         books.forEach(System.out::println);
-        Optional<Book> newBook = bookDao.findById(6L);
+        Optional<Book> newBook = bookDao.findById(5L);
         Book newBookForChange = newBook.get();
         newBookForChange.setPrice(BigDecimal.valueOf(250));
+        newBookForChange.setTitle("Harry Potter");
         System.out.println(bookDao.update(newBook.get()));
-        System.out.println(bookDao.deleteById(7L));
+        System.out.println(bookDao.deleteById(5L));
     }
 }

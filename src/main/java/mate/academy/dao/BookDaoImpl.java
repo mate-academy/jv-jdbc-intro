@@ -9,36 +9,38 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static void checkAffectedRows(int affectedRows) {
+        if (affectedRows < 1) {
+            throw new RuntimeException("Expected to update at least one row");
+        }
+    }
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException(
-                        "Expected to insert at least one row, but inserted 0 rows.");
-            }
+            checkAffectedRows(affectedRows);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
+            return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t add new car: " + book, e);
+            throw new DataProcessingException("Can't add new book: " + book, e);
         }
-        return book;
     }
 
     @Override
@@ -53,7 +55,8 @@ public class BookDaoImpl implements BookDao {
                 return book;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create connection to the DB", e);
+            throw new DataProcessingException("Failed to establish a database connection. "
+                    + "Please check the database configuration and network connectivity.", e);
         }
         return Optional.empty();
     }
@@ -63,7 +66,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 Statement statement = connection.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
+                ResultSet resultSet = statement.executeQuery(sql)) {
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
                 books.add(parseResultSet(resultSet));
@@ -80,7 +83,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                            connection.prepareStatement(sql)) {
+                        connection.prepareStatement(sql)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -97,8 +100,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement
-                        = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             checkAffectedRows(affectedRows);
@@ -120,12 +122,6 @@ public class BookDaoImpl implements BookDao {
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Result set is empty", e);
-        }
-    }
-
-    private static void checkAffectedRows(int affectedRows) {
-        if (affectedRows < 1) {
-            throw new RuntimeException("Expected to update at least one row");
         }
     }
 }
