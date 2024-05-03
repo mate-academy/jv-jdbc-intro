@@ -9,26 +9,30 @@ import java.sql.Statement;
 import mate.academy.exception.DataProcessingException;
 
 public class DatabaseInitializer {
+    private static final String FILE_PATH = "src/main/resources/init_db.sql";
+
     public void createTable() {
         try (Connection connection = ConnectionUtil.getConnection();
                 Statement statement = connection.createStatement()) {
-            StringBuilder sqlCommands = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new FileReader("src/main/resources/init_db.sql"))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sqlCommands.append(line).append(" ");
-                }
-            } catch (IOException e) {
-                throw new DataProcessingException("Failed to read init_id.sql file: ", e);
-            }
-
-            statement.executeUpdate(sqlCommands.toString());
+            String sqlCommands = parseCommandFile(FILE_PATH);
+            statement.executeUpdate(sqlCommands);
             System.out.println("Table created successfully.");
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to create table", e);
         }
     }
+
+    private String parseCommandFile(String filePath) {
+        StringBuilder sqlCommands = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sqlCommands.append(line.trim()).append("\n");
+            }
+        } catch (IOException e) {
+            throw new DataProcessingException("Failed to read init_id.sql file: " + filePath, e);
+        }
+        return sqlCommands.toString();
+    }
 }
-
-
