@@ -12,14 +12,9 @@ public class DatabaseInitializer {
     private static final String FILE_PATH = "src/main/resources/init_db.sql";
 
     public void createTable() {
-        try (Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.createStatement()) {
-            String sqlCommands = parseCommandFile(FILE_PATH);
-            statement.executeUpdate(sqlCommands);
-            System.out.println("Table created successfully.");
-        } catch (SQLException e) {
-            throw new DataProcessingException("Failed to create table", e);
-        }
+        String sqlCommands = parseCommandFile(FILE_PATH);
+        execute(sqlCommands);
+        System.out.println("Table created successfully.");
     }
 
     private String parseCommandFile(String filePath) {
@@ -34,5 +29,14 @@ public class DatabaseInitializer {
             throw new DataProcessingException("Failed to read init_id.sql file: " + filePath, e);
         }
         return sqlCommands.toString();
+    }
+
+    private void execute(String sqlCommands) {
+        try (Connection connection = ConnectionUtil.getConnection();
+                Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sqlCommands);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Failed to create table", e);
+        }
     }
 }
