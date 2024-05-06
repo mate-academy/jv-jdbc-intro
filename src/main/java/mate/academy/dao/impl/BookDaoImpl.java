@@ -2,6 +2,7 @@ package mate.academy.dao.impl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,11 +10,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
-import mate.academy.customexceptions.DataProcessingException;
 import mate.academy.dao.BookDao;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -23,13 +24,14 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
                         Statement.RETURN_GENERATED_KEYS)) {
+            ParameterMetaData parameterMetaData = statement.getParameterMetaData();
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(
-                        "Creating book failed, no rows affected.");
+                throw new DataProcessingException(
+                        "Expected to insert at least 1 row, but 0 was inserted");
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -46,6 +48,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
+        Optional<Book> result = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
                         connection.prepareStatement(sql)) {
@@ -66,7 +69,7 @@ public class BookDaoImpl implements BookDao {
                     "Failed to retrieve book from the database for ID: " + id, e
             );
         }
-        return Optional.empty();
+        return result;
     }
 
     @Override
@@ -118,7 +121,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Can not get connection", e);
+            throw new DataProcessingException("Failed to delete book record for ID: " + id, e);
         }
     }
 }

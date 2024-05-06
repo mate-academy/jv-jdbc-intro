@@ -14,13 +14,16 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
-        book.setTitle("777");
+        book.setTitle("Kameniari by Ivan Franko");
         book.setPrice(BigDecimal.valueOf(200));
         Book createdBook = bookDao.create(book);
         System.out.println(createdBook);
 
         Optional<Book> extractedBook = bookDao.findById(2L);
-        System.out.println(extractedBook);
+        System.out.println("The book by id: "
+                + extractedBook.get().getId()
+                + " is "
+                + "named: " + extractedBook);
 
         List<Book> allBooks = bookDao.findAll();
         for (Book bookInfo : allBooks) {
@@ -29,7 +32,7 @@ public class Main {
 
         Book updatedBook = new Book();
         updatedBook.setId(2L);
-        updatedBook.setTitle("888");
+        updatedBook.setTitle("On the Road by M.Kotsiubynsky");
         updatedBook.setPrice(BigDecimal.valueOf(300));
         bookDao.update(updatedBook);
         System.out.println("Updated book with id: "
