@@ -12,7 +12,7 @@ import java.util.Optional;
 import mate.academy.lib.Dao;
 import mate.academy.lib.exception.DataProcessingException;
 import mate.academy.lib.model.Book;
-import mate.academy.lib.service.ConnectionUtil;
+import mate.academy.lib.service.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to insert at least 1 row,"
-                        + " inserted 0 rows", null);
+                        + " inserted 0 rows");
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -52,16 +52,15 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    long bookId = resultSet.getObject(ID, Long.class);
-                    String title = resultSet.getString(TITLE);
-                    BigDecimal price = resultSet.getBigDecimal(PRICE);
-                    Book book = new Book(bookId, title, price);
-                    return Optional.of(book);
-                } else {
-                    return Optional.empty();
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                long bookId = resultSet.getObject(ID, Long.class);
+                String title = resultSet.getString(TITLE);
+                BigDecimal price = resultSet.getBigDecimal(PRICE);
+                Book book = new Book(bookId, title, price);
+                return Optional.of(book);
+            } else {
+                return Optional.empty();
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to find a book with id: " + id, e);
@@ -100,10 +99,10 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to insert at least 1 row,"
-                        + " inserted 0 rows", null);
+                        + " inserted 0 rows");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed to add new book: " + book, e);
+            throw new DataProcessingException("Failed to update a new book: " + book, e);
         }
         return book;
     }
@@ -114,14 +113,9 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                return false;
-            }
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to delete a book with id: " + id, e);
         }
-        return true;
     }
 }

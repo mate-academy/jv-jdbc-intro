@@ -1,4 +1,4 @@
-package mate.academy.lib.service;
+package mate.academy.lib.service.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
