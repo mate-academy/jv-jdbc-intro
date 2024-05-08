@@ -19,7 +19,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO books (title, price VALUES (?,?)))";
+        String query = "INSERT INTO books (title, price) VALUES (?,?);";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -44,20 +44,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String query = "SELECT * FROM books WHERE id = ?";
+        String query = "SELECT * FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
+                return Optional.of(creatingBook(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get an object with id = " + id, e);
@@ -67,22 +60,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String query = "SELECT * FROM books";
+        String query = "SELECT * FROM books;";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-
-                books.add(book);
+                books.add(creatingBook(resultSet, id));
+                return books;
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't connect to DB", e);
@@ -92,7 +78,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
                         connection.prepareStatement(
@@ -114,17 +100,31 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String query = "DELETE FROM books WHERE id = ?";
+        String query = "DELETE FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
+            int affectRows = statement.executeUpdate();
+            if (affectRows > 0) {
                 return true;
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get an object with id = " + id, e);
         }
         return false;
+    }
+
+    private Book creatingBook(ResultSet resultSet, Long id) {
+        try {
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get an object with id = " + id, e);
+        }
     }
 }
