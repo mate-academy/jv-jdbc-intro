@@ -1,12 +1,10 @@
 package mate.academy;
 
-
-import mate.academy.lib.Dao;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.lib.Dao;
 
 @Dao
 public class ConnectionUtil {
@@ -24,6 +22,7 @@ public class ConnectionUtil {
             throw new RuntimeException(ex);
         }
     }
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }

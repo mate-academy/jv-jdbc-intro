@@ -1,9 +1,7 @@
 package mate.academy.model;
 
-import mate.academy.lib.Dao;
-
 import java.math.BigDecimal;
-@Dao
+
 public class Book {
     private Long id;
     private String title;
@@ -35,10 +33,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
