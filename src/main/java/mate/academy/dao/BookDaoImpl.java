@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    @Dao
+
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price VALUES (?,?)))";
@@ -40,7 +40,6 @@ public class BookDaoImpl implements BookDao {
         return book;
     }
 
-    @Dao
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
@@ -64,7 +63,6 @@ public class BookDaoImpl implements BookDao {
         return Optional.empty();
     }
 
-    @Dao
     @Override
     public List<Book> findAll() {
         String query = "SELECT * FROM books";
@@ -90,7 +88,6 @@ public class BookDaoImpl implements BookDao {
         return new ArrayList<>();
     }
 
-    @Dao
     @Override
     public Book update(Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
@@ -109,7 +106,6 @@ public class BookDaoImpl implements BookDao {
         return book;
     }
 
-    @Dao
     @Override
     public boolean deleteById(Long id) {
         String query = "DELETE FROM books WHERE id = ?";
