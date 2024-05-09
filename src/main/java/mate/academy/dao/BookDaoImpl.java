@@ -53,7 +53,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(creatingBook(resultSet, id));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get an object with id = " + id, e);
+            throw new DataProcessingException("Can't find book with id = " + id, e);
         }
         return Optional.empty();
     }
@@ -71,7 +71,7 @@ public class BookDaoImpl implements BookDao {
                 return books;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't connect to DB", e);
+            throw new DataProcessingException("Can't find books ", e);
         }
         return new ArrayList<>();
     }
@@ -93,7 +93,7 @@ public class BookDaoImpl implements BookDao {
                         new SQLException());
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add a new book " + book, e);
+            throw new DataProcessingException("Error occurred  while updating book " + book, e);
         }
         return book;
     }
@@ -104,14 +104,10 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            int affectRows = statement.executeUpdate();
-            if (affectRows > 0) {
-                return true;
-            }
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get an object with id = " + id, e);
+            throw new DataProcessingException("Can't delete an object with id = " + id, e);
         }
-        return false;
     }
 
     private Book creatingBook(ResultSet resultSet, Long id) {
