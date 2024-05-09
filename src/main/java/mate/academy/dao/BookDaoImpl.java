@@ -120,7 +120,7 @@ public class BookDaoImpl implements BookDao {
             book.setPrice(price);
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get an object with id = " + id, e);
+            throw new DataProcessingException("Can't create a book with id = " + id, e);
         }
     }
 }
