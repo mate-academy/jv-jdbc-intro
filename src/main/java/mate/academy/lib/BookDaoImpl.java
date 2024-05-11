@@ -11,7 +11,7 @@ import java.util.Optional;
 import mate.academy.model.Book;
 
 @Dao
-public class DaoBookImpl implements DaoBook {
+public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?);";
@@ -20,13 +20,10 @@ public class DaoBookImpl implements DaoBook {
                         Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
-
             int affectedRows = preparedStatement.executeUpdate();
-
             if (affectedRows == 0) {
                 throw new SQLException("Creating book failed, no rows affected.");
             }
-
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     book.setId(generatedKeys.getLong(1));
@@ -54,7 +51,6 @@ public class DaoBookImpl implements DaoBook {
                 book.setPrice(resultSet.getBigDecimal("price"));
                 return Optional.of(book);
             }
-
         } catch (SQLException e) {
             throw new RuntimeException("Can not find book from the DB", e);
         }
@@ -89,8 +85,11 @@ public class DaoBookImpl implements DaoBook {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-
-            preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows < 1) {
+                throw new RuntimeException("No rows were updated. The book with id "
+                        + book.getId() + " might not exist.");
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Can not update data from DB", e);
         }
@@ -103,8 +102,7 @@ public class DaoBookImpl implements DaoBook {
         try (Connection connection = ConnectToDataBase.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
+            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Can not delete data from DB", e);
         }
