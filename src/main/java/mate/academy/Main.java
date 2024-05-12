@@ -2,12 +2,15 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
+import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
+private static final Injector injector = Injector.getInstance("mate.academy");
 public class Main {
     public static void main(String[] args) {
-        final BookDaoImpl bookDao = new BookDaoImpl();
+        BookDaoImpl bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
 
         Book book = new Book();
         book.setId(1L);
@@ -26,3 +29,4 @@ public class Main {
         bookDao.findAll().forEach(System.out::println);
     }
 }
+

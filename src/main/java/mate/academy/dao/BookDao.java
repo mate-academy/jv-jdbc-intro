@@ -6,8 +6,7 @@ import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
 @Dao
-public interface BookDaoInt {
-
+public interface BookDao {
     Book create(Book book);
 
     List<Book> findAll();

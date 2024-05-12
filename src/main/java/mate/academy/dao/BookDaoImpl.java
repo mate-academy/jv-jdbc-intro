@@ -9,9 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
-public class BookDaoImpl implements BookDaoInt {
+@Dao
+public class BookDaoImpl implements BookDao {
     public static final String URL = "jdbc:mysql://localhost:3306/book";
     public static final String USER = "root";
     public static final String PASSWORD = "1111";
@@ -58,18 +60,6 @@ public class BookDaoImpl implements BookDaoInt {
         return books;
     }
 
-    private Book mapBookFromResultSet(ResultSet resultSet) {
-        try {
-            Book book = new Book();
-            book.setId(resultSet.getLong("id"));
-            book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
-            return book;
-        } catch (SQLException e) {
-            throw new RuntimeException("SQL error db book.", e);
-        }
-    }
-
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
@@ -81,7 +71,7 @@ public class BookDaoImpl implements BookDaoInt {
                 return Optional.of(mapBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Sql error while finding book",e);
+            throw new DataProcessingException("Can't find a book by id: " + id, e);;
         }
         return Optional.empty();
     }
@@ -112,6 +102,18 @@ public class BookDaoImpl implements BookDaoInt {
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Sql error while deleting book",e);
+        }
+    }
+
+    private Book mapBookFromResultSet(ResultSet resultSet) {
+        try {
+            Book book = new Book();
+            book.setId(resultSet.getLong("id"));
+            book.setTitle(resultSet.getString("title"));
+            book.setPrice(resultSet.getBigDecimal("price"));
+            return book;
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL error while mapping - can't return book.", e);
         }
     }
 }
