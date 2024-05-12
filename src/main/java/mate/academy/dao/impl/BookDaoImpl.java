@@ -2,7 +2,6 @@ package mate.academy.dao.impl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,10 +20,12 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
-                        Statement.RETURN_GENERATED_KEYS)) {
-            ParameterMetaData parameterMetaData = statement.getParameterMetaData();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet generatedKeys = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
@@ -34,13 +35,40 @@ public class BookDaoImpl implements BookDao {
                         "Expected to insert at least 1 row, but 0 was inserted");
             }
 
-            ResultSet generatedKeys = statement.getGeneratedKeys();
+            generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to insert new book record", e);
+        } finally {
+            if (generatedKeys != null) {
+                try {
+                    generatedKeys.close();
+                } catch (SQLException e) {
+                    throw new DataProcessingException(
+                            "Failed to insert new book record into the database", e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new DataProcessingException(
+                            "Failed to close PreparedStatement after attempting "
+                                    + "to insert new book", e);
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new DataProcessingException(
+                            "Failed to close Connection after attempting "
+                                    + "to insert new book", e);
+                }
+            }
         }
         return book;
     }
