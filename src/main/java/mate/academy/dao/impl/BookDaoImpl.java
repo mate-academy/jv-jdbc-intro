@@ -137,7 +137,7 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException(
                     "Failed to update book record for ID: " + book.getId(), e);
         }
-        return null;
+        return book;
     }
 
     @Override
