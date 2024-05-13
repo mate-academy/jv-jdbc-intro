@@ -46,7 +46,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Book book = new Book();
-                book.setId(resultSet.getLong("id"));
+                book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getString("title"));
                 book.setPrice(resultSet.getBigDecimal("price"));
                 return Optional.of(book);
@@ -62,8 +62,8 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books;";
         List<Book> bookList = new ArrayList<>();
         try (Connection connection = ConnectToDataBase.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = preparedStatement.executeQuery();
+                Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 Book book = new Book();
                 book.setId(resultSet.getLong("id"));
