@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectToDataBase {
+public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/bookstore";
     private static Properties DB_PROPERTIES;
 

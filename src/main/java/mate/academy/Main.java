@@ -11,25 +11,25 @@ public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao daoBook = (BookDao) INJECTOR.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
         Book book = new Book();
         book.setTitle("Test Book");
         book.setPrice(new BigDecimal("19.99"));
-        Book createdBook = daoBook.create(book);
+        Book createdBook = bookDao.create(book);
         System.out.println("Created book: " + createdBook);
 
-        Optional<Book> foundBook = daoBook.findById(createdBook.getId());
+        Optional<Book> foundBook = bookDao.findById(createdBook.getId());
         System.out.println("Found book: " + foundBook.orElse(null));
 
-        List<Book> allBooks = daoBook.findAll();
+        List<Book> allBooks = bookDao.findAll();
         System.out.println("All books: " + allBooks);
 
         createdBook.setTitle("Updated Test Book");
-        Book updatedBook = daoBook.update(createdBook);
+        Book updatedBook = bookDao.update(createdBook);
         System.out.println("Updated book: " + updatedBook);
 
-        boolean isDeleted = daoBook.deleteById(updatedBook.getId());
+        boolean isDeleted = bookDao.deleteById(updatedBook.getId());
         System.out.println("Book deletion status: " + isDeleted);
     }
 }
