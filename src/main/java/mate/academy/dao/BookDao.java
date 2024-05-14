@@ -1,19 +1,19 @@
 package mate.academy.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.lib.Dao;
+import mate.academy.costomexeption.DataProcessingException;
 import mate.academy.model.Book;
 
-@Dao
 public interface BookDao {
-    Book create(Book book);
+    Book create(Book book) throws SQLException;
 
-    List<Book> findAll();
+    List<Book> findAll() throws DataProcessingException;
 
-    Optional<Book> findById(Long id);
+    Optional<Book> findById(Long id) throws DataProcessingException;
 
-    Book update(Book book);
+    Book update(Book book) throws DataProcessingException, SQLException;
 
-    boolean deleteById(Long id);
+    boolean deleteById(Long id) throws DataProcessingException;
 }

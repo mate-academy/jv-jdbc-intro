@@ -1,16 +1,19 @@
 package mate.academy;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Optional;
+import mate.academy.costomexeption.DataProcessingException;
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
-private static final Injector injector = Injector.getInstance("mate.academy");
 public class Main {
-    public static void main(String[] args) {
-        BookDaoImpl bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
+    public static void main(String[] args) throws SQLException, DataProcessingException {
+        final BookDaoImpl bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
 
         Book book = new Book();
         book.setId(1L);
