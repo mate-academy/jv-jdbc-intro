@@ -1,0 +1,8 @@
+CREATE SCHEMA IF NOT EXISTS testdb DEFAULT CHARACTER SET utf8;
+USE testdb;
+
+CREATE TABLE IF NOT EXISTS books (
+  id bigint AUTO_INCREMENT PRIMARY KEY,
+  title varchar(45) NOT NULL,
+  price decimal DEFAULT 0,
+);
