@@ -9,12 +9,12 @@ import java.util.Properties;
 import mate.academy.exception.DbException;
 
 public class ConnectionUtil {
-    private static final Properties dbProperties = new Properties();
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
         try {
-            dbProperties.load(new FileInputStream(Constants.APP_PROPERTIES_FILE));
-            Class.forName(dbProperties.getProperty(Constants.DB_DRIVER_TAG));
+            DB_PROPERTIES.load(new FileInputStream(Constants.APP_PROPERTIES_FILE));
+            Class.forName(DB_PROPERTIES.getProperty(Constants.DB_DRIVER_TAG));
         } catch (IOException e) {
             throw new DbException("Can`t load JDBC driver for MYSQL: " + e.getMessage());
         } catch (ClassNotFoundException e) {
@@ -25,7 +25,7 @@ public class ConnectionUtil {
     public static Connection getConnection() {
         try {
             return DriverManager.getConnection(
-                    dbProperties.getProperty(Constants.DB_URL_TAG));
+                    DB_PROPERTIES.getProperty(Constants.DB_URL_TAG));
         } catch (SQLException e) {
             throw new DbException("Can`t create connection for DB: " + e.getMessage());
         }
