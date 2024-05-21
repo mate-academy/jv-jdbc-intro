@@ -1,14 +1,13 @@
 package mate.academy;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Random;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 import mate.academy.service.BookService;
 import mate.academy.service.impl.BookServiceImpl;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Random;
 
 public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
