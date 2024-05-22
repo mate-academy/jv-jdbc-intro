@@ -3,10 +3,8 @@ package mate.academy.service.serviceimpl;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
 import mate.academy.exeption.DataProcessingException;
 import mate.academy.lib.Dao;
-import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 import mate.academy.service.BookService;
 
