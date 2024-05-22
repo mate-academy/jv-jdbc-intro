@@ -18,26 +18,51 @@ import mate.academy.model.Book;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title, price) VALUES (?,?)";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet generatedKeys = null;
+        try {
+            connection = ConnectionUtil.getConnections();
+            statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
 
-        try (Connection connection = ConnectionUtil.getConnections();
-                PreparedStatement preparedStatement =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setBigDecimal(2, book.getPrice());
-
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new DataProcessingException("Failed to insert book into the database");
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
+                throw new DataProcessingException(
+                        "Can not insert into books table");
             }
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not insert book into database ", e);
+            throw new DataProcessingException("Failed to insert new book record", e);
+        } finally {
+            if (generatedKeys != null) {
+                try {
+                    generatedKeys.close();
+                } catch (SQLException e) {
+                    throw new DataProcessingException("Failed to insert new book record", e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new DataProcessingException("Failed to insert new book record", e);
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new DataProcessingException("Failed to insert new book record", e);
+                }
+            }
         }
         return book;
     }
@@ -47,7 +72,7 @@ public class BookDaoImpl implements BookDao {
         Book book = null;
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnections();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -68,7 +93,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
 
         try (Connection connection = ConnectionUtil.getConnections();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -83,9 +108,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title=?, price=? WHERE id=?";
-        try (Connection connection = ConnectionUtil.getConnections();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = ConnectionUtil.getConnections();
+            preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
@@ -96,8 +125,22 @@ public class BookDaoImpl implements BookDao {
                 throw new SQLException("Failed to update book, no rows affected.");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not update book into the database"
-                    + book + " ", e);
+            throw new DataProcessingException("Cannot update book in the database: " + book, e);
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    System.err.println("Failed to close PreparedStatement: " + e.getMessage());
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.err.println("Failed to close Connection: " + e.getMessage());
+                }
+            }
         }
         return book;
     }
@@ -107,14 +150,14 @@ public class BookDaoImpl implements BookDao {
         String sql = "DELETE FROM books WHERE id=?";
 
         try (Connection connection = ConnectionUtil.getConnections();
-                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
                 throw new DataProcessingException("Failed delete book with id "
                         + id + " from database");
             }
-            return true;
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(("Failed delete book with id "
                     + id + " from database"));

@@ -12,8 +12,11 @@ import mate.academy.service.BookService;
 
 @Dao
 public class BookServiceImpl implements BookService {
-    private static final Injector injector = Injector.getInstance("mate.academy");
-    private final BookDao bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
+    private final BookDao bookDao;
+
+    public BookServiceImpl(BookDao bookDao) {
+        this.bookDao = bookDao;
+    }
 
     @Override
     public Book create(Book book) {
