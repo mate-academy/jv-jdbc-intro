@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -38,7 +38,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("can not add new book: " + book, e);
+            throw new DataProcessingException("can not create new book: " + book.toString(), e);
         }
         return book;
     }
@@ -94,7 +94,7 @@ public class BookDaoImpl implements BookDao {
             System.out.println("Rows updated: " + rowsAffected);
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find all books", e);
+            throw new DataProcessingException("Can not update book " + book.toString(), e);
         }
     }
 
@@ -104,14 +104,10 @@ public class BookDaoImpl implements BookDao {
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-
             statement.setLong(1, id);
-
-            int rowsAffected = statement.executeUpdate();
-            System.out.println("Rows deleted: " + rowsAffected);
-            return rowsAffected > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find all books", e);
+            throw new DataProcessingException("Can not delete book with id " + id, e);
         }
     }
 
@@ -121,10 +117,7 @@ public class BookDaoImpl implements BookDao {
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            int rowsAffected = statement.executeUpdate();
-            System.out.println("Deleted " + rowsAffected + " rows from table books");
-            return rowsAffected > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not delete all books", e);
         }
