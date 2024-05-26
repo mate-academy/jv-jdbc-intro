@@ -90,8 +90,10 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
 
-            int rowsAffected = statement.executeUpdate();
-            System.out.println("Rows updated: " + rowsAffected);
+            if (statement.executeUpdate() < 1) {
+                throw new DataProcessingException("Book " + book.toString() + " was not updated",
+                        new RuntimeException());
+            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not update book " + book.toString(), e);

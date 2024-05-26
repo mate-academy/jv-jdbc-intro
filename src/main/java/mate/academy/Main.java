@@ -27,12 +27,12 @@ public class Main {
 
         service.findAllBooks().forEach(System.out::println);
 
-        System.out.println(service.findBookById(3L));
+        System.out.println(service.findBookById(49L));
 
-        Book bookForUpdate = new Book(3L, "Update", new BigDecimal(12345));
+        Book bookForUpdate = new Book(49L, "Update", new BigDecimal(12345));
         service.updateBook(bookForUpdate);
 
-        service.deleteBookById(4L);
+        service.deleteBookById(48L);
 
         service.deleteAll();
     }
