@@ -30,7 +30,7 @@ public class Main {
         }
 
         Optional<Book> findById = bookDao.findById(1L);
-        System.out.println("Book found by id: " + findById);
+        System.out.println("Book found id: " + findById);
 
         bookDao.deleteById(3L);
 
