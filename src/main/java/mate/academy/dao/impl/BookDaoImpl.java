@@ -1,5 +1,6 @@
 package mate.academy.dao.impl;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,7 +45,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String getByIdQuery = "SELECT * FROM books WHERE id = ? AND is_deleted = 0";
+        String getByIdQuery = "SELECT * FROM books WHERE id = ? AND is_deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(getByIdQuery)) {
             statement.setLong(1, id);
@@ -60,7 +61,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String getAllQuery = "SELECT * FROM books WHERE is_deleted = 0";
+        String getAllQuery = "SELECT * FROM books WHERE is_deleted = FALSE";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(getAllQuery)) {
@@ -77,7 +78,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String updateQuery = "UPDATE books SET title = ?, price = ? "
-                + "WHERE id = ? AND is_deleted = 0";
+                + "WHERE id = ? AND is_deleted = FALSE";
         Long id = book.getId();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(updateQuery)) {
@@ -96,7 +97,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String deletedQuery = "UPDATE books SET is_deleted = 1 WHERE id = ?";
+        String deletedQuery = "UPDATE books SET is_deleted = TRUE WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(deletedQuery)) {
             statement.setLong(1, id);
@@ -108,8 +109,8 @@ public class BookDaoImpl implements BookDao {
 
     private Book createBook(ResultSet resultSet) throws SQLException {
         return new Book(
-                resultSet.getLong("id"),
-                resultSet.getString("title"),
-                resultSet.getBigDecimal("price"));
+                resultSet.getObject("id", Long.class),
+                resultSet.getObject("title", String.class),
+                resultSet.getObject("price", BigDecimal.class));
     }
 }
