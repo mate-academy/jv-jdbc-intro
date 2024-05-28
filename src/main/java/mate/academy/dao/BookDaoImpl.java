@@ -47,7 +47,7 @@ public class BookDaoImpl implements BookDao {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to find a book by id", e);
+            throw new RuntimeException("Failed to find a book by id: " + id, e);
         }
     }
 
@@ -93,7 +93,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete a book by id", e);
+            throw new RuntimeException("Failed to delete a book with id: " + id, e);
         }
     }
 }
