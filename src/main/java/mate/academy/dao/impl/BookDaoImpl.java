@@ -22,6 +22,10 @@ public class BookDaoImpl implements BookDao {
     private static final String CANT_FIND_ALL = "Can't find all books";
     private static final String CANT_UPDATE = "Can't update the book with id = ";
     private static final String CANT_DELETE = "Can't delete the book with id = ";
+    private static final String UPDATE_FAILED
+            = "Expected to update at least 1 row, but 0 was updated.";
+    private static final String INSERT_FAILED
+            = "Expected to update at least 1 row, but 0 was updated.";
 
     @Override
     public Book create(Book book) {
@@ -36,6 +40,8 @@ public class BookDaoImpl implements BookDao {
             if (generatedKey.next()) {
                 Long id = generatedKey.getObject(1, Long.class);
                 book.setId(id);
+            } else {
+                throw new DataProcessingException(INSERT_FAILED);
             }
         } catch (SQLException e) {
             throw new DataProcessingException(CANT_CREATE, e);
@@ -79,20 +85,19 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String updateQuery = "UPDATE books SET title = ?, price = ? "
                 + "WHERE id = ? AND is_deleted = FALSE";
-        Long id = book.getId();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(updateQuery)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            statement.setLong(3, id);
+            statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
-                return book;
+            if (affectedRows < 1) {
+                throw new DataProcessingException(UPDATE_FAILED);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException(CANT_UPDATE + id, e);
+            throw new DataProcessingException(CANT_UPDATE + book.getId(), e);
         }
-        throw new DataProcessingException(CANT_FIND_BY_ID + id);
+        return book;
     }
 
     @Override
@@ -101,7 +106,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(deletedQuery)) {
             statement.setLong(1, id);
-            return statement.executeUpdate() != 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(CANT_DELETE + id, e);
         }

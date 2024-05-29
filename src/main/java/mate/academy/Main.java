@@ -9,9 +9,10 @@ import mate.academy.model.Book;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
-    private static final BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
     public static void main(String[] args) {
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+
         Book book = new Book("book", BigDecimal.valueOf(100));
         Book createdBook = bookDao.create(book);
         System.out.println(createdBook);
