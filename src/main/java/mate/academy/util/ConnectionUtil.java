@@ -9,6 +9,7 @@ public class ConnectionUtil {
     private static final String DB_URL =
             "jdbc:mysql://localhost:3306/mydatabase?serverTimezone=UTC";
     private static final Properties DB_PROPERTIES;
+    private static Connection connection;
 
     static {
         DB_PROPERTIES = new Properties();
@@ -22,7 +23,14 @@ public class ConnectionUtil {
         }
     }
 
+    private ConnectionUtil() {
+
+    }
+
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        }
+        return connection;
     }
 }

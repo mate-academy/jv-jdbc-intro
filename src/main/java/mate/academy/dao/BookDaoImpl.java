@@ -40,12 +40,13 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(new Book(
-                       resultSet.getLong("id"),
-                       resultSet.getString("title"),
-                       resultSet.getBigDecimal("price")));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(new Book(
+                           resultSet.getLong("id"),
+                           resultSet.getString("title"),
+                           resultSet.getBigDecimal("price")));
+                }
             }
             return Optional.empty();
         } catch (SQLException e) {
@@ -57,8 +58,8 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String query = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            ResultSet resultSet = preparedStatement.executeQuery();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
                 books.add(new Book(
