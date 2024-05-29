@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -17,18 +18,19 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-                       PreparedStatement preparedStatement = connection.prepareStatement(query,
+                PreparedStatement preparedStatement = connection.prepareStatement(query,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                book.setId(resultSet.getLong(1));
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getLong(1);
+                book.setId(id);
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to create a book", e);
+            throw new DataProcessingException("Failed to create a book", e);
         }
     }
 
@@ -41,13 +43,13 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(new Book(
-                        resultSet.getLong("id"),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")));
+                       resultSet.getLong("id"),
+                       resultSet.getString("title"),
+                       resultSet.getBigDecimal("price")));
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to find a book by id: " + id, e);
+            throw new DataProcessingException("Failed to find a book by id: " + id, e);
         }
     }
 
@@ -66,7 +68,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to find all books", e);
+            throw new DataProcessingException("Failed to find all books", e);
         }
     }
 
@@ -81,7 +83,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update a book", e);
+            throw new DataProcessingException("Failed to update a book", e);
         }
     }
 
@@ -93,7 +95,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete a book with id: " + id, e);
+            throw new DataProcessingException("Failed to delete a book with id: " + id, e);
         }
     }
 }

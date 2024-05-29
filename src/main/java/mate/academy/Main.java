@@ -9,36 +9,33 @@ import mate.academy.model.Book;
 
 public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
-    private static final Book BOOK_1 = new Book("OnePiece", new BigDecimal(195));
-    private static final Book BOOK_1_UPDATE = new Book(1L, "OnePice", new BigDecimal(250));
-    private static final Book BOOK_2 = new Book("Naruto", new BigDecimal(235));
-    private static final Book BOOK_3 = new Book("Jujutsu Kaisen", new BigDecimal(243));
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
-        bookDao.create(BOOK_1);
-        bookDao.create(BOOK_2);
-        bookDao.create(BOOK_3);
+        List<Book> books = List.of(
+               new Book("OnePiece", new BigDecimal(195)),
+               new Book("Naruto", new BigDecimal(235)),
+               new Book("Jujutsu Kaisen", new BigDecimal(243))
+        );
 
-        bookDao.update(BOOK_1_UPDATE);
+        books.forEach(bookDao::create);
 
-        List<Book> books = bookDao.findAll();
+        Book book1Update = new Book(1L, "OnePiece", new BigDecimal(250));
+        Book updatedBook = bookDao.update(book1Update);
+        System.out.println("Updated book: " + updatedBook);
+
+        List<Book> allBooks = bookDao.findAll();
         System.out.println("All books:");
-        for (Book book : books) {
-            System.out.println(book);
-        }
+        allBooks.forEach(System.out::println);
 
-        Optional<Book> findById = bookDao.findById(1L);
-        System.out.println("Book found id: " + findById);
+        Optional<Book> bookById = bookDao.findById(1L);
+        System.out.println("Book found by id: " + bookById.orElse(null));
 
         bookDao.deleteById(3L);
 
         List<Book> listAfterDelete = bookDao.findAll();
         System.out.println("List after delete by id:");
-        for (Book book : listAfterDelete) {
-            System.out.println(book);
-        }
-
+        listAfterDelete.forEach(System.out::println);
     }
 }
