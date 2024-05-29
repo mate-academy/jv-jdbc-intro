@@ -6,14 +6,17 @@ import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
+        ConnectionUtil.initializeTable();
+
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
-        Book book1 = new Book("Book of Jungles", new BigDecimal(100));
-        bookDao.create(book1);
+        Book book = new Book("Book of Jungles", new BigDecimal(100));
+        bookDao.create(book);
 
         Optional<Book> bookById = bookDao.findById(1L);
         System.out.println(bookById);

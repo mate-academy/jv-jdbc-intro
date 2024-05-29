@@ -1,4 +1,4 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,7 +25,6 @@ public class ConnectionUtil {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            initializeTable();
         } catch (ClassNotFoundException e) {
             throw new DataProcessingException("Can not load JDBC driver");
         }
@@ -35,7 +34,7 @@ public class ConnectionUtil {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 
-    private static void initializeTable() {
+    public static void initializeTable() {
         try (Connection connection = getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet resultSet = databaseMetaData.getTables(
