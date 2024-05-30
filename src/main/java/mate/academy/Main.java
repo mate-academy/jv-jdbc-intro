@@ -6,14 +6,11 @@ import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import mate.academy.util.ConnectionUtil;
 
 public class Main {
     private static final Injector INJECTOR = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        ConnectionUtil.initializeTable();
-
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         Book book = new Book("Book of Jungles", new BigDecimal(100));
         bookDao.create(book);
@@ -24,7 +21,7 @@ public class Main {
         List<Book> books = bookDao.findAll();
         System.out.println(books);
 
-        Book bookToUpdate = new Book(2L, "Book of Jungles 2", BigDecimal.valueOf(120));
+        Book bookToUpdate = new Book(2L, "Book of Jungles 222", BigDecimal.valueOf(120));
         System.out.println(bookDao.update(bookToUpdate));
 
         boolean isDeleted = bookDao.deleteById(5L);

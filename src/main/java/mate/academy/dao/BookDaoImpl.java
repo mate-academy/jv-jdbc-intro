@@ -19,11 +19,11 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) values (?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(
-                        query, Statement.RETURN_GENERATED_KEYS
-                );
-        ) {
+        try {
+            Connection connection = ConnectionUtil.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                    query, Statement.RETURN_GENERATED_KEYS
+            );
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -37,6 +37,7 @@ public class BookDaoImpl implements BookDao {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
+            connection.close();
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create new book: " + book);
         }
@@ -80,13 +81,14 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-        ) {
+        try {
+            Connection connection = ConnectionUtil.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
+            connection.close();
             if (affectedRows < 1) {
                 throw new DataProcessingException(
                         "Expected to update two rows, but updated 0 rows."
@@ -125,17 +127,14 @@ public class BookDaoImpl implements BookDao {
 
     private Book extractBook(ResultSet resultSet) {
         try {
-            if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Long id = (long) resultSet.getObject("id");
-                return new Book(id, title, price);
-            }
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getBigDecimal("price");
+            Long id = (long) resultSet.getObject("id");
+            return new Book(id, title, price);
         } catch (SQLException e) {
             throw new DataProcessingException(
                     "Impossible to extract the book from the ResultSet."
             );
         }
-        return null;
     }
 }
