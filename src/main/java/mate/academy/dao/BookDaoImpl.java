@@ -17,20 +17,33 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet generatedKeys = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            preparedStatement = connection.prepareStatement(
+                   query, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
-            preparedStatement.executeUpdate();
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataProcessingException(
+                       "Creating book failed, no rows affected.", new SQLException());
+            }
+            generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getLong(1);
                 book.setId(id);
+            } else {
+                throw new DataProcessingException(
+                       "Creating book failed, no ID obtained.", new SQLException());
             }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to create a book", e);
+        } finally {
+            closeResources(connection, preparedStatement, generatedKeys);
         }
     }
 
@@ -38,7 +51,8 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                PreparedStatement preparedStatement =
+                         connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -76,27 +90,75 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-            preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataProcessingException(
+                       "Updating book failed, no rows affected.", new SQLException());
+            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to update a book", e);
+        } finally {
+            closeResources(connection, preparedStatement);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
         String query = "DELETE FROM books WHERE id = ?";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
-            return preparedStatement.executeUpdate() > 0;
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataProcessingException(
+                       "Deleting book failed, no rows affected.", new SQLException());
+            }
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to delete a book with id: " + id, e);
+        } finally {
+            closeResources(connection, preparedStatement);
+        }
+    }
+
+    private void closeResources(Connection connection, PreparedStatement preparedStatement) {
+        closeResources(connection, preparedStatement, null);
+    }
+
+    private void closeResources(Connection connection,
+                                PreparedStatement preparedStatement, ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                throw new DataProcessingException("Failed to close ResultSet", e);
+            }
+        }
+        if (preparedStatement != null) {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                throw new DataProcessingException("Failed to close PreparedStatement", e);
+            }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new DataProcessingException("Failed to close Connection", e);
+            }
         }
     }
 }
