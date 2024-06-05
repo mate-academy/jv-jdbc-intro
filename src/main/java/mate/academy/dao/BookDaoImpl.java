@@ -15,7 +15,6 @@ import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
 @Dao
-
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
