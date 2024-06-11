@@ -21,6 +21,7 @@ public class Main {
         book.setId(25L);
         book.setTitle("Updated Book");
         book.setPrice(BigDecimal.valueOf(5000));
+        bookDao.update(book);
         bookDao.deleteById(25L);
     }
 }
