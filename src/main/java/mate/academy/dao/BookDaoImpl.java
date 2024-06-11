@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,8 +54,8 @@ public class BookDaoImpl implements BookDao {
                     Book book = new Book();
                     book.setId(resultSet.getObject("id", Long.class));
                     book.setTitle(resultSet.getString("title"));
-                    book.setPrice(BigDecimal.valueOf(resultSet.getInt("price")));
-                    return Optional.of(book);
+                    book.setPrice(resultSet.getBigDecimal("price"));
+                    return Optional.of(mapToBook(resultSet));
                 }
             }
 
@@ -76,11 +75,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                books.add(book);
+                books.add(mapToBook(resultSet));
 
             }
         } catch (SQLException e) {
@@ -123,5 +118,13 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new RuntimeException("Can't delete book where id =" + id, e);
         }
+    }
+
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }
