@@ -24,10 +24,10 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int updatedRows = statement.executeUpdate();
-            isUpdated(updatedRows, book);
+            validateUpdate(updatedRows, book);
             ResultSet keys = statement.getGeneratedKeys();
             if (keys.next()) {
-                Long id = keys.getLong(1);
+                Long id = keys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -77,9 +77,9 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int updatedRows = statement.executeUpdate();
-            isUpdated(updatedRows, book);
+            validateUpdate(updatedRows, book);
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed to update book :" + book, e);
+            throw new DataProcessingException("There is an error with updating book with id 25", e);
         }
         return book;
     }
@@ -90,8 +90,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            int updatedRows = statement.executeUpdate();
-            return updatedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to delete book by id: " + id, e);
         }
@@ -108,7 +107,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private void isUpdated(int updatedRows, Book book) {
+    private void validateUpdate(int updatedRows, Book book) {
         if (updatedRows < 1) {
             throw new DataProcessingException("Affected rows less than 1. Failed update: "
                     + book);
