@@ -121,7 +121,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book where id = " + id, e);
+            throw new RuntimeException("Can't delete book where id =" + id, e);
         }
     }
 }
