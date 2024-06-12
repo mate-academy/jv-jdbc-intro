@@ -1,8 +1,6 @@
 package mate.academy;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.dao.BookDao;
@@ -13,14 +11,6 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        try {
-            String sqlFilePath = "src/main/resources/init_db.sql";
-            ConnectionUtil.executeSqlScript(sqlFilePath);
-            System.out.println("Database initialized successfully.");
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException("Failed to initialize the database.", e);
-        }
-
         final BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
         book.setTitle("The 48 Laws of Power");
@@ -35,7 +25,7 @@ public class Main {
         bookDao.create(book);
         System.out.println("Created: " + book);
 
-        Optional<Book> foundBook = bookDao.findById(6L);
+        Optional<Book> foundBook = bookDao.findById(3L);
         foundBook.ifPresent(b -> System.out.println("Found: " + b));
 
         bookDao.update(updatedBook);
