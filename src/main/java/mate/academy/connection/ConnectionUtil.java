@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class GenerateConnection {
+public class ConnectionUtil {
     private static Properties DB_PROPERTIES;
     private static final String URL = "jdbc:mysql://localhost:3306/bookshw";
 
