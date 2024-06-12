@@ -41,19 +41,18 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        Book book = null;
+        Optional<Book> result = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                book = getBookFromResultSet(resultSet, id);
-                book.setId(id);
+                result = Optional.of(getBookFromResultSet(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id " + id, e);
         }
-        return Optional.ofNullable(book);
+        return result;
     }
 
     @Override
@@ -64,7 +63,8 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                books.add(getBookFromResultSet(resultSet, resultSet.getLong("id")));
+                Long id = resultSet.getLong("id");
+                books.add(getBookFromResultSet(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find books ", e);
@@ -100,7 +100,7 @@ public class BookDaoImpl implements BookDao {
             if (affectedRows == 0) {
                 throw new DataProcessingException("Can't find book with id " + id);
             }
-            return affectedRows > 0;
+            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book ", e);
         }
@@ -110,7 +110,7 @@ public class BookDaoImpl implements BookDao {
         try {
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getBigDecimal("price");
-            return new Book(title, price, id);
+            return new Book(id, title, price);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book from resultSet ", e);
         }
