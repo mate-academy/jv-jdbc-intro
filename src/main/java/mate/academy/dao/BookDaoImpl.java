@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add a new book" + book, e);
+            throw new DataProcessingException("Can't add a new book" + book, e);
         }
         return book;
     }
@@ -103,7 +103,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
