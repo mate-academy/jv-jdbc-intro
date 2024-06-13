@@ -1,0 +1,7 @@
+CREATE IF NOT EXISTS DATABASE 'Library';
+CREATE IF NOT EXISTS TABLE 'books' (
+    id bigint AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    price BigDecimal NOT NULL,
+);
+USE Library
