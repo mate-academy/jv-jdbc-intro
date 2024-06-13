@@ -63,7 +63,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
+                Long id = resultSet.getObject("id", Long.class);
                 books.add(getBookFromResultSet(resultSet, id));
             }
         } catch (SQLException e) {
@@ -106,7 +106,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    public Book getBookFromResultSet(ResultSet resultSet, Long id) {
+    private Book getBookFromResultSet(ResultSet resultSet, Long id) {
         try {
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getBigDecimal("price");

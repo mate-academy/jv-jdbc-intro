@@ -11,7 +11,6 @@ public class Book {
         this.id = id;
         this.title = title;
         this.price = price;
-
     }
 
     public Long getId() {
