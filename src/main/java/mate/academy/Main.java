@@ -11,8 +11,8 @@ public class Main {
     private static final String BOOK_NAME = "Road To Java Dev";
     private static final String UPDATED_BOOK_NAME = "Dev Java Road";
     private static final BigDecimal UPDATED_PRICE = BigDecimal.valueOf(500);
-    private static final Long DELETED_BOOK_ID = 2L;
-    private static final Long UPDATED_BOOK_ID = 3L;
+    private static final Long DELETED_BOOK_ID = 1L;
+    private static final Long UPDATED_BOOK_ID = 1L;
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
