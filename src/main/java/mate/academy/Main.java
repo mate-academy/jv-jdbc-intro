@@ -11,6 +11,8 @@ public class Main {
     private static final String BOOK_NAME = "Road To Java Dev";
     private static final String UPDATED_BOOK_NAME = "Dev Java Road";
     private static final BigDecimal UPDATED_PRICE = BigDecimal.valueOf(500);
+    private static final Long DELETED_BOOK_ID = 1L;
+    private static final Long UPDATED_BOOK_ID = 1L;
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
@@ -22,7 +24,8 @@ public class Main {
         Book newBook = new Book();
         newBook.setTitle(UPDATED_BOOK_NAME);
         newBook.setPrice(UPDATED_PRICE);
+        newBook.setId(UPDATED_BOOK_ID);
         System.out.println("Updated book: " + bookDao.update(newBook));
-        System.out.println("Deleted book: " + bookDao.deleteById(1L));
+        System.out.println("Deleted book: " + bookDao.deleteById(DELETED_BOOK_ID));
     }
 }

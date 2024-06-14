@@ -16,6 +16,9 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int PARAMETER_INDEX = 1;
+    private static final int SECOND_PARAMETER_INDEX = 2;
+    private static final int THIRD_PARAMETER_INDEX = 3;
 
     @Override
     public Book create(Book book) {
@@ -25,8 +28,8 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement
                         = connection.prepareStatement(sqlCall, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, title);
-            statement.setBigDecimal(2, price);
+            statement.setString(PARAMETER_INDEX, title);
+            statement.setBigDecimal(SECOND_PARAMETER_INDEX, price);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to insert at least one row, "
@@ -34,7 +37,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                book.setId(generatedKeys.getObject(1, Long.class));
+                book.setId(generatedKeys.getObject(PARAMETER_INDEX, Long.class));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t add new book: " + book, e);
@@ -47,7 +50,7 @@ public class BookDaoImpl implements BookDao {
         String sqlCall = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlCall)) {
-            statement.setLong(1, id);
+            statement.setLong(PARAMETER_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
@@ -92,11 +95,12 @@ public class BookDaoImpl implements BookDao {
         String sqlCall = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlCall)) {
-            statement.setString(1, book.getTitle());
-            statement.setObject(2, book.getPrice());
+            statement.setString(PARAMETER_INDEX, book.getTitle());
+            statement.setObject(SECOND_PARAMETER_INDEX, book.getPrice());
+            statement.setObject(THIRD_PARAMETER_INDEX, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to update data");
+                throw new RuntimeException("Entered ID was not a valid: " + book.getId());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create a connection to thr DB", e);
@@ -109,7 +113,7 @@ public class BookDaoImpl implements BookDao {
         String sqlCall = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlCall)) {
-            statement.setLong(1, id);
+            statement.setLong(PARAMETER_INDEX, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to delete at least one row, "
