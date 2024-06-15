@@ -3,5 +3,5 @@ USE books;
 CREATE TABLE books (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(50),
-    price BIGINT
+    price NUMERIC(10, 2)
 );

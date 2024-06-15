@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
-import mate.academy.DataProcessingException;
+import mate.academy.exeption.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(SECOND_PARAMETER_INDEX, price);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row, "
+                throw new DataProcessingException("Expected to insert at least one row, "
                         + "but inserted 0 rows.");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -87,7 +87,7 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(THIRD_PARAMETER_INDEX, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Entered ID was not a valid: " + book.getId());
+                throw new DataProcessingException("Entered ID was not a valid: " + book.getId());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create a connection to thr DB", e);
@@ -103,7 +103,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(PARAMETER_INDEX, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to delete at least one row, "
+                throw new DataProcessingException("Expected to delete at least one row, "
                         + "but deleted 0 rows.");
             }
             return statement.executeUpdate() > 0;
