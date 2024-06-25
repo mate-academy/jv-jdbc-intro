@@ -1,7 +1,6 @@
 package mate.academy.dao;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -25,7 +24,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement =
                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
-            statement.setDouble(2, book.getPrice());
+            statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException(
@@ -33,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                BigInteger id = generatedKeys.getObject(1, BigInteger.class);
+                Long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -52,14 +51,11 @@ public class BookDaoImpl implements BookDao {
             statement.executeQuery();
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", BigInteger.class));
-                book.setTitle(resultSet.getObject("title", String.class));
-                book.setPrice(resultSet.getObject("price", Double.class));
+                Book book = mapResultSetToBook(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't find the book by id, where id = " + id, e);
         }
         return Optional.empty();
     }
@@ -74,15 +70,12 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 do {
-                    Book book = new Book();
-                    book.setId(resultSet.getObject("id", BigInteger.class));
-                    book.setTitle(resultSet.getObject("title", String.class));
-                    book.setPrice(resultSet.getObject("price", Double.class));
+                    Book book = mapResultSetToBook(resultSet);
                     books.add(book);
                 } while (resultSet.next());
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't find all from table", e);
         }
         return books;
     }
@@ -94,8 +87,8 @@ public class BookDaoImpl implements BookDao {
                 Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, book.getTitle());
-            statement.setDouble(2, book.getPrice());
-            statement.setBigDecimal(3, new BigDecimal(book.getId()));
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException(
@@ -103,7 +96,7 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't update the book: " + book, e);
         }
     }
 
@@ -123,5 +116,13 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't delete book where id = " + id, e);
         }
         return true;
+    }
+    
+    private static Book mapResultSetToBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong("id"));
+        book.setTitle(resultSet.getObject("title", String.class));
+        book.setPrice(resultSet.getObject("price", BigDecimal.class));
+        return book;
     }
 }

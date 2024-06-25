@@ -1,8 +1,5 @@
-package mate.academy;
+package mate.academy.util;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,7 +12,7 @@ public class ConnectionUtil {
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", getPassword());
+        DB_PROPERTIES.put("password", "1111");
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -25,15 +22,5 @@ public class ConnectionUtil {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
-    }
-
-    private static String getPassword() {
-        String path = "src/main/resources/pswrd.txt";
-        try {
-            return Files.readString(Path.of(path));
-
-        } catch (IOException e) {
-            throw new RuntimeException("Can't read a file with path: " + path, e);
-        }
     }
 }
