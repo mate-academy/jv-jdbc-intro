@@ -1,7 +1,7 @@
 CREATE TABLE `books` (
 `id` BIGINT AUTO_INCREMENT,
 `title` VARCHAR(255),
-`price` INT,
+`price` DECIMAL(5,2),
 PRIMARY KEY (`id`)
 );
 
