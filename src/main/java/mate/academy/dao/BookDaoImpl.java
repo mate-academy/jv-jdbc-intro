@@ -1,17 +1,21 @@
 package mate.academy.dao;
 
-import mate.academy.lib.Dao;
-import mate.academy.model.Book;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import mate.academy.lib.Dao;
+import mate.academy.model.Book;
+import mate.academy.model.DataProcessingException;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -22,13 +26,12 @@ public class BookDaoImpl implements BookDao {
     private static final String PRICE = "price";
     private static final String ADD_LINE = " ";
     private static final String INIT_DB_SQL = "src/main/resources/init_db.sql";
-    private static final String TAKE_BOOK_FROM_DB = "SELECT * FROM book WHERE id = ?";
-    private static final String DELETE_BOOK_FROM_DB = "DELETE * FROM book WHERE id = ?";
-    private static final String TAKE_BOOKS_FROM_DB = "SELECT * FROM book";
-    private static final String SAVE_BOOK_IN_DB = "INSERT INTO book (title, price) VALUES (?, ?)";
+    private static final String TAKE_BOOK_FROM_DB = "SELECT * FROM books WHERE id = ?";
+    private static final String DELETE_BOOK_FROM_DB = "DELETE FROM books WHERE id = ?";
+    private static final String TAKE_BOOKS_FROM_DB = "SELECT * FROM books";
+    private static final String SAVE_BOOK_IN_DB = "INSERT INTO books (title, price) VALUES (?, ?)";
 
-    @Override
-    public void createTable() {
+    public BookDaoImpl() {
         try (Connection connection = ConnectionUtil.getConnection()) {
             String sqlCodeForTable = Files.readAllLines(Path.of(INIT_DB_SQL))
                     .stream()
@@ -37,15 +40,15 @@ public class BookDaoImpl implements BookDao {
             PreparedStatement statement = connection.prepareStatement(sqlCodeForTable);
             statement.executeUpdate();
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(e);
         }
     }
 
     @Override
-    public Book save(Book book) {
+    public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SAVE_BOOK_IN_DB,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(SAVE_BOOK_IN_DB,
+                            Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(FIRST_QUESTION_MARK_INDEX,
                     book.getTitle());
@@ -53,7 +56,7 @@ public class BookDaoImpl implements BookDao {
                     book.getPrice());
             int end = statement.executeUpdate();
             if (end < 1) {
-                throw new RuntimeException("Failed to save book");
+                throw new DataProcessingException("Failed to save book");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -62,7 +65,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(e);
         }
         return book;
     }
@@ -70,7 +73,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(TAKE_BOOK_FROM_DB)) {
+                PreparedStatement statement = connection.prepareStatement(TAKE_BOOK_FROM_DB)) {
 
             statement.setLong(FIRST_QUESTION_MARK_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
@@ -87,15 +90,15 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(TAKE_BOOKS_FROM_DB)) {
+                PreparedStatement statement = connection.prepareStatement(TAKE_BOOKS_FROM_DB)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -111,33 +114,32 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(e);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_BOOK_FROM_DB)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_BOOK_FROM_DB)) {
 
             statement.setLong(FIRST_QUESTION_MARK_INDEX, id);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return true;
-            }
+            statement.executeUpdate();
+            return true;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(e);
         }
-        return false;
     }
 
     @Override
     public Book update(Book book) {
+        if (book.getId() == null) {
+            throw new DataProcessingException();
+        }
         long bookID = book.getId();
         boolean deleteById = deleteById(bookID);
         if (deleteById) {
-            save(book);
+            create(book);
         }
         return book;
     }

@@ -1,23 +1,20 @@
 package mate.academy.service;
 
+import java.util.List;
+import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.model.Book;
 
-import java.util.List;
-import java.util.Optional;
-
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
     private BookDao bookDao;
 
     public BookServiceImpl(BookDao bookDao) {
         this.bookDao = bookDao;
-        bookDao.createTable();
     }
-
 
     @Override
     public Book create(Book book) {
-        return bookDao.save(book);
+        return bookDao.create(book);
     }
 
     @Override
