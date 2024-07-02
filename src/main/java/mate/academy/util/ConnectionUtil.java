@@ -1,4 +1,4 @@
-package mate.academy.dao.util;
+package mate.academy.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
