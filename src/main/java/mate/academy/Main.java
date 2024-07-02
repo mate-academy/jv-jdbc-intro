@@ -2,19 +2,22 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.dao.impl.BookDaoImpl;
+import mate.academy.dao.util.ConnectionUtil;
+import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/book",
-                "root", "rootroot")) {
-            BookDao bookDao = new BookDaoImpl(connection);
+
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+            bookDao = new BookDaoImpl(connection);
 
             Book newBook = new Book();
             newBook.setTitle("Java");
