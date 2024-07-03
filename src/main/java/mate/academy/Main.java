@@ -7,9 +7,10 @@ import mate.academy.model.Book;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
+    private static BookDao bookDao;
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book1 = new Book();
         book1.setTitle("java");
         book1.setPrice(BigDecimal.valueOf(10));
