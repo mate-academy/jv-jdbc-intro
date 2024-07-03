@@ -1,44 +1,66 @@
 package mate.academy;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
+import mate.academy.dao.ConnectionUtil;
+import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import mate.academy.service.BookService;
-import mate.academy.service.BookServiceImpl;
 
 public class StartClass {
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
+        initializeDatabase();
+
         final Long secondBookId = 2L;
         final Long thirdBookId = 3L;
-
-        final BookDao bookDao = new BookDaoImpl();
-        final BookService bookService = new BookServiceImpl(bookDao);
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         List<Book> books = createBook();
-        Book newBook = new Book(3L,"okok", BigDecimal.valueOf(420));
+        Book newBook = new Book(2L,"okok", BigDecimal.valueOf(420));
 
-        bookService.create(books.get(0));//C
-        bookService.create(books.get(1));
-        bookService.create(books.get(2));
-        bookService.create(books.get(3));
-        bookService.create(books.get(4));
+        bookDao.create(books.get(0));//C
+        bookDao.create(books.get(1));
+        bookDao.create(books.get(2));
+        bookDao.create(books.get(3));
+        bookDao.create(books.get(4));
 
-        Optional<Book> book = bookService.readID(secondBookId);//R
+        Optional<Book> book = bookDao.findById(secondBookId);//R
 
-        boolean delete = bookService.delete(thirdBookId);//D
+        boolean delete = bookDao.deleteById(thirdBookId);//D
 
-        Book update = bookService.update(newBook);//U
+        Book update = bookDao.update(newBook);//U
 
-        List<Book> listOfBooks = bookService.readAll();
+        List<Book> listOfBooks = bookDao.findAll();
 
         System.out.println("We have " + book
                 + ", we delete third book? -> " + delete
                 + " and we updated this book -> " + update);
         for (int i = 0; i < listOfBooks.size(); i++) {
             System.out.println("Our " + i + "th book: " + listOfBooks.get(i));
+        }
+    }
+    private static void initializeDatabase() {
+        try (Connection connection = ConnectionUtil.getConnection();
+             Statement statement = connection.createStatement()) {
+            Path sqlPath = Path.of("src/main/init_db.sql");
+            if (!Files.exists(sqlPath)) {
+                throw new RuntimeException("Database initialization file 'init_db.sql' not found.");
+            }
+            List<String> lines = Files.readAllLines(sqlPath);
+            String sql = lines.stream()
+                    .collect(Collectors.joining(" "));
+            statement.execute(sql);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize database", e);
         }
     }
 
