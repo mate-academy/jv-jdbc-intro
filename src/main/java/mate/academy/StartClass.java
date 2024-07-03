@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import mate.academy.dao.BookDao;
 import mate.academy.dao.ConnectionUtil;
 import mate.academy.lib.Injector;
@@ -48,9 +47,10 @@ public class StartClass {
             System.out.println("Our " + i + "th book: " + listOfBooks.get(i));
         }
     }
+
     private static void initializeDatabase() {
         try (Connection connection = ConnectionUtil.getConnection();
-             Statement statement = connection.createStatement()) {
+                Statement statement = connection.createStatement()) {
             Path sqlPath = Path.of("src/main/init_db.sql");
             if (!Files.exists(sqlPath)) {
                 throw new RuntimeException("Database initialization file 'init_db.sql' not found.");

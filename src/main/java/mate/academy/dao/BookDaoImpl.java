@@ -28,8 +28,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SAVE_BOOK_IN_DB,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(SAVE_BOOK_IN_DB,
+                        Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(FIRST_QUESTION_MARK_INDEX,
                     book.getTitle());
@@ -54,7 +54,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(TAKE_BOOK_FROM_DB)) {
+                PreparedStatement statement = connection.prepareStatement(TAKE_BOOK_FROM_DB)) {
 
             statement.setLong(FIRST_QUESTION_MARK_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
@@ -79,7 +79,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(TAKE_BOOKS_FROM_DB)) {
+                PreparedStatement statement = connection.prepareStatement(TAKE_BOOKS_FROM_DB)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -101,7 +101,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_BOOK_FROM_DB)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_BOOK_FROM_DB)) {
 
             statement.setLong(FIRST_QUESTION_MARK_INDEX, id);
             return statement.executeUpdate() > 0;
@@ -123,13 +123,14 @@ public class BookDaoImpl implements BookDao {
         return book;*/
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Can't update book: " + book + " - no rows in database updated");
+                throw new DataProcessingException("Can't update book: " + book
+                        + " - no rows in database updated");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Error executing update for book: " + book, e);
