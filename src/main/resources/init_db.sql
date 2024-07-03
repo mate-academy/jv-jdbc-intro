@@ -1,6 +1,8 @@
 CREATE DATABASE `book`;
 USE book;
 CREATE TABLE `books` (
-`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-`title` VARCHAR (255),
-`price` INT);
+`id` INT NOT NULL AUTO_INCREMENT,
+`title` VARCHAR(255),
+`price` INT,
+PRIMARY KEY(`id`)
+);
