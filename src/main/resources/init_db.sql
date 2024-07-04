@@ -1,8 +1,8 @@
 CREATE DATABASE `book`;
 USE book;
 CREATE TABLE `books` (
-`id` INT NOT NULL AUTO_INCREMENT,
+`id` BIGINT AUTO_INCREMENT,
 `title` VARCHAR(255),
-`price` INT,
+`price` BigDecimal,
 PRIMARY KEY(`id`)
 );

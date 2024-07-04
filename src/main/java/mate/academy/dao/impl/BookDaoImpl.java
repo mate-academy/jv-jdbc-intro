@@ -52,10 +52,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                book.setId(resultSet.getLong(1));
-                book.setTitle(resultSet.getString(2));
-                book.setPrice(resultSet.getObject(3, BigDecimal.class));
-                return Optional.of(book);
+                return Optional.of(createBookFromDB(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id = " + id);
@@ -71,11 +68,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject(1, Long.class));
-                book.setTitle(resultSet.getString(2));
-                book.setPrice(resultSet.getObject(3, BigDecimal.class));
-                books.add(book);
+                books.add(createBookFromDB(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find list of books");
@@ -108,10 +101,21 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id = " + id);
+        }
+    }
+
+    public Book createBookFromDB(ResultSet resultSet) {
+        Book book = new Book();
+        try {
+            book.setId(resultSet.getObject(1, Long.class));
+            book.setTitle(resultSet.getString(2));
+            book.setPrice(resultSet.getObject(3, BigDecimal.class));
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't create book from DB");
         }
     }
 }
