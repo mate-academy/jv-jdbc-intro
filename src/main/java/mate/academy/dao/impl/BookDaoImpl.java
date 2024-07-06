@@ -6,6 +6,7 @@ import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
