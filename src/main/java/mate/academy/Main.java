@@ -7,11 +7,11 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import mate.academy.connection.ConnectionUtil;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");

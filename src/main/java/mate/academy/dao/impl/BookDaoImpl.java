@@ -9,11 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.connection.ConnectionUtil;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -25,10 +25,17 @@ public class BookDaoImpl implements BookDao {
                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
-            preparedStatement.executeUpdate();
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                book.setId(generatedKeys.getLong(1));
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        book.setId(generatedKeys.getLong(1));
+                    } else {
+                        throw new SQLException("Creating book failed, no ID obtained.");
+                    }
+                }
+            } else {
+                throw new DataProcessingException("No rows were affected");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Couldn't create book: " + book, e);
@@ -77,9 +84,14 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-            preparedStatement.executeUpdate();
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected <= 0) {
+                throw new DataProcessingException("No rows were affected");
+            }
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't update book: " + book, e);
+            throw new DataProcessingException("Could not update book in the database", e);
         }
         return book;
     }
