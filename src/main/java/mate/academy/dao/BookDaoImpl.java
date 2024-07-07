@@ -19,9 +19,11 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String insertBookQuery = "INSERT INTO books (title, price) VALUES (?, ?);";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection
-                        .prepareStatement(insertBookQuery, Statement.RETURN_GENERATED_KEYS)) {
+        Connection connection = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            PreparedStatement statement = connection
+                    .prepareStatement(insertBookQuery, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -41,6 +43,8 @@ public class BookDaoImpl implements BookDao {
                     + book.getTitle()
                     + ", and price: "
                     + book.getPrice() + ":", e);
+        } finally {
+            closeConnection(connection);
         }
         return book;
     }
@@ -84,9 +88,11 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String updateBookQuery =
                 "UPDATE books SET title = ?, price = ? WHERE id = ? AND is_deleted = FALSE;";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection
-                        .prepareStatement(updateBookQuery)) {
+        Connection connection = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            PreparedStatement statement = connection
+                    .prepareStatement(updateBookQuery);
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -98,6 +104,8 @@ public class BookDaoImpl implements BookDao {
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book by id:" + book.getId(), e);
+        } finally {
+            closeConnection(connection);
         }
         return book;
     }
@@ -105,25 +113,42 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean delete(Long id) {
         String deleteBookQuery = "UPDATE books SET is_deleted = TRUE WHERE id = ?;";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection
-                            .prepareStatement(deleteBookQuery)) {
+        Connection connection = null;
+        try {
+            connection = ConnectionUtil.getConnection();
+            PreparedStatement statement = connection
+                    .prepareStatement(deleteBookQuery);
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id:" + id + ":", e);
+        } finally {
+            closeConnection(connection);
         }
     }
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getObject("id", Long.class);
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getBigDecimal("price");
+        final String columnID = "id";
+        final String columnTitle = "title";
+        final String columnPrice = "price";
+        final Long id = resultSet.getObject(columnID, Long.class);
+        final String title = resultSet.getString(columnTitle);
+        final BigDecimal price = resultSet.getBigDecimal(columnPrice);
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);
         book.setPrice(price);
         return book;
+    }
+
+    private void closeConnection(Connection connection) {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't close connection to DB: ", e);
+        }
     }
 }
