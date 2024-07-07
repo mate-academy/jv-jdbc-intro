@@ -21,6 +21,5 @@ public class Main {
         if (bookDao.deleteById(3L)) {
             System.out.println("book with id = " + 2 + " was deleted");
         }
-
     }
 }

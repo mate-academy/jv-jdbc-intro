@@ -2,15 +2,15 @@ CREATE DATABASE book_db;
 
 USE book_db;
 
-CREATE TABLE book
+CREATE TABLE books
 (
-  id INT NOT NULL AUTO_INCREMENT,
+  id BIGINT AUTO_INCREMENT,
   title VARCHAR(50),
-  price decimal(8,2),
+  price DECIMAL(8,2),
   PRIMARY KEY (id)
 );
 
-INSERT INTO book(title, price)
+INSERT INTO books(title, price)
     VALUES  ('John Rouel Tolkien Lord of the Rings', 980.05),
             ('Kleiv Luis Narnia', 750.45),
             ('John Rouel Tolkien Silmarilion', 230.25),
