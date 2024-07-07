@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
-import mate.academy.DataProcessingException;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -23,7 +23,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql,
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
-            statement.setInt(2, book.getPrice());
+            statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
@@ -32,11 +32,11 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                BigDecimal id = generatedKeys.getObject(1, BigDecimal.class);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create a connection for saving to the DB", e);
+            throw new DataProcessingException("Can't add a new book, " + book, e);
         }
         return book;
     }
@@ -85,9 +85,9 @@ public class BookDaoImpl implements BookDao {
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setBigDecimal(3, book.getId());
+            statement.setLong(3, book.getId());
             statement.setString(1, book.getTitle());
-            statement.setInt(2, book.getPrice());
+            statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
@@ -96,7 +96,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create a connection for updating DB data", e);
         }
-        return findById(book.getId().longValue()).orElseThrow(
+        return findById(book.getId()).orElseThrow(
                 () -> new RuntimeException("Update don't work correctly"));
     }
 
@@ -106,14 +106,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setBigDecimal(1, BigDecimal.valueOf(id));
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Expected to delete one row, but deleted 0 rows");
-            } else {
-                return true;
-            }
-
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create a connection for updating DB data", e);
         }
@@ -121,9 +114,9 @@ public class BookDaoImpl implements BookDao {
 
     private Book getBookFromResulSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getBigDecimal(1));
+        book.setId(resultSet.getLong(1));
         book.setTitle(resultSet.getString(2));
-        book.setPrice(resultSet.getInt(3));
+        book.setPrice(resultSet.getBigDecimal(3));
         return book;
     }
 }
