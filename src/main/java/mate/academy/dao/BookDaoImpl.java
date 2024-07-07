@@ -51,11 +51,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getBigDecimal(1));
-                book.setTitle(resultSet.getString(2));
-                book.setPrice(resultSet.getInt(3));
-                return Optional.of(book);
+                return Optional.of(getBookFromResulSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
@@ -74,11 +70,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getBigDecimal(1));
-                book.setTitle(resultSet.getString(2));
-                book.setPrice(resultSet.getInt(3));
-                books.add(book);
+                books.add(getBookFromResulSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
@@ -89,7 +81,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ? price = ? WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -101,18 +93,11 @@ public class BookDaoImpl implements BookDao {
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to update one row, but updated 0 rows");
             }
-            ResultSet resultSet = statement.getResultSet();
-            if (resultSet.next()) {
-                Book bookFromDB = new Book();
-                bookFromDB.setId(resultSet.getBigDecimal(1));
-                bookFromDB.setTitle(resultSet.getString(2));
-                bookFromDB.setPrice(resultSet.getInt(3));
-                return bookFromDB;
-            }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create a connection for updating DB data", e);
         }
-        return null;
+        return findById(book.getId().longValue()).orElseThrow(
+                () -> new RuntimeException("Update don't work correctly"));
     }
 
     @Override
@@ -132,5 +117,13 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot create a connection for updating DB data", e);
         }
+    }
+
+    private Book getBookFromResulSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getBigDecimal(1));
+        book.setTitle(resultSet.getString(2));
+        book.setPrice(resultSet.getInt(3));
+        return book;
     }
 }
