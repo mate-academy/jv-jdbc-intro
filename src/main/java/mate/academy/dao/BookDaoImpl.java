@@ -9,14 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO book (title, price) VALUES (?, ?);";
@@ -51,7 +50,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(creatingBook(resultSet, id));
+                return Optional.of(mapResultSetToBook(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to find book by id: " + id, e);
@@ -68,13 +67,12 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Long id = resultSet.getObject("id", Long.class);
-                books.add(creatingBook(resultSet, id));
-                return books;
+                books.add(mapResultSetToBook(resultSet, id));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to find books", e);
         }
-        return new ArrayList<>();
+        return books;
     }
 
     @Override
@@ -110,7 +108,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book creatingBook(ResultSet resultSet, Long id) {
+    private Book mapResultSetToBook(ResultSet resultSet, Long id) {
         try {
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getObject("price", BigDecimal.class);

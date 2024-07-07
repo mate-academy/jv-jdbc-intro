@@ -16,9 +16,9 @@ public class Main {
         book.setPrice(new BigDecimal("99.99"));
 
         System.out.println(bookDao.create(book));
-        System.out.println(bookDao.findById(4L));
+        System.out.println(bookDao.findById(1L));
         System.out.println(bookDao.findAll());
         System.out.println(bookDao.update(book));
-        System.out.println(bookDao.deleteById(4L));
+        System.out.println(bookDao.deleteById(1L));
     }
 }
