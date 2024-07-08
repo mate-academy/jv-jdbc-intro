@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtilImpl implements ConnectionUtil {
+    private static final String DB_URL = "jdbs.mysql://localhost:3306/my_db";
     private static final Properties DB_PROPERTIES;
 
     static {
@@ -21,7 +22,7 @@ public class ConnectionUtilImpl implements ConnectionUtil {
     }
 
     static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbs.mysql://localhost:3306/my_db", DB_PROPERTIES);
+        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 
 }

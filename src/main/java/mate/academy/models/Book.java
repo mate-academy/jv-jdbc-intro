@@ -5,7 +5,7 @@ import mate.academy.lib.Table;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "books", schema = "test")
+@Table(name = "books", schema = "my_db")
 public class Book {
     private Long id;
     private String title;
