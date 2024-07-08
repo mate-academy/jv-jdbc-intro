@@ -23,8 +23,7 @@ public class BookDaoImpl implements BookDao {
             prepareStatement.setString(1, book.getTitle());
             prepareStatement.setBigDecimal(2, book.getPrice());
 
-            int affectedRows = prepareStatement.executeUpdate();
-            if (affectedRows > 1) {
+            if (prepareStatement.executeUpdate() > 1) {
                 book.setId(getIdFromResultSet(prepareStatement.getGeneratedKeys()));
                 return book;
             }
@@ -70,8 +69,7 @@ public class BookDaoImpl implements BookDao {
             prepareStatement.setBigDecimal(2, book.getPrice());
             prepareStatement.setLong(3, book.getId());
 
-            int updatedRows = prepareStatement.executeUpdate();
-            if (updatedRows > 1) {
+            if (prepareStatement.executeUpdate() > 1) {
                 return book;
             }
             throw new DataProcessingException("Can't update the book: " + book);
@@ -88,9 +86,7 @@ public class BookDaoImpl implements BookDao {
 
             prepareStatement.setLong(1, id);
 
-            int updatedRows = prepareStatement.executeUpdate();
-            return updatedRows > 1;
-
+            return prepareStatement.executeUpdate() > 1;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete the book by id: " + id, e);
         }
@@ -105,14 +101,12 @@ public class BookDaoImpl implements BookDao {
 
     private Optional<Book> getBookFromResultSet(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
-            Long id = resultSet.getObject("id", Long.class);
-            String title = resultSet.getString("title");
-            BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
             Book book = new Book();
-            book.setId(id);
-            book.setTitle(title);
-            book.setPrice(price);
+
+            book.setId(resultSet.getObject("id", Long.class));
+            book.setTitle(resultSet.getString("title"));
+            book.setPrice(resultSet.getObject("price", BigDecimal.class));
+
             return Optional.of(book);
         }
         return Optional.empty();

@@ -6,13 +6,15 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtilImpl implements ConnectionUtil {
+    private static final String USER = "root";
+    private static final String PASSWORD = "illya";
     private static final String DB_URL = "jdbs.mysql://localhost:3306/my_db";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "illya");
+        DB_PROPERTIES.put("user", USER);
+        DB_PROPERTIES.put("password", PASSWORD);
 
         try {
             Class.forName("com.mysql.cj.jdbs.Driver");
