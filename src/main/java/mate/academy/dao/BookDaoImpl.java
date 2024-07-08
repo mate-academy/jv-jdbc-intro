@@ -16,6 +16,10 @@ import mate.academy.utils.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String columnId = "id";
+    private static final String columnTitle = "title";
+    private static final String columnPrice = "price";
+
     @Override
     public Book create(Book book) {
         String insertBookQuery = "INSERT INTO books (title, price) VALUES (?, ?);";
@@ -52,19 +56,19 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String findBookQuery = "SELECT * from books WHERE id = ? AND is_deleted = FALSE;";
+        Optional<Book> book = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(findBookQuery)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            Book book = null;
             if (resultSet.next()) {
-                book = getBookFromResultSet(resultSet);
+                book = Optional.of(getBookFromResultSet(resultSet));
             }
-            return Optional.ofNullable(book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book from id " + id + ":", e);
         }
+        return book;
     }
 
     @Override
@@ -119,8 +123,7 @@ public class BookDaoImpl implements BookDao {
             PreparedStatement statement = connection
                     .prepareStatement(deleteBookQuery);
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id:" + id + ":", e);
         } finally {
@@ -129,12 +132,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
-        final String columnID = "id";
-        final String columnTitle = "title";
-        final String columnPrice = "price";
-        final Long id = resultSet.getObject(columnID, Long.class);
-        final String title = resultSet.getString(columnTitle);
-        final BigDecimal price = resultSet.getBigDecimal(columnPrice);
+        Long id = resultSet.getObject(columnId, Long.class);
+        String title = resultSet.getString(columnTitle);
+        BigDecimal price = resultSet.getBigDecimal(columnPrice);
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);
