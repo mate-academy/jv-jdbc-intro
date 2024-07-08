@@ -8,9 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtilImpl implements ConnectionUtil {
-    private static String db_url;
     private static final Properties DB_PROPERTIES;
-    private static String password;
 
     static {
         DB_PROPERTIES = new Properties();
@@ -22,20 +20,6 @@ public class ConnectionUtilImpl implements ConnectionUtil {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Can not load JDBS driver", e);
         }
-    }
-
-    public static void setDbUrl(String db_url) {
-        if (db_url == null) {
-            throw new DataProcessingException("URL for database SQL is empty");
-        }
-        ConnectionUtilImpl.db_url = db_url;
-    }
-
-    public static void setPassword(String password) {
-        if (password == null) {
-            throw new DataProcessingException("Password for database SQL is empty");
-        }
-        ConnectionUtilImpl.password = password;
     }
 
     static Connection getConnection() throws SQLException {
