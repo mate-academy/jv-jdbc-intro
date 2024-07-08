@@ -2,7 +2,6 @@ package mate.academy;
 
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
-import mate.academy.dao.ConnectionUtilImpl;
 import mate.academy.lib.Injector;
 import mate.academy.models.Book;
 import mate.academy.service.BookService;
