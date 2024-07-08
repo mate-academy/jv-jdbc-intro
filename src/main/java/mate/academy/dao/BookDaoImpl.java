@@ -1,8 +1,5 @@
 package mate.academy.dao;
 
-import mate.academy.exceptions.DataProcessingException;
-import mate.academy.lib.Dao;
-import mate.academy.models.Book;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exceptions.DataProcessingException;
+import mate.academy.lib.Dao;
+import mate.academy.models.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -88,7 +88,7 @@ public class BookDaoImpl implements BookDao {
 
             prepareStatement.setLong(1, id);
 
-            int updatedRows  = prepareStatement.executeUpdate();
+            int updatedRows = prepareStatement.executeUpdate();
             return updatedRows > 1;
 
         } catch (SQLException e) {

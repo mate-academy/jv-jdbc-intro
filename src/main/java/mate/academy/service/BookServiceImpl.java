@@ -1,12 +1,11 @@
 package mate.academy.service;
 
+import java.util.List;
 import mate.academy.dao.BookDao;
 import mate.academy.exceptions.DataProcessingException;
 import mate.academy.models.Book;
 
-import java.util.List;
-
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
 
     public BookServiceImpl(BookDao bookDao) {

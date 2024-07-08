@@ -1,8 +1,8 @@
 package mate.academy.models;
 
+import java.math.BigDecimal;
 import mate.academy.lib.Entity;
 import mate.academy.lib.Table;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "books", schema = "my_db")
@@ -13,6 +13,7 @@ public class Book {
 
     public Book() {
     }
+
     public Long getId() {
         return id;
     }
@@ -39,10 +40,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
