@@ -1,11 +1,7 @@
 package mate.academy.models;
 
 import java.math.BigDecimal;
-import mate.academy.lib.Entity;
-import mate.academy.lib.Table;
 
-@Entity
-@Table(name = "books", schema = "my_db")
 public class Book {
     private Long id;
     private String title;

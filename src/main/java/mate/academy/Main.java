@@ -20,9 +20,10 @@ public class Main {
         BookService bookService = new BookServiceImpl(bookDao);
 
         List<Book> savedBooks = new ArrayList<>();
-        Map<String, BigDecimal> dataForBooks = Map.of("Java", new BigDecimal(300),
-                "Python", new BigDecimal(200), "C++", new BigDecimal(100));
-        dataForBooks.forEach((key, value) -> {
+        Map.of("Java", new BigDecimal(300),
+                "Python", new BigDecimal(200),
+                "C++", new BigDecimal(100))
+                .forEach((key, value) -> {
             Book currentBook = new Book();
             currentBook.setTitle(key);
             currentBook.setPrice(value);
