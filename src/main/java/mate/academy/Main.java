@@ -24,11 +24,11 @@ public class Main {
                 "Python", new BigDecimal(200),
                 "C++", new BigDecimal(100))
                 .forEach((key, value) -> {
-            Book currentBook = new Book();
-            currentBook.setTitle(key);
-            currentBook.setPrice(value);
-            savedBooks.add(bookService.save(currentBook));
-        });
+                    Book currentBook = new Book();
+                    currentBook.setTitle(key);
+                    currentBook.setPrice(value);
+                    savedBooks.add(bookService.save(currentBook));
+                });
         System.out.println("savedBooks = " + savedBooks);
 
         Book book = bookService.get(2L);
