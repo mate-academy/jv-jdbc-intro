@@ -45,7 +45,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(createNewEntity(resultSet));
+                return Optional.of(mapResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id = " + id, e);
@@ -61,7 +61,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                allBooks.add(createNewEntity(resultSet));
+                allBooks.add(mapResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create List of all books in DB; ", e);
@@ -100,7 +100,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book createNewEntity(ResultSet resultSet) throws SQLException {
+    private Book mapResultSetToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
         book.setId(resultSet.getObject("id", Long.class));
         book.setTitle(resultSet.getString("title"));
