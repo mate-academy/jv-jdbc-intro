@@ -9,8 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.models.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -40,7 +42,7 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create a connection to the DB", e);
+            throw new DataProcessingException("Can't add a book", e);
         }
     }
 
@@ -58,7 +60,7 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create a connection to the DB", e);
+            throw new DataProcessingException("Can't find book by id", e);
         }
         return Optional.empty();
     }
@@ -77,7 +79,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create a connection to the DB", e);
+            throw new DataProcessingException("Can't find all books", e);
         }
 
         return result;
@@ -102,7 +104,7 @@ public class BookDaoImpl implements BookDao {
             return book;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create a connection to the DB", e);
+            throw new DataProcessingException("Can't update book", e);
         }
     }
 
@@ -119,7 +121,7 @@ public class BookDaoImpl implements BookDao {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create a connection to the DB", e);
+            throw new DataProcessingException("Can't delete book by id", e);
         }
     }
 
