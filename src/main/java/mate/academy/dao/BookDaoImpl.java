@@ -50,10 +50,9 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         String sql = "SELECT * FROM books";
-        try (PreparedStatement prepareStatement = ConnectionUtilImpl.getConnection()
-                .prepareStatement(sql)) {
+        try (Statement statement = ConnectionUtilImpl.getConnection().createStatement()) {
 
-            return getAllFromResultSet(prepareStatement.executeQuery());
+            return getAllFromResultSet(statement.executeQuery(sql));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get any books from the database", e);
         }
@@ -61,7 +60,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ?) WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (PreparedStatement prepareStatement = ConnectionUtilImpl.getConnection()
                 .prepareStatement(sql)) {
 

@@ -23,10 +23,10 @@ public class Main {
         Map.of("Java", new BigDecimal(300),
                 "Python", new BigDecimal(200),
                 "C++", new BigDecimal(100))
-                .forEach((key, value) -> {
+                .forEach((title, price) -> {
                     Book currentBook = new Book();
-                    currentBook.setTitle(key);
-                    currentBook.setPrice(value);
+                    currentBook.setTitle(title);
+                    currentBook.setPrice(price);
                     savedBooks.add(bookService.save(currentBook));
                 });
         System.out.println("savedBooks = " + savedBooks);
