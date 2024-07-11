@@ -11,8 +11,8 @@ public interface BookDao {
 
     List<Book> findAll();
 
-    void update(Book book);
+    Book update(Book book);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 
 }
