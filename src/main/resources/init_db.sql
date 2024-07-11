@@ -1,0 +1,7 @@
+CREATE DATABASE 'books_db';
+
+CREATE TABLE 'books' (
+    'id' BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    'title' VARCHAR(255) NOT NULL,
+    'price' DECIMAL NOT NULL
+    );
