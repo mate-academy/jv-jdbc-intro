@@ -44,7 +44,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(parseBookFromResultSet(resultSet));
+                return Optional.of(createBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Couldn't find book by id " + id, e);
@@ -60,7 +60,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                books.add(parseBookFromResultSet(resultSet));
+                books.add(createBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Couldn't get all books", e);
@@ -96,7 +96,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private Book parseBookFromResultSet(ResultSet resultSet) throws SQLException {
+    private Book createBookFromResultSet(ResultSet resultSet) throws SQLException {
         Long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");

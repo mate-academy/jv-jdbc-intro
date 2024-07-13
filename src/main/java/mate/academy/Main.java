@@ -25,5 +25,14 @@ public class Main {
         bookDao.findAll().forEach(System.out::println);
 
         bookDao.deleteById(book.getId());
+
+        if (bookDao.findById(book.getId()).isEmpty()) {
+            System.out.println("Book successfully deleted.");
+        } else {
+            System.out.println("Book deletion failed.");
+        }
+
+        System.out.println("Books after deletion: ");
+        bookDao.findAll().forEach(System.out::println);
     }
 }
