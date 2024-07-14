@@ -105,10 +105,10 @@ public class BookDaoImpl implements BookDao {
         Long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getBigDecimal("price");
-        Book selectedBook = new Book();
-        selectedBook.setId(id);
-        selectedBook.setTitle(title);
-        selectedBook.setPrice(price);
-        return selectedBook;
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
