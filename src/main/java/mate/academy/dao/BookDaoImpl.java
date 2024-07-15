@@ -50,7 +50,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can ot find book by id" + id, e);
+            throw new DataProcessingException("Can not find book by id" + id, e);
         }
         return Optional.empty();
     }

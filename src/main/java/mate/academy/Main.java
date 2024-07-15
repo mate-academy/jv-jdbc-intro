@@ -6,7 +6,7 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
-    private static Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
         Book harryPotter = new Book();
