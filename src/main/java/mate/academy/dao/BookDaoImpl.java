@@ -44,7 +44,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        Optional<Book> book = null;
+        Optional<Book> book = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
@@ -53,9 +53,9 @@ public class BookDaoImpl implements BookDao {
                 book = Optional.of(getBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find bok by id: " + id, e);
+            throw new DataProcessingException("Can not find book by id: " + id, e);
         }
-        return Optional.empty();
+        return book;
     }
 
     @Override
@@ -83,7 +83,12 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            statement.executeUpdate();
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows < 1) {
+                throw new DataProcessingException("Expected to insert at lest "
+                        + "one row, but inserted 0 rows.");
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not update book: " + book, e);
         }
