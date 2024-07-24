@@ -1,4 +1,4 @@
-package mate.academy.lib;
+package mate.academy.dao;
 
 import java.io.File;
 import java.io.IOException;
