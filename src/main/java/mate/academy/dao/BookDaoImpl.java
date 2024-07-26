@@ -9,10 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -110,14 +110,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        int affectedRows;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setLong(1,id);
-            affectedRows = statement.executeUpdate();
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book from db by id " + id, e);
         }
-        return affectedRows == 1;
     }
 }
