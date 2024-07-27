@@ -98,7 +98,7 @@ public class BookDaoImpl implements BookDao<Long, Book> {
         }
     }
 
-    private static void validateAffectedRows(int affectedRows) {
+    private void validateAffectedRows(int affectedRows) {
         if (affectedRows < 1) {
             throw new DataProcessingException(
                     "Expected to insert at least one row, but inserted 0 rows",
@@ -106,7 +106,7 @@ public class BookDaoImpl implements BookDao<Long, Book> {
         }
     }
 
-    private static Book buildBook(ResultSet resultSet) throws SQLException {
+    private Book buildBook(ResultSet resultSet) throws SQLException {
         return new Book(
                 resultSet.getLong("id"),
                 resultSet.getString("title"),
