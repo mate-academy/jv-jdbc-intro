@@ -12,18 +12,19 @@ public class Main {
 
     public static void main(String[] args) {
 
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        createBook(bookDao, "Test Book", BigDecimal.valueOf(230));
-        createBook(bookDao, "Test Book2", BigDecimal.valueOf(530));
+        Book book = createBook("Test Book", BigDecimal.valueOf(230));
+        Book book2 = createBook("Test Book2", BigDecimal.valueOf(530));
 
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        bookDao.create(book);
+        bookDao.create(book2);
         List<Book> allBooks = bookDao.findAll();
         System.out.println("first list of books" + allBooks);
 
-        Book bookToUpdate = new Book();
-        bookToUpdate.setTitle("Test Book Update");
-        bookToUpdate.setId(8L);
+        book.setTitle("Test Book Update");
+        book.setId(8L);
 
-        Book updateOutcome = bookDao.update(bookToUpdate);
+        Book updateOutcome = bookDao.update(book);
         System.out.println("update successful for book: " + updateOutcome);
 
         allBooks = bookDao.findAll();
@@ -37,10 +38,10 @@ public class Main {
 
     }
 
-    private static void createBook(BookDao bookDao, String title, BigDecimal price) {
+    private static Book createBook(String title, BigDecimal price) {
         Book book = new Book();
         book.setTitle(title);
         book.setPrice(price);
-        bookDao.create(book);
+        return book;
     }
 }
