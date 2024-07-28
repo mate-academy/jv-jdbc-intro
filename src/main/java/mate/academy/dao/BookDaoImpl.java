@@ -54,7 +54,6 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id " + id, e);
         }
-
         return Optional.empty();
     }
 
@@ -71,7 +70,6 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find books", e);
         }
-
         return books;
     }
 

@@ -11,27 +11,23 @@ public class Main {
     public static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        Book book = new Book();
-        book.setTitle("Test Book");
-        book.setPrice(BigDecimal.valueOf(230));
-        Book book2 = new Book();
-        book2.setTitle("Test Book2");
-        book2.setPrice(BigDecimal.valueOf(530));
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        bookDao.create(book);
-        bookDao.create(book2);
+        createBook(bookDao, "Test Book", BigDecimal.valueOf(230));
+        createBook(bookDao, "Test Book2", BigDecimal.valueOf(530));
+
         List<Book> allBooks = bookDao.findAll();
         System.out.println("first list of books" + allBooks);
 
-        book.setTitle("Test Book Update");
-        book.setId(8L);
+        Book bookToUpdate = new Book();
+        bookToUpdate.setTitle("Test Book Update");
+        bookToUpdate.setId(8L);
 
-        Book updateOutcome = bookDao.update(book);
+        Book updateOutcome = bookDao.update(bookToUpdate);
         System.out.println("update successful for book: " + updateOutcome);
 
         allBooks = bookDao.findAll();
-        System.out.println("second list of books" + allBooks);
+        System.out.println("List of books after update" + allBooks);
 
         Optional<Book> bookById = bookDao.findById(8L);
         System.out.println("Book found by id: " + bookById);
@@ -41,4 +37,10 @@ public class Main {
 
     }
 
+    private static void createBook(BookDao bookDao, String title, BigDecimal price) {
+        Book book = new Book();
+        book.setTitle(title);
+        book.setPrice(price);
+        bookDao.create(book);
+    }
 }
