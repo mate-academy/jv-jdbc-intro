@@ -18,12 +18,16 @@ public class Main {
         books.add(new Book("Dune", new BigDecimal(1700)));
 
         books.forEach(bookDao::create);
-        Book book = bookDao.findById(1L).orElseThrow(() ->
+
+        Book bookToUpdate = bookDao.findById(1L).orElseThrow(() ->
                 new RuntimeException("Couldn't find the book")
         );
+        bookToUpdate.setTitle("Updated Harry Potter");
+        bookToUpdate.setPrice(new BigDecimal(2500));
+        bookDao.update(bookToUpdate);
+
         List<Book> bookList = bookDao.findAll();
         System.out.println(bookList);
-        Book updatedBook = bookDao.update(new Book("Harry Potter", new BigDecimal(2500)));
 
         System.out.println(bookDao.deleteById(1L));
     }
