@@ -15,6 +15,7 @@ public class Injector {
     private final List<Class<?>> classes = new ArrayList<>();
 
     private Injector(String mainPackageName) {
+        System.out.println("Initializing Injector for package: " + mainPackageName);
         try {
             classes.addAll(getClasses(mainPackageName));
         } catch (IOException | ClassNotFoundException e) {
@@ -73,6 +74,7 @@ public class Injector {
      */
     private static List<Class<?>> getClasses(String packageName)
             throws IOException, ClassNotFoundException {
+        System.out.println("Getting classes for package: " + packageName);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new RuntimeException("Class loader is null");
@@ -82,7 +84,10 @@ public class Injector {
         List<File> dirs = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
+            String decodedPath = java.net.URLDecoder.decode(resource.getFile(), "UTF-8");
+            System.out.println("Decoded Resource: " + decodedPath);
+            System.out.println("Resource: " + resource.getFile());
+            dirs.add(new File(decodedPath));
         }
         ArrayList<Class<?>> classes = new ArrayList<>();
         for (File directory : dirs) {
@@ -103,8 +108,10 @@ public class Injector {
             throws ClassNotFoundException {
         List<Class<?>> classes = new ArrayList<>();
         if (!directory.exists()) {
+            System.out.println("Directory does not exist: " + directory.getAbsolutePath());
             return classes;
         }
+        System.out.println("Scanning directory: " + directory.getAbsolutePath());
         File[] files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -115,6 +122,7 @@ public class Injector {
                     classes.addAll(findClasses(file, packageName + "."
                             + file.getName()));
                 } else if (file.getName().endsWith(".class")) {
+                    System.out.println("Found class file: " + file.getName());
                     classes.add(Class.forName(packageName + '.'
                             + file.getName().substring(0, file.getName().length() - 6)));
                 }
