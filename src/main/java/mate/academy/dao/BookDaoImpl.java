@@ -46,20 +46,11 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
-            }
+            return (mapToBook(statement.executeQuery()));
+
         } catch (SQLException e) {
             throw new DataProcessingException("Can not find a book with ID: " + id, e);
         }
-        return Optional.empty();
     }
 
     @Override
@@ -116,5 +107,19 @@ public class BookDaoImpl implements BookDao {
             books.add(book);
         }
         return books;
+    }
+
+    private Optional<Book> mapToBook(ResultSet resultSet) throws SQLException {
+        if (resultSet.next()) {
+            Long id = resultSet.getLong(1);
+            String title = resultSet.getString(2);
+            BigDecimal price = resultSet.getBigDecimal(3);
+            Book book = new Book();
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return Optional.of(book);
+        }
+        return Optional.empty();
     }
 }
