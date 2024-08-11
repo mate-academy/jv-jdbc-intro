@@ -43,23 +43,31 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
+        Optional<Book> result = Optional.empty();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            return (mapToBook(statement.executeQuery()));
-
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = Optional.of(mapToBook(resultSet, id));
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not find a book with ID: " + id, e);
         }
+        return result;
     }
 
     @Override
     public List<Book> findAll() {
         String sql = "SELECT * FROM books";
-        List<Book> books;
+        List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            books = mapToBooks(statement.executeQuery());
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Long id = resultSet.getObject("id", Long.class);
+                books.add(mapToBook(resultSet, id));
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get books", e);
         }
@@ -97,29 +105,17 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private List<Book> mapToBooks(ResultSet resultSet) throws SQLException {
-        List<Book> books = new ArrayList<>();
-        while (resultSet.next()) {
-            Book book = new Book();
-            book.setId(resultSet.getLong(1));
-            book.setTitle(resultSet.getString(2));
-            book.setPrice(resultSet.getBigDecimal(3));
-            books.add(book);
-        }
-        return books;
-    }
-
-    private Optional<Book> mapToBook(ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) {
-            Long id = resultSet.getLong(1);
-            String title = resultSet.getString(2);
-            BigDecimal price = resultSet.getBigDecimal(3);
+    private Book mapToBook(ResultSet resultSet, Long id) {
+        try {
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getBigDecimal("price");
             Book book = new Book();
             book.setId(id);
             book.setTitle(title);
             book.setPrice(price);
-            return Optional.of(book);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get the results from ResultSet", e);
         }
-        return Optional.empty();
     }
 }

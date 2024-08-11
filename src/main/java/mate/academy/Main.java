@@ -33,7 +33,7 @@ public class Main {
         updatedBook.setTitle("New title");
         updatedBook.setPrice(BigDecimal.valueOf(2000));
         System.out.println(bookDao.update(updatedBook));
-        System.out.println("Deleting book with id = 1:");
-        System.out.println(bookDao.deleteById(5L));
+        System.out.println("Deleting book with id = 6:");
+        System.out.println(bookDao.deleteById(6L));
     }
 }
