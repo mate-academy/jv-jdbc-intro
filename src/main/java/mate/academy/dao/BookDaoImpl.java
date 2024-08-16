@@ -28,14 +28,14 @@ public class BookDaoImpl implements BookDao {
 
             int updatedRow = preparedStatement.executeUpdate();
             if (updatedRow == 0) {
-                throw new SQLException("Creating book failed, no rows affected.");
+                throw new SQLException("Creating book failed, no rows affected: " + book);
             }
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     book.setId(generatedKeys.getLong(1));
                 } else {
-                    throw new SQLException("Creating book failed, no ID obtained.");
+                    throw new SQLException("Creating book failed, no ID obtained: " + book);
                 }
             }
             return book;
@@ -67,7 +67,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.createStatement()) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 Book book = getBookFromResultSet(resultSet);
