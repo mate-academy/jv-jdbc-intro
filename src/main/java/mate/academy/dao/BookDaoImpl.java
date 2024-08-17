@@ -9,14 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -27,7 +26,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
 
             int updatedRow = preparedStatement.executeUpdate();
-            if (updatedRow == 0) {
+            if (updatedRow < 1) {
                 throw new SQLException("Creating book failed, no rows affected: " + book);
             }
 
@@ -89,7 +88,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int updatedRow = statement.executeUpdate();
             if (updatedRow < 1) {
-                throw new RuntimeException("Expected one row updated at least");
+                throw new DataProcessingException("Expected one row updated at least");
             }
             return book;
         } catch (SQLException e) {
@@ -103,8 +102,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            int deletedRow = statement.executeUpdate();
-            return deletedRow > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book by id: " + id, e);
         }
