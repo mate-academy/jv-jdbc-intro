@@ -87,7 +87,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        Book updatedBook = null;
+        Book updatedBook = book;
         try (Connection connection = ConnectionUtil.connectToDatabase();
                 PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BOOK_QUERY,
                         Statement.RETURN_GENERATED_KEYS)) {
@@ -95,10 +95,10 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(3, book.getPrice());
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Long bookId = resultSet.getLong("id");
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
-                updatedBook = new Book(bookId, title, price);
+                updatedBook.setTitle(title);
+                updatedBook.setPrice(price);
             }
         } catch (SQLException throwables) {
             throw new RuntimeException(throwables);
@@ -110,8 +110,8 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(int id) {
         boolean isDeleted;
         try (Connection connection = ConnectionUtil.connectToDatabase();
-                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BOOK_QUERY,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(DELETE_BOOK_QUERY)) {
             preparedStatement.setLong(1, id);
             isDeleted = preparedStatement.execute();
         } catch (SQLException throwables) {
