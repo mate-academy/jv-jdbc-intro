@@ -3,7 +3,7 @@
 * Try to avoid code duplication. Especially, when you are working with ResultSet.
   Move retrieving data from ResultSet into Entity object to a separate private method.
 
-* Don't make `books.title` UNIQUE. This is not required in this task.
+* Don't make `book.title` UNIQUE. This is not required in this task.
 
 * When creating a table in MySQL, use `bigint` column type for storing id.
 
@@ -12,11 +12,11 @@
   
 * Use `PreparedStatement` over `Statement`, even for a static query with no parameters in `findAll()` method. It's the best practice, and it's slightly faster.
 
-* Column naming (`books.` is a table name in these examples):
+* Column naming (`book.` is a table name in these examples):
 
-Wrong: `books.bookTitle`, `books.BOOK_TITLE`
+Wrong: `book.bookTitle`, `book.BOOK_TITLE`
 
-Good: `books.title`
+Good: `book.title`
 
 * Use `Statement.RETURN_GENERATED_KEYS` only in `create` statement, it's not needed in other methods.
 
@@ -48,11 +48,11 @@ Good: `books.title`
 
     - Bad practice:
         ```sql  
-        insert into books (..) VALUES (..);    
+        insert into book (..) VALUES (..);    
         ``` 
     - Good practice: 
         ```sql
-        INSERT INTO books (..) VALUES (..);
+        INSERT INTO book (..) VALUES (..);
         ```   
 * Let's save each query in a separate variable.
     - Bad practice:
@@ -60,7 +60,7 @@ Good: `books.title`
             public List<Book> findAll() {
                 try (Connection connection = ConnectionUtil.getConnection()
                     PreparedStatement preparedStatement = connection
-                        .prepareStatement("SELECT * FROM books")) { // it's bad
+                        .prepareStatement("SELECT * FROM book")) { // it's bad
                     ...
                 } catch (SQLException ex) {
                     ...
@@ -70,7 +70,7 @@ Good: `books.title`
     - Good practice: 
         ```java
             public List<Book> findAll() {
-                String query = "SELECT * FROM books"; // it's good
+                String query = "SELECT * FROM book"; // it's good
                 try (Connection connection = ConnectionUtil.getConnection();
                     PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                     ...
@@ -105,11 +105,11 @@ Good: `books.title`
 
     - Bad practice:
         ```sql  
-        SELECT * FROM schemaname.books WHERE id = 1;                     
+        SELECT * FROM schemaname.book WHERE id = 1;                     
         ``` 
     - Good practice: 
         ```sql
-        SELECT * FROM books WHERE id = 1;
+        SELECT * FROM book WHERE id = 1;
         ```         
 * When you convert `ResultSet` to `Book` better create an object using setters or constructor but not both of them, because it's not consistent to use both ways of initialization of object.
 

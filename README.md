@@ -25,7 +25,7 @@ public class Main {
 }
 ```
 **WARNING!!!** Path to your project must contain only english letters. Also, it mustn't contain spaces. In other case `Injector` won't work correctly.
-- Your table should be named `books` and contain these columns: `id`, `title`, `price`.
+- Your table should be named `book` and contain these columns: `id`, `title`, `price`.
 ### Java classes structure:
 - Book
 
