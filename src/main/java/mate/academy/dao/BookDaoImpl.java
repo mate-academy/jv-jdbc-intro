@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,12 +54,7 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(1, id, Types.BIGINT);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getObject("title", String.class);
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                book = mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Could not find book with id: " + id, e);
@@ -75,10 +69,7 @@ public class BookDaoImpl implements BookDao {
             List<Book> books = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getObject("title", String.class));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
+                Book book = mapResultSet(resultSet);
                 books.add(book);
             }
             return books;
@@ -111,14 +102,17 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID_SQL)) {
             statement.setObject(1, id, Types.BIGINT);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException("At least one row was expected to be affected, "
-                       + "but 0 rows were affected");
-            }
-            return true;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("An error occurred while deleting the book", e);
         }
+    }
+
+    private Book mapResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong("id"));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }

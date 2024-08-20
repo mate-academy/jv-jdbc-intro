@@ -20,10 +20,10 @@ public class Main {
         bookDao.findById(1L);
         System.out.println(bookDao.findAll());
         Book book = new Book();
-        book.setId(40L);
+        book.setId(43L);
         book.setTitle("Update First Book");
         book.setPrice(BigDecimal.valueOf(45));
         bookDao.update(book);
-        bookDao.deleteById(40L);
+        bookDao.deleteById(43L);
     }
 }
