@@ -1,4 +1,4 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
