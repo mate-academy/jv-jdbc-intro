@@ -17,13 +17,13 @@ public class Main {
         for (Book book : books) {
             bookDao.create(book);
         }
-        bookDao.findById(1L);
+        bookDao.findById(34L);
         System.out.println(bookDao.findAll());
         Book book = new Book();
-        book.setId(43L);
+        book.setId(46L);
         book.setTitle("Update First Book");
         book.setPrice(BigDecimal.valueOf(45));
         bookDao.update(book);
-        bookDao.deleteById(43L);
+        bookDao.deleteById(46L);
     }
 }

@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getLong(1));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("An error occurred while creating the book", e);
+            throw new DataProcessingException("An error occurred while creating the books", e);
         }
         return book;
     }
@@ -57,7 +57,7 @@ public class BookDaoImpl implements BookDao {
                 book = mapResultSet(resultSet);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not find book with id: " + id, e);
+            throw new DataProcessingException("Could not find books with id: " + id, e);
         }
         return Optional.of(book);
     }
@@ -74,7 +74,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not find all book", e);
+            throw new DataProcessingException("Could not find all books", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class BookDaoImpl implements BookDao {
                         + "but 0 rows were affected");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("An error occurred while updating the book", e);
+            throw new DataProcessingException("An error occurred while updating the books", e);
         }
         return book;
     }
@@ -104,7 +104,7 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(1, id, Types.BIGINT);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("An error occurred while deleting the book", e);
+            throw new DataProcessingException("An error occurred while deleting the books", e);
         }
     }
 

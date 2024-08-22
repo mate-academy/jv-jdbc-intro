@@ -17,15 +17,15 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book();
+        Book books = new Book();
         // initialize field values using setters or constructor
-        bookDao.create(book);
+        bookDao.create(books);
         // test other methods from BookDao
     }
 }
 ```
 **WARNING!!!** Path to your project must contain only english letters. Also, it mustn't contain spaces. In other case `Injector` won't work correctly.
-- Your table should be named `book` and contain these columns: `id`, `title`, `price`.
+- Your table should be named `books` and contain these columns: `id`, `title`, `price`.
 ### Java classes structure:
 - Book
 
@@ -40,10 +40,10 @@ public class Book {
 ```
 
 ### BookDao methods:
-    - Book create(Book book);
+    - Book create(Book books);
     - Optional<Book> findById(Long id);
     - List<Book> findAll();
-    - Book update(Book book);
+    - Book update(Book books);
     - boolean deleteById(Long id);
     
 ### Create custom exception
