@@ -17,7 +17,7 @@ import mate.academy.model.Book;
 public class BookDaoimpl implements BookDao {
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO book(title, price) VALUES (?, ?)";
+        String sql = "INSERT INTO books(title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql,
                          Statement.RETURN_GENERATED_KEYS)) {
@@ -42,7 +42,7 @@ public class BookDaoimpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM book WHERE id = ?";
+        String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -59,7 +59,7 @@ public class BookDaoimpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String sql = "SELECT * FROM book";
+        String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -76,7 +76,7 @@ public class BookDaoimpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE book SET title = ?, price = ? WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, book.getTitle());
@@ -94,18 +94,15 @@ public class BookDaoimpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM book WHERE id = ?";
+        String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, id);
             int affectedRows = ps.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("Failed to delete the book with id: " + id);
-            }
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book", e);
         }
-        return true;
     }
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
