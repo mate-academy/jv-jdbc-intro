@@ -12,6 +12,7 @@ public class ConnectionUtil {
     private static final String USER_NAME = "root";
     private static final String PASSWORD = "bodyaA20041@";
     private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
+
     static {
         DB_PROPERTIES = new Properties();
         DB_PROPERTIES.setProperty("user", USER_NAME);
