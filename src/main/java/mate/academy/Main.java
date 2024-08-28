@@ -14,7 +14,7 @@ public class Main {
         book1.setPrice(BigDecimal.valueOf(200));
         Book book2 = new Book();
         book2.setTitle("book2");
-        book2.setPrice(BigDecimal.valueOf(300));;
+        book2.setPrice(BigDecimal.valueOf(300));
         Book updateBook = new Book();
         updateBook.setId(1L);
         updateBook.setTitle("updatedBook");
