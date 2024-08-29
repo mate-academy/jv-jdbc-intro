@@ -23,10 +23,6 @@ public class BookDaoImpl implements BookDao {
                         connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("No affected rows");
-            }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getLong(1);
