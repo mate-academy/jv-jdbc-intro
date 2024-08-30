@@ -27,7 +27,8 @@ public class BookDaoimpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row, but inserted "
+                throw new DataProcessingException("Expected to insert at least one row,"
+                        + " but inserted "
                         + affectedRows + " rows");
             }
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -85,7 +86,8 @@ public class BookDaoimpl implements BookDao {
             statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Failed to update the book with id: " + book.getId());
+                throw new DataProcessingException("Failed to update the book with id: "
+                        + book.getId());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot update book", e);
