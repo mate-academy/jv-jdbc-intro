@@ -25,7 +25,6 @@ public class BookDaoImpl implements BookDao {
                     connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to affect at least one row, "
