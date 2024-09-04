@@ -45,7 +45,7 @@ public class BookDaoImpl implements BookDao {
         Book book = null;
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -63,7 +63,7 @@ public class BookDaoImpl implements BookDao {
         Book book;
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 book = parseBook(resultSet);
