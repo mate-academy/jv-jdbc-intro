@@ -17,12 +17,10 @@ public class Main {
         bookDao.create(book1);
         bookDao.create(book2);
         bookDao.create(book3);
-        System.out.println(bookDao.findAll());
+        bookDao.findAll();
         book3.setPrice(BigDecimal.valueOf(250));
         bookDao.update(book3);
-        System.out.println(bookDao.findAll());
-        System.out.println(bookDao.findById(2L).get());
+        bookDao.findById(2L).get();
         bookDao.deleteById(1L);
-        System.out.println(bookDao.findAll());
     }
 }
