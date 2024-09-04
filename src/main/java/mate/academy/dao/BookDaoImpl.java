@@ -16,22 +16,30 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final int TITLE_INDEX = 1;
+    private static final int PRICE_INDEX = 2;
+    private static final int ID_INDEX = 3;
+    private static final int ID_PARAMETER_INDEX = 1;
+    private static final int GENERATED_KEY_INDEX = 2;
+    private static final int MIN_AFFECTED_ROWS = 1;
+    private static final int NO_ROWS_AFFECTED = 0;
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
                         Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows < MIN_AFFECTED_ROWS) {
                 throw new DataProcessingException("Expected paste at least 1 row, "
                         + "but was pasted 0 rows.");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                long id = generatedKeys.getObject(1, Long.class);
+                long id = generatedKeys.getObject(GENERATED_KEY_INDEX, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -46,7 +54,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_PARAMETER_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 book = parseBook(resultSet);
@@ -80,11 +88,11 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(3, book.getId());
-            statement.setString(1, book.getTitle());
-            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(ID_INDEX, book.getId());
+            statement.setString(TITLE_INDEX, book.getTitle());
+            statement.setBigDecimal(PRICE_INDEX, book.getPrice());
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows < MIN_AFFECTED_ROWS) {
                 throw new DataProcessingException("Expected update at least 1 row, "
                         + "but was updated 0 rows.");
             }
@@ -101,12 +109,12 @@ public class BookDaoImpl implements BookDao {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setLong(ID_PARAMETER_INDEX, id);
             affectedRows = statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book with id:" + id, e);
         }
-        return affectedRows > 0;
+        return affectedRows > NO_ROWS_AFFECTED;
     }
 
     private Book parseBook(ResultSet resultSet) {
