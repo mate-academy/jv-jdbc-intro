@@ -67,7 +67,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 book = parseBook(resultSet);
-                books.add(Optional.ofNullable(book).get());
+                books.add(book);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find books in Database.", e);
