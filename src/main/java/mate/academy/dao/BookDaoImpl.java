@@ -20,7 +20,7 @@ public class BookDaoImpl implements BookDao {
     private static final int PRICE_INDEX = 2;
     private static final int ID_INDEX = 3;
     private static final int ID_PARAMETER_INDEX = 1;
-    private static final int GENERATED_KEY_INDEX = 2;
+    private static final int GENERATED_KEY_INDEX = 1;
     private static final int MIN_AFFECTED_ROWS = 1;
     private static final int NO_ROWS_AFFECTED = 0;
 
@@ -39,7 +39,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                long id = generatedKeys.getObject(GENERATED_KEY_INDEX, Long.class);
+                Long id = generatedKeys.getObject(GENERATED_KEY_INDEX, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -50,32 +50,30 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        Book book = null;
+        Optional<Book> result = Optional.empty();
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(ID_PARAMETER_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                book = parseBook(resultSet);
+                result = Optional.of(parseBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot find book with id:" + id, e);
+            throw new DataProcessingException("Cannot find result with id:" + id, e);
         }
-        return Optional.ofNullable(book);
+        return result;
     }
 
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        Book book;
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                book = parseBook(resultSet);
-                books.add(book);
+                books.add(parseBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot find books in Database.", e);
@@ -105,22 +103,20 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        int affectedRows;
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(ID_PARAMETER_INDEX, id);
-            affectedRows = statement.executeUpdate();
+            return statement.executeUpdate() > NO_ROWS_AFFECTED;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book with id:" + id, e);
         }
-        return affectedRows > NO_ROWS_AFFECTED;
     }
 
     private Book parseBook(ResultSet resultSet) {
         Book book;
         try {
-            long id = resultSet.getObject("id", Long.class);
+            Long id = resultSet.getObject("id", Long.class);
             String title = resultSet.getString("title");
             BigDecimal price = resultSet.getObject("price", BigDecimal.class);
             book = new Book(id, title, price);
