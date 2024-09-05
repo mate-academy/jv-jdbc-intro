@@ -3,7 +3,7 @@ package mate.academy.model;
 import java.math.BigDecimal;
 
 public class Book {
-    private long id;
+    private Long id;
     private String title;
     private BigDecimal price;
 
@@ -12,17 +12,17 @@ public class Book {
         this.price = price;
     }
 
-    public Book(long id, String title, BigDecimal price) {
+    public Book(Long id, String title, BigDecimal price) {
         this.id = id;
         this.title = title;
         this.price = price;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
