@@ -3,7 +3,6 @@ package mate.academy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -30,11 +29,13 @@ public class Main {
                 .ifPresent(updatedBook -> {
                     updatedBook.setTitle("SQL in 10 Minutes");
                     updatedBook.setPrice(BigDecimal.valueOf(24.99));
-                    System.out.println(System.lineSeparator() + "Updated in db: " + bookDao.update(updatedBook));
+                    System.out.println(System.lineSeparator()
+                            + "Updated in db: " + bookDao.update(updatedBook));
                 });
 
         // Delete all books
-        allBooks.forEach(book -> System.out.println("Deleted record from DB: " + bookDao.deleteById(book.getId())));
+        allBooks.forEach(book -> System.out.println("Deleted record from DB: "
+                + bookDao.deleteById(book.getId())));
     }
 
     private static List<Book> initializeBooks() {
