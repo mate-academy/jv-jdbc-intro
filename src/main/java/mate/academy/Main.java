@@ -1,7 +1,12 @@
 package mate.academy;
 
-public class Main {
-    public static void main(String[] args) {
+import mate.academy.lib.Injector;
+import mate.academy.util.ConnectionUtil;
 
+import java.sql.SQLException;
+
+public class Main {
+    private static final Injector INJECTOR = Injector.getInstance("mate.jdbc");
+    public static void main(String[] args) {
     }
 }
