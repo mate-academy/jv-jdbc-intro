@@ -7,19 +7,18 @@ import mate.academy.model.Book;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
-    private BookDao bookDao;
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book1 = new Book("The Perfect Shot", BigDecimal.valueOf(100));
-        Book book2 = new Book("Modern Java", BigDecimal.valueOf(350));
-        Book book3 = new Book("Atomic Habits", BigDecimal.valueOf(220));
-        bookDao.create(book1);
-        bookDao.create(book2);
-        bookDao.create(book3);
+        Book firstBook = new Book("The Perfect Shot", BigDecimal.valueOf(100));
+        Book secondBook = new Book("Modern Java", BigDecimal.valueOf(350));
+        Book thirdBook = new Book("Atomic Habits", BigDecimal.valueOf(220));
+        bookDao.create(firstBook);
+        bookDao.create(secondBook);
+        bookDao.create(thirdBook);
         bookDao.findAll();
-        book3.setPrice(BigDecimal.valueOf(250));
-        bookDao.update(book3);
+        thirdBook.setPrice(BigDecimal.valueOf(250));
+        bookDao.update(thirdBook);
         bookDao.findById(2L).get();
         bookDao.deleteById(1L);
     }
