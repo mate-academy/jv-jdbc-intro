@@ -8,7 +8,7 @@ import mate.academy.service.BookService;
 import mate.academy.service.impl.BookServiceImpl;
 
 public class Main {
-    private static final Injector injector = Injector.getInstance("mate.academy");
+    private static final Injector injector = Injector.getInstance("mate.academy.dao");
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);

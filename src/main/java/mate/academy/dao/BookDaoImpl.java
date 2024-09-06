@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,8 +27,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement statement =
-                    connection.prepareStatement(INSERT_BOOK_SQL, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement = connection.prepareStatement(INSERT_BOOK_SQL,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
@@ -57,8 +56,9 @@ public class BookDaoImpl implements BookDao {
             if (!resultSet.next()) {
                 throw new RuntimeException("No book with id: " + id);
             }
-            Book book = new Book(resultSet.getString(TITLE_COLUMN),
-                    resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
+            Book book = new Book();
+            book.setTitle(resultSet.getString(TITLE_COLUMN));
+            book.setPrice(resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
             book.setId(id);
             return Optional.of(book);
         } catch (SQLException e) {
@@ -75,8 +75,9 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Book book = new Book(resultSet.getString(TITLE_COLUMN),
-                        resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
+                Book book = new Book();
+                book.setTitle(resultSet.getString(TITLE_COLUMN));
+                book.setPrice(resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
                 book.setId(resultSet.getObject(1, Long.class));
                 bookList.add(book);
             }
@@ -90,7 +91,7 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement =
-                    connection.prepareStatement(UPDATE_BOOK_SQL, Statement.RETURN_GENERATED_KEYS);
+                    connection.prepareStatement(UPDATE_BOOK_SQL);
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             statement.setObject(3, book.getId());
@@ -108,7 +109,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Book book) {
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement =
-                    connection.prepareStatement(DELETE_BOOK_SQL, Statement.RETURN_GENERATED_KEYS);
+                    connection.prepareStatement(DELETE_BOOK_SQL);
             statement.setObject(1, book.getId());
 
             return statement.executeUpdate() > 0;
