@@ -13,16 +13,13 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
 
-        // Initialize data
         List<Book> books = initializeBooks();
         books.forEach(book -> System.out.println("Created record in DB: " + bookDao.create(book)));
 
-        // Fetch all books once and reuse the list
         List<Book> allBooks = bookDao.findAll();
         System.out.println(System.lineSeparator() + "Records in DB:");
         allBooks.forEach(System.out::println);
 
-        // Update a specific book
         allBooks.stream()
                 .filter(b -> Objects.equals(b.getTitle(), "Effective Java"))
                 .findFirst()
@@ -33,7 +30,6 @@ public class Main {
                             + "Updated in db: " + bookDao.update(updatedBook));
                 });
 
-        // Delete all books
         allBooks.forEach(book -> System.out.println("Deleted record from DB: "
                 + bookDao.deleteById(book.getId())));
     }
