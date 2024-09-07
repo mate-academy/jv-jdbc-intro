@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
                 throw new DataProcessingException("Book was not found!");
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't update book with id: " + book.getId());
         }
         return book;
     }
