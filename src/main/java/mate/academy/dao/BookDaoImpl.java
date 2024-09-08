@@ -7,14 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import mate.academy.connection.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final Throwable cause = new NoSuchElementException();
     private static final String TITLE_COLUMN = "title";
     private static final String PRICE_COLUMN = "price";
     private static final String INSERT_BOOK_SQL = "INSERT INTO book (title, price) VALUES (?, ?)";
@@ -32,7 +34,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("Inserted book is empty");
+                throw new DataProcessingException("Inserted book is empty", cause);
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -54,13 +56,9 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (!resultSet.next()) {
-                throw new RuntimeException("No book with id: " + id);
+                throw new DataProcessingException("No book with id: " + id, cause);
             }
-            Book book = new Book();
-            book.setTitle(resultSet.getString(TITLE_COLUMN));
-            book.setPrice(resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
-            book.setId(id);
-            return Optional.of(book);
+            return Optional.of(fetchBook(resultSet));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id: " + id, e);
         }
@@ -75,11 +73,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setTitle(resultSet.getString(TITLE_COLUMN));
-                book.setPrice(resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
-                book.setId(resultSet.getObject(1, Long.class));
-                bookList.add(book);
+                bookList.add(fetchBook(resultSet));
             }
             return bookList;
         } catch (SQLException e) {
@@ -97,7 +91,7 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(3, book.getId());
 
             if (statement.executeUpdate() < 1) {
-                throw new RuntimeException("No book for update in database: " + book);
+                throw new DataProcessingException("No book for update in database: " + book, cause);
             }
             return book;
         } catch (SQLException e) {
@@ -106,15 +100,23 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean deleteById(Book book) {
+    public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement =
                     connection.prepareStatement(DELETE_BOOK_SQL);
-            statement.setObject(1, book.getId());
+            statement.setObject(1, id);
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete book: " + book, e);
+            throw new DataProcessingException("Can't delete book with id: " + id, e);
         }
+    }
+
+    private Book fetchBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setTitle(resultSet.getString(TITLE_COLUMN));
+        book.setPrice(resultSet.getObject(PRICE_COLUMN, BigDecimal.class));
+        book.setId(resultSet.getObject(1, Long.class));
+        return book;
     }
 }
