@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
@@ -16,7 +15,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final Throwable cause = new NoSuchElementException();
     private static final String TITLE_COLUMN = "title";
     private static final String PRICE_COLUMN = "price";
     private static final String INSERT_BOOK_SQL = "INSERT INTO book (title, price) VALUES (?, ?)";
@@ -34,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setObject(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
-                throw new DataProcessingException("Inserted book is empty", cause);
+                throw new DataProcessingException("Can't add a new book " + book);
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -56,7 +54,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (!resultSet.next()) {
-                throw new DataProcessingException("No book with id: " + id, cause);
+                throw new DataProcessingException("No book with id: " + id);
             }
             return Optional.of(fetchBook(resultSet));
         } catch (SQLException e) {
@@ -91,7 +89,7 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(3, book.getId());
 
             if (statement.executeUpdate() < 1) {
-                throw new DataProcessingException("No book for update in database: " + book, cause);
+                throw new DataProcessingException("No book for update in database: " + book);
             }
             return book;
         } catch (SQLException e) {
