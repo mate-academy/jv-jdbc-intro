@@ -16,7 +16,6 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private static final Throwable cause = new NoSuchElementException();
     private static final String TITLE_COLUMN = "title";
     private static final String PRICE_COLUMN = "price";
     private static final String INSERT_BOOK_SQL = "INSERT INTO book (title, price) VALUES (?, ?)";
