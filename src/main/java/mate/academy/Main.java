@@ -10,9 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book();
-        book.setTitle("Java Programming");
-        book.setPrice(new BigDecimal(200));
+        Book book = new Book(1L, "Java Programming", new BigDecimal(200));
 
         bookDao.create(book);
         bookDao.findAll().forEach(System.out::println);
