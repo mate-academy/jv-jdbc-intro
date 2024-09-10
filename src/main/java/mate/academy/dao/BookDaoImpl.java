@@ -16,6 +16,7 @@ import mate.academy.util.ConnectionUtil;
 @Dao
 public class BookDaoImpl implements BookDao {
 
+    @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
 
@@ -26,15 +27,15 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
 
-            if (affectedRows == 0) {
-                throw new SQLException("Creating book failed, no rows affected.");
+            if (affectedRows < 1) {
+                throw new DataProcessingException("Creating book failed, no rows affected.");
             }
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    book.setId(generatedKeys.getLong(1));
+                    book.setId(generatedKeys.getObject(1, Long.class));
                 } else {
-                    throw new SQLException("Creating book failed, no ID obtained.");
+                    throw new DataProcessingException("Creating book failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
@@ -44,6 +45,7 @@ public class BookDaoImpl implements BookDao {
         return book;
     }
 
+    @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
 
@@ -62,6 +64,7 @@ public class BookDaoImpl implements BookDao {
         return Optional.empty();
     }
 
+    @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books";
@@ -79,6 +82,7 @@ public class BookDaoImpl implements BookDao {
         return books;
     }
 
+    @Override
     public Book update(Book book) {
         String sql = "UPDATE books SET price = ?, title = ? WHERE id = ?";
         try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sql)) {
@@ -96,6 +100,7 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
+    @Override
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (PreparedStatement statement = ConnectionUtil.getConnection().prepareStatement(sql)) {
