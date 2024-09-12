@@ -1,16 +1,14 @@
-package mate.academy.DAO;
+package mate.academy.dao;
 
-import mate.academy.model.Book;
 import mate.academy.exception.DataProcessingException;
-
 import mate.academy.lib.Dao;
-import mate.academy.util.ConnectionUtil;
-
+import mate.academy.model.Book;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -23,7 +21,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     INSERT_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();

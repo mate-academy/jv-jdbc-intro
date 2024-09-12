@@ -41,10 +41,11 @@ public class Book {
 
     @Override
     public String toString() {
-        return "mate.academy.model.Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "mate.academy.model.Book{"
+                + "id=" + id
+                + ", title='" + title
+                + '\''
+                + ", price=" + price
+                + '}';
     }
 }
