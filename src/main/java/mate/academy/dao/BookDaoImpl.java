@@ -44,7 +44,7 @@ public class BookDaoImpl implements BookDao {
             setGeneratedId(book, preparedStatement);
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException( "Error creating book: Title = " + book.getTitle()
+            throw new DataProcessingException("Error creating book: Title = " + book.getTitle()
                     + ", Price = " + book.getPrice(), e);
         }
     }
