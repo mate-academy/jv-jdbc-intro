@@ -100,11 +100,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new SQLException("Expected to effect at least one row, but effected 0");
-            }
-            return true;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id = " + id, e);
         }
