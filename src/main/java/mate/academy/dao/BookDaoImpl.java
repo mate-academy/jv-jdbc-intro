@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,8 @@ public class BookDaoImpl implements BookDao {
             + " price = ? WHERE id = ?";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM books WHERE id = ?";
 
-    private void setGeneratedId(Book book, PreparedStatement preparedStatement) throws SQLException {
+    private void setGeneratedId(Book book,
+                                PreparedStatement preparedStatement) throws SQLException {
         ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
         if (generatedKeys.next()) {
             book.setId(generatedKeys.getLong(1));
@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     INSERT_BOOK_QUERY, new String[] {"id"})) {
+                        INSERT_BOOK_QUERY, new String[] {"id"})) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();

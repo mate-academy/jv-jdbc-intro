@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -34,21 +33,3 @@ public class Main {
         System.out.println("Deleted: " + isDeleted);
     }
 }
-
-class TestProperties {
-    public static void main(String[] args) {
-        try (InputStream input = TestProperties.class.getClassLoader().getResourceAsStream("db.properties")) {
-            if (input == null) {
-                System.out.println("File not found");
-                return;
-            }
-            Properties props = new Properties();
-            props.load(input);
-            System.out.println("Loaded DB URL: " + props.getProperty("db.url"));
-            System.out.println("Loaded DB Username: " + props.getProperty("db.username"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-}
-

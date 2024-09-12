@@ -12,7 +12,8 @@ public class ConnectionUtil {
     private static Connection connection;
 
     static {
-        try (InputStream input = ConnectionUtil.class.getClassLoader().getResourceAsStream("db.properties")) {
+        try (InputStream input = ConnectionUtil.class.getClassLoader()
+                .getResourceAsStream("db.properties")) {
             if (input == null) {
                 throw new RuntimeException("Unable to find db.properties file");
             }
