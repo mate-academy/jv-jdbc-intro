@@ -1,8 +1,12 @@
 package mate.academy;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
+
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -13,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book newBook = new Book(null, "Clean Code", new BigDecimal("19.99"));
+        Book newBook = new Book("Clean Code", new BigDecimal("19.99"));
         bookDao.create(newBook);
 
         Optional<Book> foundBook = bookDao.findById(newBook.getId());
@@ -30,3 +34,21 @@ public class Main {
         System.out.println("Deleted: " + isDeleted);
     }
 }
+
+class TestProperties {
+    public static void main(String[] args) {
+        try (InputStream input = TestProperties.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                System.out.println("File not found");
+                return;
+            }
+            Properties props = new Properties();
+            props.load(input);
+            System.out.println("Loaded DB URL: " + props.getProperty("db.url"));
+            System.out.println("Loaded DB Username: " + props.getProperty("db.username"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+

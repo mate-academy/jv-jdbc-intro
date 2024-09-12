@@ -1,27 +1,42 @@
 package mate.academy.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL =
-            "jdbc:mysql://localhost:3306/book_store?serverTimezone=UTC";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
+    private static Connection connection;
 
     static {
-        DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "test");
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot load JDBC driver", e);
+        try (InputStream input = ConnectionUtil.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                throw new RuntimeException("Unable to find db.properties file");
+            }
+            DB_PROPERTIES.load(input);
+            System.out.println("Loaded DB URL: " + DB_PROPERTIES.getProperty("db.url"));
+            System.out.println("Loaded DB Username: " + DB_PROPERTIES.getProperty("db.username"));
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to load database properties file", ex);
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        if (connection == null || connection.isClosed()) {
+            String url = DB_PROPERTIES.getProperty("db.url");
+            String user = DB_PROPERTIES.getProperty("db.username");
+            String password = DB_PROPERTIES.getProperty("db.password");
+
+            if (url == null || user == null || password == null) {
+                throw new RuntimeException("Database properties are not properly set");
+            }
+
+            connection = DriverManager.getConnection(url, user, password);
+        }
+        return connection;
     }
 }
+

@@ -25,22 +25,27 @@ public class BookDaoImpl implements BookDao {
             + " price = ? WHERE id = ?";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM books WHERE id = ?";
 
+    private void setGeneratedId(Book book, PreparedStatement preparedStatement) throws SQLException {
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            book.setId(generatedKeys.getLong(1));
+        }
+    }
+
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        INSERT_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     INSERT_BOOK_QUERY, new String[] {"id"})) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                book.setId(generatedKeys.getLong(1));
-            }
+            setGeneratedId(book, preparedStatement);
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error creating book: " + book, e);
+            throw new DataProcessingException( "Error creating book: Title = " + book.getTitle()
+                    + ", Price = " + book.getPrice(), e);
         }
     }
 
