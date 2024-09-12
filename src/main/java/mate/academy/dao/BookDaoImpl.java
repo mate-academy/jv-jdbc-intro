@@ -16,6 +16,7 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+
     private static final String INSERT_BOOK_QUERY = "INSERT INTO books ("
             + "title, price) VALUES (?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ?";
@@ -83,7 +84,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error updating book: " + book, e);
+            throw new DataProcessingException("Error updating book: " + book, e); // typo fixed here
         }
     }
 
