@@ -1,11 +1,11 @@
 package mate.academy.dao;
 
-import mate.academy.exception.DataProcessingException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -22,7 +22,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-    try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                          INSERT_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Error creating book: " + book, e);
-    }
+        }
     }
 
     @Override
@@ -51,7 +51,7 @@ public class BookDaoImpl implements BookDao {
             return Optional.empty();
         } catch (SQLException e) {
             throw new DataProcessingException("Error retrieving book with id: " + id, e);
-    }
+        }
     }
 
     @Override
@@ -66,7 +66,7 @@ public class BookDaoImpl implements BookDao {
             return books;
         } catch (SQLException e) {
             throw new DataProcessingException("Error retrieving all books", e);
-    }
+        }
     }
 
     @Override
