@@ -7,15 +7,18 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/test?user=root";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "Gx42Cbj1!";
+    private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "Gx42Cbj1!");
+        DB_PROPERTIES.put("user", DB_USER);
+        DB_PROPERTIES.put("password", DB_PASSWORD);
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Can't load MySQL driver",e);
         }

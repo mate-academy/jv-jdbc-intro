@@ -48,14 +48,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Long bookId = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new Book();
-                book.setId(bookId);
-                book.setTitle(title);
-                book.setPrice(price);
-                optionalBook = Optional.of(book);
+                optionalBook = Optional.of(fetchEntityFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Could not find book by id", e);
@@ -71,14 +64,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Long bookId = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Book book = new Book();
-                book.setId(bookId);
-                book.setTitle(title);
-                book.setPrice(price);
-                books.add(book);
+                books.add(fetchEntityFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Could not find all books", e);
@@ -113,5 +99,16 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Could not delete book", e);
         }
         return affectedRows > 0;
+    }
+
+    private Book fetchEntityFromResultSet(ResultSet resultSet) throws SQLException {
+        Long bookId = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        Book book = new Book();
+        book.setId(bookId);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
