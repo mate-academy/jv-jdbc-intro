@@ -1,26 +1,26 @@
 package mate.academy;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/intro";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "091088a+");
-        try {
+        try (FileInputStream input = new FileInputStream("config.properties")) {
+            DB_PROPERTIES.load(input);
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can not load JDBC driver", e);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Can not load configuration or JDBC driver", e);
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        String url = DB_PROPERTIES.getProperty("db.url");
+        return DriverManager.getConnection(url, DB_PROPERTIES);
     }
 }

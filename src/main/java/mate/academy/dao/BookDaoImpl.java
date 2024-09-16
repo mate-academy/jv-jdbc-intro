@@ -18,7 +18,7 @@ import mate.academy.model.Book;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO book (title, price) VALUES (?, ?);";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?);";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
                         Statement.RETURN_GENERATED_KEYS)) {
@@ -42,7 +42,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM book WHERE id = ?;";
+        String sql = "SELECT * FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
@@ -66,7 +66,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM book;";
+        String sql = "SELECT * FROM books;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
@@ -96,7 +96,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(3, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException(
+                throw new DataProcessingException(
                         "Expected to update at least one row, but updated 0 rows.");
             }
             return book;
