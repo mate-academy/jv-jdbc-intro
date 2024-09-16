@@ -13,7 +13,8 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         List<Book> books = List.of(
-                new Book("Can't Hurt Me: Master Your Mind and Defy the Odds", new BigDecimal("8.99")),
+                new Book("Can't Hurt Me: Master Your Mind and Defy the Odds",
+                        new BigDecimal("8.99")),
                 new Book("Atomic Habits", new BigDecimal("25.99")),
                 new Book("The Great Gatsby", new BigDecimal("15.00"))
         );
