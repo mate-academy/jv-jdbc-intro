@@ -1,6 +1,6 @@
 CREATE TABLE book
 (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    tittle VARCHAR(100),
-    price  INT,
+    tittle VARCHAR(100) NOT NULL,
+    price  INT NOT NULL ,
 );
