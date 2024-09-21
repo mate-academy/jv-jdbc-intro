@@ -5,9 +5,23 @@ public class Book {
     private String title;
     private int price;
 
-    public Book(String title, int price) {
+    private Book(long id, String title, int price) {
+        this.id = id;
         this.title = title;
         this.price = price;
+    }
+
+    private Book(String title, int price) {
+        this.title = title;
+        this.price = price;
+    }
+
+    public static Book of(long id, String title, int price) {
+        return new Book(id, title, price);
+    }
+
+    public static Book of(String title, int price) {
+        return new Book(title, price);
     }
 
     public void setId(long id) {
