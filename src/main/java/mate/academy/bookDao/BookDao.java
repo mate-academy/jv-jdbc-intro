@@ -5,7 +5,7 @@ import mate.academy.model.Book;
 import java.util.List;
 import java.util.Optional;
 
-public interface bookDao {
+public interface BookDao {
     Book create(Book book);
 
     Optional<Book> findById(Long id);
