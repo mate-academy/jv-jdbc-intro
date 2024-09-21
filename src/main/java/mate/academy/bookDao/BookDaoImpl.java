@@ -1,6 +1,7 @@
 package mate.academy.bookDao;
 
 import mate.academy.dbconnection.ConnectionUtil;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.model.Book;
 
 import java.sql.Connection;
@@ -37,7 +38,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get all books from database", e);
+            throw new DataProcessingException("Can't get all books", e);
         }
         return books;
     }
