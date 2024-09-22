@@ -69,7 +69,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get all books from the database: " + books);
+            throw new DataProcessingException("Can't get all books from the database:  " + books);
         }
         return books;
     }
