@@ -53,7 +53,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get a book by id" + id);
+            throw new RuntimeException("Can't get a book by id: " + id);
         }
         return Optional.empty();
     }
