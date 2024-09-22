@@ -18,10 +18,11 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public int getRowsCount() {
-        String sql = "SELECT COUNT(*) AS total_rows FROM book";
+        String sql = "SELECT COUNT(*) AS total_rows FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                        PreparedStatement statement = connection.prepareStatement(sql);
-                        ResultSet resultSet = statement.executeQuery()) {
+                        PreparedStatement preparedStatement = connection
+                                .prepareStatement(sql);
+                        ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 return resultSet.getInt("total_rows");
             }
@@ -33,44 +34,46 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean clear() {
-        String sql = "TRUNCATE TABLE book";
+        String sql = "TRUNCATE TABLE books";
         try (Connection connection = ConnectionUtil.getConnection();
                         Statement statement = connection.createStatement()) {
-            int affectedRows = statement.executeUpdate(sql);
-            return affectedRows >= getRowsCount();
+            statement.executeUpdate(sql);
+            return true;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't clear table", e);
         }
+
     }
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO book(title, price) VALUES(?, ?)";
+        String sql = "INSERT INTO books(title, price) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-                        PreparedStatement statement = connection
+                        PreparedStatement preparedStatement = connection
                                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setObject(1, book.getTitle());
-            statement.setInt(2, book.getPrice());
-            int affectedRows = statement.executeUpdate();
+            preparedStatement.setObject(1, book.getTitle());
+            preparedStatement.setInt(2, book.getPrice());
+            int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Book could not be created");
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 long id = generatedKeys.getLong(1);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add a new book " + book.getTitle(), e);
+            throw new DataProcessingException("Can't add a book " + book, e);
         }
         return book;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM book WHERE id = ?";
+        String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                        PreparedStatement preparedStatement = connection
+                                .prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -80,14 +83,14 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find book by id " + id, e);
+            throw new DataProcessingException("Can't get book by id " + id, e);
         }
         return Optional.empty();
     }
 
     @Override
     public List<Book> findAll() {
-        String sql = "SELECT * FROM book";
+        String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                             Statement statement = connection.createStatement();
@@ -107,13 +110,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE book SET title = ?, price = ? WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                        PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, book.getTitle());
-            statement.setInt(2, book.getPrice());
-            statement.setLong(3, book.getId());
-            int affectedRows = statement.executeUpdate();
+                        PreparedStatement preparedStatement = connection
+                                .prepareStatement(sql)) {
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setInt(2, book.getPrice());
+            preparedStatement.setLong(3, book.getId());
+            int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Book not found");
             }
@@ -125,7 +129,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM book WHERE id = ?";
+        String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                         PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
