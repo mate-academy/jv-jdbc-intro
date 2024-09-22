@@ -6,15 +6,15 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/test";
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/test?user=root";
     private static final Properties DB_PROPERTIES;
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "Nero0410";
 
     static {
         DB_PROPERTIES = new Properties();
-        String userName = "root";
-        String password = "Nero0410";
-        DB_PROPERTIES.put("user", userName);
-        DB_PROPERTIES.put("password", password);
+        DB_PROPERTIES.put("user", USERNAME);
+        DB_PROPERTIES.put("password", PASSWORD);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

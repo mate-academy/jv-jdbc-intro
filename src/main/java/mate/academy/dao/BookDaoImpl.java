@@ -38,7 +38,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("can not add new book to DB: " + book);
+            throw new DataProcessingException("Can't save a book to DB: " + book);
         }
         return book;
     }
@@ -54,7 +54,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot create a connection to the DB", e);
+            throw new RuntimeException("Can't get a book by id" + id, e);
         }
         return Optional.empty();
     }
@@ -64,8 +64,8 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = statement.executeQuery();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 books.add(getBookFromResultSet(resultSet));
             }
@@ -90,7 +90,8 @@ public class BookDaoImpl implements BookDao {
                         + book.getId());
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create a connection to the DB");
+            throw new DataProcessingException("Can't update the book with id: "
+                    + book.getId());
         }
         return book;
     }
