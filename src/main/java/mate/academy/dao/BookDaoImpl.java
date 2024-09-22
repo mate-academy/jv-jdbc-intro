@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +20,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -54,7 +53,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get a book by id" + id, e);
+            throw new RuntimeException("Can't get a book by id" + id);
         }
         return Optional.empty();
     }
@@ -70,7 +69,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get all books from the database");
+            throw new DataProcessingException("Can't get all books from the database: " + books);
         }
         return books;
     }

@@ -8,8 +8,8 @@ import java.util.Properties;
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/test?user=root";
     private static final Properties DB_PROPERTIES;
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "Nero0410";
+    private static final String USERNAME = System.getenv("DB_USERNAME");
+    private static final String PASSWORD = System.getenv("DB_PASSWORD");
 
     static {
         DB_PROPERTIES = new Properties();
@@ -23,7 +23,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL,DB_PROPERTIES);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL,DB_PROPERTIES);
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't connection DriverManager");
+        }
     }
 }
