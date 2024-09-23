@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getLong(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create book: " + book, e);
+            throw new DataProcessingException("Can't create book: " + book, e);
         }
         return book;
     }
@@ -78,7 +78,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            if (statement.executeUpdate() == 0) {
+            if (statement.executeUpdate() < 1) {
                 throw new DataProcessingException("No book found to update with id "
                         + book.getId());
             }
