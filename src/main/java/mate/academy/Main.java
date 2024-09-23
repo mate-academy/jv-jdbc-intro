@@ -1,5 +1,6 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.bookdao.BookDao;
@@ -11,9 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book firstBook = Book.of("Effective Java", 700);
-        Book secondBook = Book.of("Clean Code", 900);
-        Book thirdBook = Book.of("Head of Java", 600);
+        Book firstBook = Book.of("Effective Java", new BigDecimal(700));
+        Book secondBook = Book.of("Clean Code", new BigDecimal(900));
+        Book thirdBook = Book.of("Head of Java", new BigDecimal(600));
 
         bookDao.create(firstBook);
         bookDao.create(secondBook);
@@ -22,22 +23,16 @@ public class Main {
         List<Book> booksFromDb = bookDao.findAll();
         System.out.println(booksFromDb);
 
-        int rowsCount = bookDao.getRowsCount();
-        System.out.println(rowsCount);
-
         Optional<Book> bookById = bookDao.findById(3L);
         bookById.ifPresent(System.out::println);
 
-        Book book = Book.of(3L, "Harry Potter", 1000);
+        Book book = Book.of(3L, "Harry Potter", new BigDecimal(1000));
         Book updated = bookDao.update(book);
         System.out.println(updated);
 
         bookDao.findById(3L).ifPresent(System.out::println);
 
-        boolean b = bookDao.deleteById(3L);
-        System.out.println(b);
-
-        bookDao.clear();
-
+        boolean isBookDeleted = bookDao.deleteById(3L);
+        System.out.println(isBookDeleted);
     }
 }
