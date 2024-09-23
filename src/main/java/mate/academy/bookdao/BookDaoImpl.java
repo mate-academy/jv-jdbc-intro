@@ -1,5 +1,6 @@
 package mate.academy.bookdao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,15 +22,12 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                         PreparedStatement preparedStatement = connection
                                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setObject(1, book.getTitle());
-            preparedStatement.setInt(2, book.getPrice());
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows < 1) {
+            if (storeBook(preparedStatement, book, false)) {
                 throw new RuntimeException("Book could not be created");
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                long id = generatedKeys.getLong(1);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -47,10 +45,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                int price = resultSet.getInt("price");
-                Book book = Book.of(id, title, price);
-                return Optional.of(book);
+                return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get book by id " + id, e);
@@ -66,11 +61,7 @@ public class BookDaoImpl implements BookDao {
                             Statement statement = connection.createStatement();
                             ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                int price = resultSet.getInt("price");
-                Book book = Book.of(id, title, price);
-                books.add(book);
+                books.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books", e);
@@ -84,11 +75,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                         PreparedStatement preparedStatement = connection
                                 .prepareStatement(sql)) {
-            preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setInt(2, book.getPrice());
-            preparedStatement.setLong(3, book.getId());
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows < 1) {
+            if (storeBook(preparedStatement, book, true)) {
                 throw new RuntimeException("Book not found");
             }
         } catch (SQLException e) {
@@ -111,5 +98,24 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't delete book by " + id, e);
         }
         return true;
+    }
+
+    private Book mapToBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong("id");
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return Book.of(id, title, price);
+    }
+
+    private boolean storeBook(PreparedStatement preparedStatement, Book book, boolean idPresent) throws SQLException {
+        if (idPresent) {
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setLong(3, book.getId());
+            return preparedStatement.executeUpdate() < 1;
+        }
+        preparedStatement.setString(1, book.getTitle());
+        preparedStatement.setBigDecimal(2, book.getPrice());
+        return preparedStatement.executeUpdate() < 1;
     }
 }
