@@ -15,36 +15,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-
-    @Override
-    public int getRowsCount() {
-        String sql = "SELECT COUNT(*) AS total_rows FROM books";
-        try (Connection connection = ConnectionUtil.getConnection();
-                        PreparedStatement preparedStatement = connection
-                                .prepareStatement(sql);
-                        ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                return resultSet.getInt("total_rows");
-            }
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't get row count", e);
-        }
-        return 0;
-    }
-
-    @Override
-    public boolean clear() {
-        String sql = "TRUNCATE TABLE books";
-        try (Connection connection = ConnectionUtil.getConnection();
-                        Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sql);
-            return true;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't clear table", e);
-        }
-
-    }
-
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books(title, price) VALUES(?, ?)";

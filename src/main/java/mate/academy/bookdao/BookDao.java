@@ -6,10 +6,6 @@ import mate.academy.model.Book;
 
 public interface BookDao {
 
-    int getRowsCount();
-
-    boolean clear();
-
     Book create(Book book);
 
     Optional<Book> findById(Long id);
