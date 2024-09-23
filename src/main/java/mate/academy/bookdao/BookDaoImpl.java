@@ -107,7 +107,8 @@ public class BookDaoImpl implements BookDao {
         return Book.of(id, title, price);
     }
 
-    private boolean storeBook(PreparedStatement preparedStatement, Book book, boolean idPresent) throws SQLException {
+    private boolean storeBook(PreparedStatement preparedStatement,
+                              Book book, boolean idPresent) throws SQLException {
         if (idPresent) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
