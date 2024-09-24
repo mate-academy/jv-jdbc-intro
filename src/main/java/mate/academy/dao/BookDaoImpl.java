@@ -70,9 +70,9 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Long identify = resultSet.getLong(FIRST_COLUMN_INDEX);
-                String title = resultSet.getString(SECOND_COLUMN_INDEX);
-                BigDecimal price = resultSet.getBigDecimal(THIRD_COLUMN_INDEX);
+                Long identify = resultSet.getObject(FIRST_COLUMN_INDEX, Long.class);
+                String title = resultSet.getObject(SECOND_COLUMN_INDEX, String.class);
+                BigDecimal price = resultSet.getObject(THIRD_COLUMN_INDEX, BigDecimal.class);
 
                 Book book = new Book(identify, title, price);
                 optionalBook = Optional.of(book);
@@ -93,9 +93,9 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Long id = resultSet.getLong(FIRST_COLUMN_INDEX);
-                String title = resultSet.getString(SECOND_COLUMN_INDEX);
-                BigDecimal price = resultSet.getBigDecimal(THIRD_COLUMN_INDEX);
+                Long id = resultSet.getObject(FIRST_COLUMN_INDEX, Long.class);
+                String title = resultSet.getObject(SECOND_COLUMN_INDEX, String.class);
+                BigDecimal price = resultSet.getObject(THIRD_COLUMN_INDEX, BigDecimal.class);
 
                 Book book = new Book(id, title, price);
                 bookList.add(book);
