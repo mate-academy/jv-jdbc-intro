@@ -1,21 +1,32 @@
 package mate.academy.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
-    private static final Properties DB_PROPERTIES;
+    private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "QWERTY123");
+        try (InputStream input = ConnectionUtil.class.getClassLoader()
+                .getResourceAsStream("db/db.properties")) {
+            if (input == null) {
+                throw new RuntimeException("Sorry, unable to find db.properties in db package");
+            }
+            DB_PROPERTIES.load(input);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load database properties", e);
+        }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
+        String dbUrl = DB_PROPERTIES.getProperty("db.url");
+        String dbUser = DB_PROPERTIES.getProperty("db.user");
+        String dbPassword = DB_PROPERTIES.getProperty("db.password");
+
+        return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 }
