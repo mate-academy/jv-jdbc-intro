@@ -9,6 +9,9 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final Properties DB_PROPERTIES = new Properties();
+    private static String dbUrl;
+    private static String dbUser;
+    private static String dbPassword;
 
     static {
         try (InputStream input = ConnectionUtil.class.getClassLoader()
@@ -23,9 +26,9 @@ public class ConnectionUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        String dbUrl = DB_PROPERTIES.getProperty("db.url");
-        String dbUser = DB_PROPERTIES.getProperty("db.user");
-        String dbPassword = DB_PROPERTIES.getProperty("db.password");
+        dbUrl = DB_PROPERTIES.getProperty("db.url");
+        dbUser = DB_PROPERTIES.getProperty("db.user");
+        dbPassword = DB_PROPERTIES.getProperty("db.password");
 
         return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
