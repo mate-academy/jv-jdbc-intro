@@ -70,11 +70,8 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Long identify = resultSet.getObject(FIRST_COLUMN_INDEX, Long.class);
-                String title = resultSet.getObject(SECOND_COLUMN_INDEX, String.class);
-                BigDecimal price = resultSet.getObject(THIRD_COLUMN_INDEX, BigDecimal.class);
+                Book book = mapResultSetToBook(resultSet);
 
-                Book book = new Book(identify, title, price);
                 optionalBook = Optional.of(book);
             }
         } catch (SQLException e) {
@@ -89,15 +86,12 @@ public class BookDaoImpl implements BookDao {
         List<Book> bookList = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection
-                        .prepareStatement(SQL_OUTPUT_REQUEST)) {
+                           .prepareStatement(SQL_OUTPUT_REQUEST)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Long id = resultSet.getObject(FIRST_COLUMN_INDEX, Long.class);
-                String title = resultSet.getObject(SECOND_COLUMN_INDEX, String.class);
-                BigDecimal price = resultSet.getObject(THIRD_COLUMN_INDEX, BigDecimal.class);
+                Book book = mapResultSetToBook(resultSet);
 
-                Book book = new Book(id, title, price);
                 bookList.add(book);
             }
 
@@ -112,7 +106,7 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection
-                        .prepareStatement(SQL_UPDATE_REQUEST)) {
+                              .prepareStatement(SQL_UPDATE_REQUEST)) {
             preparedStatement.setString(FIRST_PARAMETER_INDEX, book.getTitle());
             preparedStatement.setBigDecimal(SECOND_PARAMETER_INDEX, book.getPrice());
             preparedStatement.setLong(THIRD_PARAMETER_INDEX, book.getId());
@@ -134,7 +128,7 @@ public class BookDaoImpl implements BookDao {
         int affectedRows = 0;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection
-                        .prepareStatement(SQL_DELETE_REQUEST)) {
+                           .prepareStatement(SQL_DELETE_REQUEST)) {
             preparedStatement.setLong(FIRST_PARAMETER_INDEX, id);
             affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -142,5 +136,17 @@ public class BookDaoImpl implements BookDao {
                     + "connection with the database", e);
         }
         return affectedRows > 0;
+    }
+
+    private Book mapResultSetToBook(ResultSet resultSet) {
+        try {
+            Long id = resultSet.getObject(FIRST_COLUMN_INDEX, Long.class);
+            String title = resultSet.getObject(SECOND_COLUMN_INDEX, String.class);
+            BigDecimal price = resultSet.getObject(THIRD_COLUMN_INDEX, BigDecimal.class);
+
+            return new Book(id, title, price);
+        } catch (SQLException e) {
+            throw new DataProcessingException("Error mapping ResultSet to Book", e);
+        }
     }
 }
