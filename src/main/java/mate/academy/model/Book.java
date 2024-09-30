@@ -7,8 +7,7 @@ public class Book {
     private String title;
     private BigDecimal price;
 
-    public Book(Long id, String title, BigDecimal price) {
-        this.id = id;
+    public Book(String title, BigDecimal price) {
         this.title = title;
         this.price = price;
     }

@@ -14,8 +14,8 @@ public class Main {
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book book = new Book(1L, "Java Programming", new BigDecimal("29.99"));
-        Book book1 = new Book(2L, "Java", new BigDecimal("30.25"));
+        Book book = new Book("Java Programming", new BigDecimal("29.99"));
+        Book book1 = new Book("Java", new BigDecimal("30.25"));
         bookDao.create(book);
         bookDao.create(book1);
 

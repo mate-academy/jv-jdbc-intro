@@ -104,8 +104,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     Book mapToBook(ResultSet resultSet) throws SQLException {
-        return new Book(resultSet.getLong("id"),
-                resultSet.getString("title"),
+        Book book = new Book(resultSet.getString("title"),
                 resultSet.getBigDecimal("price"));
+        book.setId(resultSet.getLong("id"));
+        return book;
     }
 }

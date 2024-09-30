@@ -7,17 +7,18 @@ import java.util.Properties;
 import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test?serverTimezone=UTC";
     private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "Root1234");
+        DB_PROPERTIES.put("user", System.getenv("DB_USER"));
+        DB_PROPERTIES.put("password", System.getenv("DB_PASSWORD"));
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new DataProcessingException("Can not load JDBC driver", e);
+            throw new DataProcessingException(
+                    "Can not load JDBC driver: com.mysql.cj.jdbc.Driver not found", e);
         }
     }
 
