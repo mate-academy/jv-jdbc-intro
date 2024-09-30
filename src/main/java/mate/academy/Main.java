@@ -14,10 +14,10 @@ public class Main {
 
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book book = new Book();
-        book.setTitle("Java Programming");
-        book.setPrice(new BigDecimal("29.99"));
+        Book book = new Book(1L, "Java Programming", new BigDecimal("29.99"));
+        Book book1 = new Book(2L, "Java", new BigDecimal("30.25"));
         bookDao.create(book);
+        bookDao.create(book1);
 
         Optional<Book> retrievedBook = bookDao.findById(book.getId());
         System.out.println(retrievedBook);
