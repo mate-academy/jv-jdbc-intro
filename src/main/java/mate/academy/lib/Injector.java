@@ -31,7 +31,7 @@ public class Injector {
         return injector;
     }
 
-    public static Object getInstance(Class<?> certainInterface) {
+    public static Object getDaoInstance(Class<?> certainInterface) {
         Class<?> clazz = findClassExtendingInterface(certainInterface);
         return createInstance(clazz);
     }
