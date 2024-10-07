@@ -14,7 +14,7 @@ public class Main {
         BookDao bookDao = (BookDao) INJECTOR.getInstance(BookDao.class);
         Optional<Book> foundBook = bookDao.findById(1L);
         if (foundBook.isPresent()) {
-            System.out.println("Book found: " + foundBook.get());
+            System.out.println("Book found:" + foundBook.get());
             Book bookToUpdate = foundBook.get();
             bookToUpdate.setTitle("Alice in Wonderland");
             bookToUpdate.setPrice(new BigDecimal("120.00"));
