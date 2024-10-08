@@ -1,22 +1,31 @@
 package mate.academy;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Optional;
 import mate.academy.dao.BookDao;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
+import mate.academy.util.InitDatabase;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy.dao");
 
     public static void main(String[] args) {
+        try {
+            InitDatabase.executeInitScript(ConnectionUtil.getConnection());
+        } catch (SQLException e) {
+            throw new DataProcessingException("Cannot initialize DataBase", e);
+        }
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         Book testBook1 = bookDao.create(new Book("Harry Potter and the Philosophers Stone",
                 BigDecimal.valueOf(9.99)));
 
         //findById method test
-        Optional<Book> testFindBook = bookDao.findById(1L);
+        Optional<Book> testFindBook = bookDao.findById(testBook1.getId());
         if (testFindBook.isPresent()) {
             Book test1 = testFindBook.get();
             System.out.println("Find by ID1 book: " + System.lineSeparator() + test1);
