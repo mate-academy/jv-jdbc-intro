@@ -9,11 +9,13 @@ import mate.academy.exception.DataProcessingException;
 public class ConnectionUtils {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final Properties DB_PROPERTIES;
+    private static final String PASSWORD = "4321";
+    private static final String USER = "root";
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "4321");
+        DB_PROPERTIES.put("user", USER);
+        DB_PROPERTIES.put("password", PASSWORD);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

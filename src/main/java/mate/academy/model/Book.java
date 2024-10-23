@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Book {
-    private long id;
+    private Long id;
     private String title;
     private BigDecimal price;
 
-    public Book(long id, String title, BigDecimal price) {
+    public Book(Long id, String title, BigDecimal price) {
         this.id = id;
         this.title = title;
         this.price = price;
