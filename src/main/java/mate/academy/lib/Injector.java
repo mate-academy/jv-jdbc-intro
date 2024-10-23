@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Injector {
+
     private static final Map<String, Injector> injectors = new HashMap<>();
     private final List<Class<?>> classes = new ArrayList<>();
 
@@ -47,8 +48,8 @@ public class Injector {
             }
         }
         throw new RuntimeException("Can't find class which implements "
-                + certainInterface.getName()
-                + " interface and has valid annotation (Dao or Service)");
+            + certainInterface.getName()
+            + " interface and has valid annotation (Dao or Service)");
     }
 
     private Object createInstance(Class<?> clazz) {
@@ -63,8 +64,8 @@ public class Injector {
     }
 
     /**
-     * Scans all classes accessible from the context class loader which
-     * belong to the given package and subpackages.
+     * Scans all classes accessible from the context class loader which belong to the given package
+     * and subpackages.
      *
      * @param packageName The base package
      * @return The classes
