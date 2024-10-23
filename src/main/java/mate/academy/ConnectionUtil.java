@@ -19,14 +19,22 @@ public class ConnectionUtil {
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "Root1234");
+        String user = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");
+
+        if (user == null || password == null) {
+            throw new DataProcessingException(
+                "Database credentials are not set in environment variables", null);
+        }
+
+        DB_PROPERTIES.put("user", user);
+        DB_PROPERTIES.put("password", password);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             initDatabase();
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't find driver", e);
         }
     }
 
@@ -57,8 +65,7 @@ public class ConnectionUtil {
 
     private static String readSqlFile(String fileName) {
         try {
-            Path path = Paths.get(Main.class
-                    .getClassLoader().getResource(fileName).toURI());
+            Path path = Paths.get(Main.class.getClassLoader().getResource(fileName).toURI());
             return Files.readString(path);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Failed to read SQL file", e);
