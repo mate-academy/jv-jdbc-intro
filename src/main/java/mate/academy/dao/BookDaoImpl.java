@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,13 +32,20 @@ public class BookDaoImpl implements BookDao {
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(TITLE_COLUMN_INDEX, book.getTitle());
             statement.setBigDecimal(PRICE_COLUMN_INDEX, book.getPrice());
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new DataProcessingException("The book wasn’t created: " + book);
+            }
+
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getLong(1);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Не вдалося створити книгу: " + book, e);
+            throw new DataProcessingException("The book wasn’t created: " + book, e);
         }
         return book;
     }
@@ -51,14 +57,10 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(ID_COLUMN_INDEX, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(createNewBook(
-                        id,
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")
-                ));
+                return Optional.of(mapResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Не вдалося знайти книгу за id " + id, e);
+            throw new DataProcessingException("The book wasn’t found by id " + id, e);
         }
         return Optional.empty();
     }
@@ -70,14 +72,10 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(SELECT_ALL_BOOKS)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                books.add(createNewBook(
-                        resultSet.getLong("id"),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price")
-                ));
+                books.add(mapResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Не вдалося знайти всі книги", e);
+            throw new DataProcessingException("All books were not found", e);
         }
         return books;
     }
@@ -90,10 +88,10 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(PRICE_COLUMN_INDEX, book.getPrice());
             statement.setLong(ID_COLUMN_INDEX + 1, book.getId());
             if (statement.executeUpdate() < 1) {
-                throw new DataProcessingException("Не вдалося оновити книгу: " + book);
+                throw new DataProcessingException("The book has not been updated: " + book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Не вдалося оновити книгу: " + book, e);
+            throw new DataProcessingException("The book has not been updated: " + book, e);
         }
         return book;
     }
@@ -106,15 +104,15 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Не вдалося видалити книгу з id: " + id, e);
+            throw new DataProcessingException("The book has not been deleted from id: " + id, e);
         }
     }
 
-    private Book createNewBook(Long id, String title, BigDecimal price) {
+    private Book mapResultSetToBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(id);
-        book.setTitle(title);
-        book.setPrice(price);
+        book.setId(resultSet.getLong("id"));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
         return book;
     }
 }
