@@ -1,4 +1,4 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class ConnectionUtil {
 
-    private static final String DB_URL = "jdbc:mysQl://localhost:3306/test";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final Properties DB_PROPERTIES;
 
     static {
@@ -18,7 +18,7 @@ public class ConnectionUtil {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't load MSQL Driver",e);
+            throw new RuntimeException("Can't load MySQL Driver",e);
         }
     }
 

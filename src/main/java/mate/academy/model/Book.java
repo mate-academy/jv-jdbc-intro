@@ -7,6 +7,12 @@ public class Book {
     private String title;
     private BigDecimal price;
 
+    public Book() {
+    }
+
+    public Book(Long l, String book1, BigDecimal bigDecimal) {
+    }
+
     public Long getId() {
         return id;
     }
