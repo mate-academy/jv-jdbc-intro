@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -95,7 +96,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                book.setId(resultSet.getLong(1));
+                book.setId(resultSet.getLong(3));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't update book: " + book, e);

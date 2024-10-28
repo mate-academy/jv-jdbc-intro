@@ -8,7 +8,7 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
-    private static final Injector injector = Injector.getInstance("src.main.java.mate.academy.dao");
+    private static final Injector injector = Injector.getInstance("mate.academy.dao");
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
@@ -22,6 +22,7 @@ public class Main {
         books.forEach(bookDao::create);
         Book secondBook = books.get(1);
         secondBook.setTitle("No name");
+        secondBook.setPrice(BigDecimal.valueOf(99.99));
         bookDao.update(secondBook);
         System.out.println(bookDao.findById(2L));
         System.out.println(bookDao.findAll());
