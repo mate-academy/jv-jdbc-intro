@@ -6,13 +6,13 @@ import mate.academy.model.Book;
 
 public interface BookDao {
 
-    void create(Book book);
+    Book create(Book book);
 
     Optional<Book> findById(Long id);
 
     List<Book> findAll();
 
-    void update(Book book);
+     Book update(Book book);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 }
