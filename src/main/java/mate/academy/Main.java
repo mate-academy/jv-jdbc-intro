@@ -21,12 +21,11 @@ public class Main {
 
         books.forEach(bookDao::create);
         Book secondBook = books.get(1);
-        secondBook.setTitle("No name");
+        secondBook.setTitle("No title");
         secondBook.setPrice(BigDecimal.valueOf(99.99));
         bookDao.update(secondBook);
         System.out.println(bookDao.findById(2L));
         System.out.println(bookDao.findAll());
         bookDao.deleteById(3L);
-
     }
 }
