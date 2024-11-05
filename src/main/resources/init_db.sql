@@ -1,0 +1,8 @@
+CREATE DATABASE bookDB;
+USE bookDB;
+CREATE TABLE book
+(
+id     INT unsigned    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+title   VARCHAR(150)    NOT NULL,
+Price   BIGINT          NOT NULL
+);
