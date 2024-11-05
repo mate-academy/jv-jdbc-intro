@@ -20,8 +20,10 @@ public class Main {
         System.out.println("The book added: " + book);
 
         Book foundBook = bookDao.findById(book.getId()).orElse(null);
-        if (foundBook != null) {
-            System.out.println("The book was found: " + foundBook);
+        if (foundBook == null) {
+            System.out.println("The book with ID " + book.getId() + " was not found.");
+        } else {
+            System.out.println("Found book: " + foundBook);
         }
 
         book.setTitle("Advanced Java Programming");

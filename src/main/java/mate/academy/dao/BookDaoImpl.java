@@ -29,8 +29,8 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row,"
-                        + " but inserted 0 rows");
+                throw new DataProcessingException("Failed to insert book,"
+                        + " affected rows: 0", null);
             }
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
@@ -88,9 +88,16 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
 
-            preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataProcessingException("Failed to update book with id "
+                        + book.getId() + ", no rows affected.", null);
+            } else if (affectedRows > 1) {
+                throw new DataProcessingException("Unexpected update result for book with id "
+                        + book.getId() + ", more than one row affected.", null);
+            }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update " + book, e);
+            throw new DataProcessingException("Can't update book " + book, e);
         }
         return book;
     }
