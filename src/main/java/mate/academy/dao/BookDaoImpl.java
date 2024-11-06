@@ -3,6 +3,7 @@ package mate.academy.dao;
 import mate.academy.ConnectionUtil;
 import mate.academy.services.Book;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Optional;
 
@@ -37,6 +38,26 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book get(Long id) {
+        String sql = "SELECT * FROM books WHERE id = ?";
+        try (Connection connection = ConnectionUtil.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String model = resultSet.getString("model");
+                Integer price = resultSet.getObject("price", Integer.class);
+
+                Book book = new Book();
+                book.setId(id);
+                book.setModel(model);
+                book.setPrice(price);
+
+                return book;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Can not create a connection to the DB", e);
+        }
         return null;
     }
 

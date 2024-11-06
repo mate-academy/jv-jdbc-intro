@@ -13,6 +13,10 @@ public class Book {
         this.price = BigDecimal.valueOf(price);
     }
 
+    public Book() {
+
+    }
+
     public Long getId() {
         return id;
     }
