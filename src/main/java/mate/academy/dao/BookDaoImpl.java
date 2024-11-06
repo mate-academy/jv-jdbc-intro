@@ -59,7 +59,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection", e);
+            throw new RuntimeException("Can't find book with id = " + id, e);
         }
         return Optional.empty();
     }
@@ -88,15 +88,13 @@ public class BookDaoImpl implements BookDao {
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement
-                        = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+                        = connection.prepareStatement(sql);) {
 
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setLong(3, book.getId());
             preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                book.setId(resultSet.getLong(3));
-            }
+
         } catch (SQLException e) {
             throw new RuntimeException("Can't update book: " + book, e);
         }
