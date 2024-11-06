@@ -2,8 +2,8 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import mate.academy.lib.dao.BookDao;
 import mate.academy.lib.Injector;
+import mate.academy.lib.dao.BookDao;
 import mate.academy.lib.model.Book;
 
 public class Main {
