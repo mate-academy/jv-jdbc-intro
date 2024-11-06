@@ -20,14 +20,18 @@ public class Main {
         System.out.println(book2);
 
         Optional<Book> bookOptional = bookDao.findById(book2.getId());
-        System.out.println(bookOptional.isPresent());
-        System.out.println(bookOptional.get().getTitle());
-        System.out.println(bookOptional.get().getPrice());
+        bookOptional.ifPresent(foundBook -> {
+            System.out.println("Book found:");
+            System.out.println("Title: " + foundBook.getTitle());
+            System.out.println("Price: " + foundBook.getPrice());
+        });
 
         List<Book> books = bookDao.findAll();
         System.out.println(books);
 
-        Book book3 = bookDao.update(book);
+        book2.setPrice(BigDecimal.valueOf(50.99));
+
+        Book book3 = bookDao.update(book2);
         System.out.println(book3);
 
         boolean isDeleted = bookDao.deleteById(book.getId());
