@@ -1,14 +1,16 @@
 package mate.academy.services;
 
+import java.math.BigDecimal;
+
 public class Book {
     private Long id;
     private String model;
-    private int price;
+    private BigDecimal price;
 
     public Book(Long id, String model, int price) {
         this.id = id;
         this.model = model;
-        this.price = price;
+        this.price = BigDecimal.valueOf(price);
     }
 
     public Long getId() {
@@ -27,11 +29,11 @@ public class Book {
         this.model = model;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
     public void setPrice(int price) {
-        this.price = price;
+        this.price = BigDecimal.valueOf(price);
     }
 }
