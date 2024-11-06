@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +32,8 @@ public class BookDaoImpl implements BookDao {
             }
 
             if (affectedRows < 1) {
-                throw new RuntimeException
-                        ("Expected to insert at least 1 row, but inserted 0 rows");
+                throw new RuntimeException(
+                        "Expected to insert at least 1 row, but inserted 0 rows");
             }
 
         } catch (SQLException e) {
@@ -69,7 +69,6 @@ public class BookDaoImpl implements BookDao {
         return Optional.empty();
     }
 
-
     @Override
     public List<Book> findAll() {
         String query = "SELECT * FROM book";
@@ -98,9 +97,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String query = "UPDATE book " +
-                "SET title = ?, price = ? " +
-                "WHERE id = ? ;";
+        String query = "UPDATE book "
+                + "SET title = ?, price = ? "
+                + "WHERE id = ? ;";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement
                     = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -110,8 +109,8 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows < 1) {
-                throw new RuntimeException
-                        ("Expected to update at least 1 row, but inserted 0 rows");
+                throw new RuntimeException(
+                        "Expected to update at least 1 row, but inserted 0 rows");
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't update the book " + e);
