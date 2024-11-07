@@ -4,14 +4,8 @@ import java.math.BigDecimal;
 
 public class Book {
     private Long id;
-    private String model;
+    private String title;
     private BigDecimal price;
-
-    public Book(Long id, String model, int price) {
-        this.id = id;
-        this.model = model;
-        this.price = BigDecimal.valueOf(price);
-    }
 
     public Book() {
 
@@ -25,12 +19,12 @@ public class Book {
         this.id = id;
     }
 
-    public String getModel() {
-        return model;
+    public String getTitle() {
+        return title;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public BigDecimal getPrice() {
@@ -39,5 +33,14 @@ public class Book {
 
     public void setPrice(int price) {
         this.price = BigDecimal.valueOf(price);
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", price=" + price +
+                '}';
     }
 }
