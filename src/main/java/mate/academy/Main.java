@@ -21,5 +21,6 @@ public class Main {
         bookDao.create(redBook);
 
         bookDao.deleteById(1L);
+
     }
 }
