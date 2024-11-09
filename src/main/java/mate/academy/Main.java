@@ -1,14 +1,11 @@
 package mate.academy;
 
-import mate.academy.dao.BookDao;
-import mate.academy.lib.Dao;
-import mate.academy.lib.Injector;
-import mate.academy.model.Book;
+import static mate.academy.db.DatabaseInitializer.initializeDatabaseScript;
 
 import java.math.BigDecimal;
-import java.util.Optional;
-
-import static mate.academy.db.DatabaseInitializer.initializeDatabaseScript;
+import mate.academy.dao.BookDao;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
@@ -23,6 +20,6 @@ public class Main {
         redBook.setPrice(BigDecimal.valueOf(50));
         bookDao.create(redBook);
 
-        bookDao.deleteById(1l);
+        bookDao.deleteById(1L);
     }
 }

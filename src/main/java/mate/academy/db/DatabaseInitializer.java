@@ -11,7 +11,7 @@ public class DatabaseInitializer {
             `title` VARCHAR(255) NOT NULL,
             `price` INT NOT NULL
         );
-        """;
+            """;
 
     public static void initializeDatabaseScript() {
         try (FileWriter fileWriter = new FileWriter(FILE_PATH)) {
