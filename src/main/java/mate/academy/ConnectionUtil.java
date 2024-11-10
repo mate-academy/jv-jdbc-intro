@@ -14,9 +14,9 @@ public class ConnectionUtil {
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "99edfv99");
 
-        try{
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch(ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException("Cannot load JDBC driver",e);
         }
     }
