@@ -12,6 +12,7 @@ import mate.academy.connectionutil.ConnectionUtil;
 import mate.academy.exeption.DataProcessingException;
 import mate.academy.model.Book;
 
+@Dao
 public class BookDaoImpl implements BookDao {
 
     @Override
@@ -29,7 +30,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getObject(1, Long.class));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed to create book", e);
+            throw new RuntimeException("Failed to create book", e);
         }
         return book;
     }
