@@ -1,19 +1,13 @@
 package mate.academy;
 
+import java.util.List;
 import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
-import mate.academy.db.DatabaseInitializer;
 import mate.academy.lib.Injector;
 import mate.academy.services.Book;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Optional;
-
-import static mate.academy.ConnectionUtil.getConnection;
-
 public class Main {
-    private static final Injector injector = new Injector("mate.academy");
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
@@ -21,17 +15,17 @@ public class Main {
         book.setTitle("Red Book");
         book.setPrice(50);
 
-        bookDao.save(book);
-
-        Book bookFromDb = bookDao.get(1L);
-
-        Optional<Book> bookById = bookDao.findById(1L);
+        bookDao.create(book);
+        bookDao.findById(1L);
 
         Book updateBook = new Book();
         updateBook.setTitle("Ice");
-        updateBook.setPrice(30);
 
         bookDao.update(updateBook);
+
+        List<Book> allBooks = bookDao.findAll();
+
+        bookDao.deleteById(1L);
 
     }
 }

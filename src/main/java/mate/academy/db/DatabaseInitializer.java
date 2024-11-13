@@ -12,7 +12,7 @@ public class DatabaseInitializer {
             `price` DECIMAL(10, 2) NOT NULL
             PRIMARY KEY(`id`)
         );
-        """;
+            """;
 
     public static void initializeDatabaseScript() {
         try (FileWriter fileWriter = new FileWriter(FILE_PATH)) {
