@@ -8,28 +8,30 @@ import mate.academy.services.Book;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import static mate.academy.ConnectionUtil.getConnection;
 
 public class Main {
     private static final Injector injector = new Injector("mate.academy");
     public static void main(String[] args) {
-        DatabaseInitializer.initializeDatabaseScript();
-
-        try (Connection connection = getConnection()) {
-            System.out.println("Connection successful!");
-        } catch (SQLException e) {
-            System.err.println("Connection failed: " + e.getMessage());
-        }
-
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book redBook = new Book();
-        redBook.setTitle("Red Book");
-        redBook.setPrice(50);
+        Book book = new Book();
+        book.setTitle("Red Book");
+        book.setPrice(50);
 
-        Book saveRedBook = bookDao.save(redBook);
+        bookDao.save(book);
 
-        System.out.println(bookDao.get(1L));
+        Book bookFromDb = bookDao.get(1L);
+
+        Optional<Book> bookById = bookDao.findById(1L);
+
+        Book updateBook = new Book();
+        updateBook.setTitle("Ice");
+        updateBook.setPrice(30);
+
+        bookDao.update(updateBook);
+
     }
 }
