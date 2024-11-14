@@ -107,12 +107,9 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                return false;
-            }
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not delete book by id", e);
         }
-        return true;
     }
 }
