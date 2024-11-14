@@ -52,7 +52,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(getFromResultSet(id, resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot create connection to DB", e);
+            throw new RuntimeException("Can't find book by id " + id, e);
         }
         return Optional.empty();
     }
@@ -91,7 +91,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can`t update book: " + book, e);
         }
-        return null;
+        return book;
     }
 
     @Override
