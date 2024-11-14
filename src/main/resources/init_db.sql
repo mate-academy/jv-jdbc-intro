@@ -6,9 +6,9 @@ CREATE TABLE books(
 
 USE test;
 
-INSERT INTO books (title, price) VALUES ('Test1', 10.00);
-INSERT INTO books (title, price) VALUES ('Test2', 15.40);
-INSERT INTO books (title, price) VALUES ('Test3', 25.00);
-INSERT INTO books (title, price) VALUES ('Test4', 267.00);
-INSERT INTO books (title, price) VALUES ('Test5', 159.50);
-INSERT INTO books (title, price) VALUES ('Test6', 2444.99);
+INSERT INTO books (title, price) VALUES ('Book One', 10.00);
+INSERT INTO books (title, price) VALUES ('Book Two', 15.40);
+INSERT INTO books (title, price) VALUES ('Book Three', 25.00);
+INSERT INTO books (title, price) VALUES ('Book Four', 267.00);
+INSERT INTO books (title, price) VALUES ('Book Five', 159.50);
+INSERT INTO books (title, price) VALUES ('Book Six', 2444.99);
