@@ -1,11 +1,12 @@
 package mate.academy.model;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Book {
     private Long id;
     private String title;
-    private int price;
+    private BigDecimal price;
 
     public Long getId() {
         return id;
@@ -23,11 +24,11 @@ public class Book {
         this.title = title;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -40,9 +41,9 @@ public class Book {
             return false;
         }
         Book book = (Book) o;
-        return price == book.price
-                && Objects.equals(id, book.id)
-                && Objects.equals(title, book.title);
+        return Objects.equals(id, book.id)
+                && Objects.equals(title, book.title)
+                && Objects.equals(price, book.price);
     }
 
     @Override

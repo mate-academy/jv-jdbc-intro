@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ public class BookDaoImpl implements BookDao {
                         = connection.prepareStatement(sql,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
-            statement.setInt(2, book.getPrice());
+            statement.setBigDecimal(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
                 throw new RuntimeException("Should be at least one row affected, but got zero");
             }
@@ -48,7 +49,7 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
                 book.setId(id);
                 book.setTitle(resultSet.getObject("title", String.class));
-                book.setPrice(resultSet.getObject("price", Integer.class));
+                book.setPrice(resultSet.getObject("price", BigDecimal.class));
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -68,7 +69,7 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
                 book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getObject("title", String.class));
-                book.setPrice(resultSet.getObject("price", Integer.class));
+                book.setPrice(resultSet.getObject("price", BigDecimal.class));
                 bookList.add(book);
             }
             return bookList;
@@ -86,7 +87,7 @@ public class BookDaoImpl implements BookDao {
                 throw new RuntimeException("Id cannot be null");
             }
             statement.setString(1, book.getTitle());
-            statement.setInt(2, book.getPrice());
+            statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             if (statement.executeUpdate() < 1) {
                 throw new RuntimeException("Should be at least one row affected, but got zero");

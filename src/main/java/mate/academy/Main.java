@@ -1,5 +1,6 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -11,20 +12,20 @@ public class Main {
     public static void main(String[] args) {
         Book firstBook = new Book();
         firstBook.setTitle("firstBook");
-        firstBook.setPrice(50);
+        firstBook.setPrice(BigDecimal.valueOf(50));
 
         Book secondBook = new Book();
         secondBook.setTitle("secondBook");
-        secondBook.setPrice(70);
+        secondBook.setPrice(BigDecimal.valueOf(70));
 
         Book thirdBook = new Book();
         thirdBook.setTitle("thirdBook");
-        thirdBook.setPrice(35);
+        thirdBook.setPrice(BigDecimal.valueOf(35));
 
         Book updateBook = new Book();
         updateBook.setId(1L);
         updateBook.setTitle("updatedBook");
-        updateBook.setPrice(100);
+        updateBook.setPrice(BigDecimal.valueOf(100));
 
         bookDao.create(firstBook);
         bookDao.create(secondBook);
