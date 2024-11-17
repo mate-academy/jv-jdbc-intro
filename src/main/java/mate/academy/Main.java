@@ -6,10 +6,11 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
-    public static final Injector injector = Injector.getInstance("mate.academy");
-    public static final BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-
     public static void main(String[] args) {
+        final BookDao bookDao = (BookDao) Injector
+                .getInstance("mate.academy")
+                .getInstance(BookDao.class);
+
         Book firstBook = new Book();
         firstBook.setTitle("firstBook");
         firstBook.setPrice(BigDecimal.valueOf(50));

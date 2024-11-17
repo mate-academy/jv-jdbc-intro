@@ -46,10 +46,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(resultSet.getObject("title", String.class));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
+                Book book = mapBookToResultSet(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -66,10 +63,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             List<Book> bookList = new ArrayList<>();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getObject("title", String.class));
-                book.setPrice(resultSet.getObject("price", BigDecimal.class));
+                Book book = mapBookToResultSet(resultSet);
                 bookList.add(book);
             }
             return bookList;
@@ -83,9 +77,6 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE book SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            if (book.getId() == null) {
-                throw new RuntimeException("Id cannot be null");
-            }
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -104,10 +95,17 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected >= 1;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete by id: " + id, e);
         }
+    }
+
+    private Book mapBookToResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getObject("title", String.class));
+        book.setPrice(resultSet.getObject("price", BigDecimal.class));
+        return book;
     }
 }
