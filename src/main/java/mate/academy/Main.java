@@ -27,7 +27,7 @@ public class Main {
         System.out.println("All books in the database:");
         bookDao.findAll().forEach(System.out::println);
 
-        if (bookDao.deleteById(1L)) {
+        if (bookDao.deleteById(updateBook.getId())) {
             System.out.println("Book was deleted");
         }
     }
