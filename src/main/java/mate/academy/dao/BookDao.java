@@ -16,6 +16,4 @@ public interface BookDao {
 
     void delete(Book book);
 
-    void deleteById(long id);
-
 }

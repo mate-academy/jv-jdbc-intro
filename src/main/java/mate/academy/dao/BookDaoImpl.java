@@ -132,15 +132,4 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Error deleting book from database.", e);
         }
     }
-
-    @Override
-    public void deleteById(long id) {
-        String query = "DELETE FROM book WHERE id = ?";
-        try (Connection connection = getConnection(); PreparedStatement statement
-                = connection.prepareStatement(query)) {
-            statement.setLong(1, id);
-        } catch (SQLException e) {
-            throw new DataProcessingException("Error deleting book by ID from database.", e);
-        }
-    }
 }

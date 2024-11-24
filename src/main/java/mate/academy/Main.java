@@ -42,9 +42,5 @@ public class Main {
         // Test delete
         bookDao.delete(savedBook);
         System.out.println("Deleted Book: " + savedBook);
-
-        // Test deleteById
-        bookDao.deleteById(savedBook.getId());
-        System.out.println("Deleted Book by ID: " + savedBook.getId());
     }
 }
