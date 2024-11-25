@@ -27,9 +27,5 @@ public class Main {
         book.setPrice(BigDecimal.valueOf(103.20));
         book.setTitle("JJJJJ");
         bookService.updateBook(1, book);
-
-        bookService.deleteBookById(2);
-
     }
 }
-

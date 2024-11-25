@@ -27,8 +27,7 @@ public class BookDaoImpl implements BookDao {
     public static final int PARAMETER_INDEX_ONE = 1;
     public static final int PARAMETER_INDEX_TWO = 2;
     public static final int COLUMN_INDEX_THREE = 3;
-    public static final int MIN_UPDATE_BOOK = 1;
-    public static final List<Book> BOOK_LIST = new ArrayList<>();
+    public static final int MIN_CREATE_OR_UPDATE_OR_REMOVE_BOOK = 1;
     public static final String CAN_T_DELETE_BOOK_BY_ID_MSG = "Can't delete book by ID:";
     public static final String CAN_T_UPDATE_BOOK = "Can't update book ";
 
@@ -39,9 +38,9 @@ public class BookDaoImpl implements BookDao {
                         Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(PARAMETER_INDEX_ONE, book.getTitle());
             preparedStatement.setBigDecimal(PARAMETER_INDEX_TWO, book.getPrice());
-            int executeUpdate = preparedStatement.executeUpdate();
-            if (executeUpdate < MIN_UPDATE_BOOK) {
-                throw new RuntimeException(EXPECTED_CREATE + executeUpdate);
+            int executeCreate = preparedStatement.executeUpdate();
+            if (executeCreate < MIN_CREATE_OR_UPDATE_OR_REMOVE_BOOK) {
+                throw new RuntimeException(EXPECTED_CREATE + executeCreate);
             }
             ResultSet resultGeneratedKey = preparedStatement.getGeneratedKeys();
             while (resultGeneratedKey.next()) {
@@ -72,13 +71,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
+        List<Book> bookList = new ArrayList<>();
         try (PreparedStatement preparedStatement = getPreparedStatement(SELECT_FROM_BOOKS)) {
             ResultSet executeQuery = getExecuteQuery(preparedStatement);
             while (executeQuery.next()) {
                 Book book = buildBook(executeQuery);
-                BOOK_LIST.add(book);
+                bookList.add(book);
             }
-            return BOOK_LIST;
+            return bookList;
         } catch (SQLException e) {
             throw new DataProcessingException(CAN_T_GET_A_LIST_OF_BOOK_MSG, e);
         }
@@ -91,7 +91,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(PARAMETER_INDEX_TWO, book.getPrice());
             statement.setInt(COLUMN_INDEX_THREE, book.getId());
             int executeUpdate = statement.executeUpdate();
-            if (executeUpdate < MIN_UPDATE_BOOK) {
+            if (executeUpdate < MIN_CREATE_OR_UPDATE_OR_REMOVE_BOOK) {
                 throw new RuntimeException(EXPECTED_CREATE + executeUpdate);
             }
         } catch (SQLException e) {
@@ -104,7 +104,13 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(int id) {
         try (PreparedStatement statement = getPreparedStatement(DELETE_FROM_BOOKS_WHERE_ID)) {
             statement.setInt(PARAMETER_INDEX_ONE, id);
-            statement.executeUpdate();
+
+            int executeRemove = statement.executeUpdate();
+
+            if (executeRemove >= MIN_CREATE_OR_UPDATE_OR_REMOVE_BOOK) {
+                return true;
+            }
+
         } catch (SQLException e) {
             throw new DataProcessingException(CAN_T_DELETE_BOOK_BY_ID_MSG + id, e);
         }
