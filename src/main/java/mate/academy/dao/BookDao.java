@@ -7,12 +7,12 @@ import mate.academy.entity.Book;
 public interface BookDao {
     Book create(Book book);
 
-    Optional<Book> findById(int id);
+    Optional<Book> findById(Long id);
 
     List<Book> findAll();
 
     Book update(Book book);
 
-    boolean deleteById(int id);
+    boolean deleteById(Long id);
 
 }

@@ -18,7 +18,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<Book> getBookById(int id) {
+    public Optional<Book> getBookById(Long id) {
         return bookDao.findById(id);
     }
 
@@ -28,13 +28,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book updateBook(int id, Book book) {
+    public Book updateBook(Long id, Book book) {
         book.setId(id);
         return bookDao.update(book);
     }
 
     @Override
-    public boolean deleteBookById(int id) {
+    public boolean deleteBookById(Long id) {
         return bookDao.deleteById(id);
     }
 }

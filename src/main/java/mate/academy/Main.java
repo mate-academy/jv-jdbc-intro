@@ -20,12 +20,12 @@ public class Main {
 
         bookService.createBook(book);
 
-        bookService.getBookById(1);
+        bookService.getBookById(1L);
 
         bookService.findAllBooks();
 
         book.setPrice(BigDecimal.valueOf(103.20));
         book.setTitle("JJJJJ");
-        bookService.updateBook(1, book);
+        bookService.updateBook(1L, book);
     }
 }

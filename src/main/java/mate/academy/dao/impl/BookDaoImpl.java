@@ -44,7 +44,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet resultGeneratedKey = preparedStatement.getGeneratedKeys();
             while (resultGeneratedKey.next()) {
-                int id = resultGeneratedKey.getObject(PARAMETER_INDEX_ONE, Integer.class);
+                Long id = resultGeneratedKey.getObject(PARAMETER_INDEX_ONE, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -54,7 +54,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Optional<Book> findById(int id) {
+    public Optional<Book> findById(Long id) {
         try (PreparedStatement preparedStatement =
                      getPreparedStatement(SELECT_FROM_BOOKS_WHERE_ID)) {
             preparedStatement.setLong(PARAMETER_INDEX_ONE, id);
@@ -89,7 +89,7 @@ public class BookDaoImpl implements BookDao {
         try (PreparedStatement statement = getPreparedStatement(UPDATE_BOOKS_QUERY)) {
             statement.setString(PARAMETER_INDEX_ONE, book.getTitle());
             statement.setBigDecimal(PARAMETER_INDEX_TWO, book.getPrice());
-            statement.setInt(COLUMN_INDEX_THREE, book.getId());
+            statement.setLong(COLUMN_INDEX_THREE, book.getId());
             int executeUpdate = statement.executeUpdate();
             if (executeUpdate < MIN_CREATE_OR_UPDATE_OR_REMOVE_BOOK) {
                 throw new RuntimeException(EXPECTED_CREATE + executeUpdate);
@@ -101,9 +101,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(Long id) {
         try (PreparedStatement statement = getPreparedStatement(DELETE_FROM_BOOKS_WHERE_ID)) {
-            statement.setInt(PARAMETER_INDEX_ONE, id);
+            statement.setLong(PARAMETER_INDEX_ONE, id);
 
             int executeRemove = statement.executeUpdate();
 
@@ -128,7 +128,7 @@ public class BookDaoImpl implements BookDao {
 
     private static Book buildBook(ResultSet executeQuery) throws SQLException {
         Book book = new Book();
-        book.setId(executeQuery.getInt(PARAMETER_INDEX_ONE));
+        book.setId(executeQuery.getLong(PARAMETER_INDEX_ONE));
         book.setTitle(executeQuery.getString(PARAMETER_INDEX_TWO));
         book.setPrice(executeQuery.getBigDecimal(COLUMN_INDEX_THREE));
         return book;

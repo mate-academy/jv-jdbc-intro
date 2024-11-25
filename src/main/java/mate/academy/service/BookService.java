@@ -7,11 +7,11 @@ import mate.academy.entity.Book;
 public interface BookService {
     Book createBook(Book book);
 
-    Optional<Book> getBookById(int id);
+    Optional<Book> getBookById(Long id);
 
     List<Book> findAllBooks();
 
-    Book updateBook(int id,Book book);
+    Book updateBook(Long id,Book book);
 
-    boolean deleteBookById(int id);
+    boolean deleteBookById(Long id);
 }
