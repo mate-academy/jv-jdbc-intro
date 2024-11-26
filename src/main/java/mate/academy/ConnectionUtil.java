@@ -7,12 +7,12 @@ import java.util.Properties;
 
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/jv_jdbc_intro";
-    private static final Properties BD_Properties;
+    private static final Properties DB_Properties;
 
     static {
-        BD_Properties = new Properties();
-        BD_Properties.put("user", "root");
-        BD_Properties.put("password", "root123!@#");
+        DB_Properties = new Properties();
+        DB_Properties.put("user", "root");
+        DB_Properties.put("password", "root123!@#");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -22,6 +22,6 @@ public class ConnectionUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, BD_Properties);
+        return DriverManager.getConnection(DB_URL, DB_Properties);
     }
 }

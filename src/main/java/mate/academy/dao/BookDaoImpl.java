@@ -29,7 +29,7 @@ public class BookDaoImpl implements BookDao {
 
             int executeUpdate = preparedStatement.executeUpdate();
             if (executeUpdate < 1) {
-                throw new RuntimeException("Cant add new Book");
+                throw new RuntimeException("Cant add new book with following parameters: " + book);
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -39,7 +39,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Cant add new Book", e);
+            throw new RuntimeException("Cant add new book with following parameters: " + book, e);
         }
 
         return book;
@@ -65,7 +65,7 @@ public class BookDaoImpl implements BookDao {
                 book.setPrice(price);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create connection", e);
+            throw new RuntimeException("findById failed", e);
         }
 
         Optional<Book> result = Optional.ofNullable(book);
@@ -95,7 +95,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create connection", e);
+            throw new RuntimeException("update failed", e);
         }
 
         currentBook = findById(book.getId()).get();
@@ -108,7 +108,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean delete(Long id) {
         if (findById(id).isEmpty()) {
-            return false;
+            throw new RuntimeException(
+                    "There is no object with such id: " + id);
         }
 
         String sql = "DELETE FROM books WHERE id = ?";
@@ -125,7 +126,7 @@ public class BookDaoImpl implements BookDao {
             return true;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create connection", e);
+            throw new RuntimeException("delete failed", e);
         }
     }
 
@@ -156,7 +157,7 @@ public class BookDaoImpl implements BookDao {
             return result;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Cant create connection", e);
+            throw new RuntimeException("findAll failed", e);
         }
     }
 }
