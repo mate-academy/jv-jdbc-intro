@@ -7,7 +7,6 @@ import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.models.Book;
 
-
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
