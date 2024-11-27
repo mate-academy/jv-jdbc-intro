@@ -1,0 +1,5 @@
+CREATE TABLE books (
+    id SERIAL PRIMARY KEY NOT NULL,
+    title VARCHAR(255),
+    price DECIMAL
+)
