@@ -16,8 +16,8 @@ public class Main {
         book = bookDao.create(book);
         System.out.println("Created book: " + book);
 
-        Optional<Book> foundedBook = bookDao.findById(book.getId());
-        System.out.println("Founded book: " + foundedBook.orElse(null));
+        Optional<Book> foundBook = bookDao.findById(book.getId());
+        System.out.println("Found book: " + foundBook.orElse(null));
 
         List<Book> books = bookDao.findAll();
         System.out.println("All books: " + books);
