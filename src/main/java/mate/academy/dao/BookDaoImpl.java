@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Inserted 0 rows");
+                throw new DataProcessingException("Inserted 0 rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -82,7 +82,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int executed = statement.executeUpdate();
             if (executed < 1) {
-                throw new RuntimeException("No executed rows");
+                throw new DataProcessingException("No executed rows");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book: " + book, e);
