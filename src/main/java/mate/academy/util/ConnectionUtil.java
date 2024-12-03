@@ -22,7 +22,7 @@ public class ConnectionUtil {
         try {
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't load MSQL driver" + e);
+            throw new RuntimeException("Can't load MYSQL driver" + e);
         }
     }
 

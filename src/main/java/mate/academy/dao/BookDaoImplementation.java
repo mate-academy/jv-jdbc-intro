@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -28,7 +30,7 @@ public class BookDaoImplementation implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't insert book into the database: " + book, e);
+            throw new DataProcessingException("Can't insert book into the database: " + book, e);
         }
     }
 
@@ -44,7 +46,7 @@ public class BookDaoImplementation implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't find book by id: " + id, e);
+            throw new DataProcessingException("Can't find book by id: " + id, e);
         }
         return Optional.empty();
     }
@@ -61,7 +63,7 @@ public class BookDaoImplementation implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't find all books", e);
+            throw new DataProcessingException("Can't find all books", e);
         }
     }
 
@@ -77,7 +79,7 @@ public class BookDaoImplementation implements BookDao {
                 return book;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update book: " + book, e);
+            throw new DataProcessingException("Can't update book: " + book, e);
         }
         throw new RuntimeException("No book found to update with id: " + book.getId());
     }
@@ -90,7 +92,7 @@ public class BookDaoImplementation implements BookDao {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book by id: " + id, e);
+            throw new DataProcessingException("Can't delete book by id: " + id, e);
         }
     }
 
