@@ -27,7 +27,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException(" Can't create a new book" + book);
+                throw new DataProcessingException(" Can't create the book" + book);
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -35,7 +35,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getLong(1));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create a new book: " + book, e);
+            throw new DataProcessingException("Can't create the book: " + book, e);
         }
 
         return book;
@@ -43,7 +43,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String query = "SELECT * FROM books WHERE id=?";
+        String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -71,7 +71,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can't find all books", e);
         }
 
         return books;
@@ -79,7 +79,23 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        return null;
+        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
+                throw new DataProcessingException(" Can't update the book" + book);
+            }
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't update the book: " + book, e);
+        }
+
+        return book;
     }
 
     @Override

@@ -6,7 +6,6 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class Main {
     public static final Injector injector = Injector.getInstance("mate.academy");
@@ -37,6 +36,12 @@ public class Main {
         System.out.println("------------= FIND ALL =------------");
         bookDao.findAll().forEach(System.out::println);
         System.out.println();
+
+        System.out.println("------------= UPDATE =------------");
+        createdBook2.setTitle("New title for book 2");
+        createdBook2.setPrice(BigDecimal.valueOf(44.44));
+        Book updatedBook = bookDao.update(createdBook2);
+        System.out.println(createdBook2 + " was updated to " + updatedBook);
     }
 
     private static void findByIdAndPrint(Long id, BookDao bookDao) {
