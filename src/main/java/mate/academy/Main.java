@@ -22,9 +22,9 @@ public class Main {
         Book createdBook3 = bookDao.create(book3);
 
         System.out.println("------------= CREATE =------------");
-        System.out.println(createdBook1 + " created!");
-        System.out.println(createdBook2 + " created!");
-        System.out.println(createdBook3 + " created!");
+        System.out.println(createdBook1 + " was created!");
+        System.out.println(createdBook2 + " was created!");
+        System.out.println(createdBook3 + " was created!");
         System.out.println();
 
         System.out.println("------------= FIND BY ID =------------");
@@ -42,6 +42,17 @@ public class Main {
         createdBook2.setPrice(BigDecimal.valueOf(44.44));
         Book updatedBook = bookDao.update(createdBook2);
         System.out.println(createdBook2 + " was updated to " + updatedBook);
+        System.out.println();
+
+        System.out.println("------------= DELETE =------------");
+        Long id = createdBook1.getId();
+        if (bookDao.deleteById(id)) {
+            System.out.println("Book with id=" + id + " was deleted");
+        }
+        System.out.println();
+
+        System.out.println("------------= FINAL RESULT =------------");
+        bookDao.findAll().forEach(System.out::println);
     }
 
     private static void findByIdAndPrint(Long id, BookDao bookDao) {

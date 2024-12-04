@@ -19,6 +19,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
+
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection
                      .prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -44,6 +45,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
+
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -63,6 +65,7 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String query = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
+
         try (Connection connection = ConnectionUtil.getConnection();
              Statement statement = connection.createStatement()) {
 
@@ -80,6 +83,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -100,7 +104,21 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        return false;
+        String query = "DELETE FROM books WHERE id = ?";
+
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setLong(1, id);
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
+                throw new DataProcessingException(" Can't delete a book by id=" + id);
+            }
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't delete a book by id=" + id, e);
+        }
+
+        return true;
     }
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {

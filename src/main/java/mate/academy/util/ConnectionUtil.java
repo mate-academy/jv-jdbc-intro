@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class ConnectionUtil {
     public static final String DB_URL = "jdbc:mysql://localhost:3306/test_dao_db";
-    public static final String DB_USER = "root";
-    public static final String DB_PASSWORD = "Root_1234";
+    public static final String DB_USER = ""; // put database user name
+    public static final String DB_PASSWORD = "";  // put database user password
 
     public static Connection getConnection() {
         try {
