@@ -6,6 +6,7 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Main {
     public static final Injector injector = Injector.getInstance("mate.academy");
@@ -28,17 +29,19 @@ public class Main {
         System.out.println();
 
         System.out.println("------------= FIND BY ID =------------");
-        Long id1 = book1.getId();
-        Book foundBook1 = bookDao.findById(id1).orElseThrow(
-                () -> new DataProcessingException("Can't find book with id=" + id1));
-        System.out.println("Book with id=" + id1 + ": " + foundBook1);
-        Long id2 = book1.getId();
-        Book foundBook2 = bookDao.findById(id2).orElseThrow(
-                () -> new DataProcessingException("Can't find book with id=" + id2));
-        System.out.println("Book with id=" + id2 + ": " + foundBook2);
-        Long id3 = book1.getId();
-        Book foundBook3 = bookDao.findById(id3).orElseThrow(
-                () -> new DataProcessingException("Can't find book with id=" + id3));
-        System.out.println("Book with id=" + id3 + ": " + foundBook3);
+        findByIdAndPrint(book1.getId(), bookDao);
+        findByIdAndPrint(book2.getId(), bookDao);
+        findByIdAndPrint(book3.getId(), bookDao);
+        System.out.println();
+
+        System.out.println("------------= FIND ALL =------------");
+        bookDao.findAll().forEach(System.out::println);
+        System.out.println();
+    }
+
+    private static void findByIdAndPrint(Long id, BookDao bookDao) {
+        Book foundBook = bookDao.findById(id).orElseThrow(
+                () -> new DataProcessingException("Can't find book with id=" + id));
+        System.out.println("Book with id=" + id + ": " + foundBook);
     }
 }
