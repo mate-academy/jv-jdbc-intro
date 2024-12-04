@@ -7,6 +7,11 @@ public class Book {
     private String title;
     private BigDecimal price;
 
+    public Book(String title, BigDecimal price) {
+        this.title = title;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }
