@@ -9,7 +9,7 @@ public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/home_work";
     private static final Properties DB_PROPERTIES = new Properties();
 
-    static{
+    static {
         DB_PROPERTIES.put("user", "root");
         DB_PROPERTIES.put("password", "123456789");
 
