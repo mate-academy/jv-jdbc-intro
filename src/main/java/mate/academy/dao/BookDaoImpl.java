@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             if (statement.executeUpdate() < 1) {
                 throw new DataProcessingException(
-                        "Creating book failed , no raws affected " + book
+                        "Creating book failed , no rows affected " + book
                 );
             }
             book.setId(getGenerateId(statement));
@@ -101,11 +101,11 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID_QUERY)) {
-            statement.setLong(3, id);
+            statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    String.format("Book with id = %d wasn't delete", id), e);
+                    String.format("Book with id = %d wasn't deleted", id), e);
         }
     }
 
