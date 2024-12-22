@@ -1,9 +1,9 @@
 package mate.academy;
 
 import mate.academy.lib.BookDao;
-import mate.academy.lib.Injector;
 import mate.academy.lib.Book;
 import java.math.BigDecimal;
+import mate.academy.lib.Injector;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy.lib");

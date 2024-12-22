@@ -7,7 +7,6 @@ public class Book {
     private String title;
     private BigDecimal price;
 
-
     public Long getId() {
         return id;
     }
