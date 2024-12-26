@@ -109,23 +109,20 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Error updating books in database.", e);
         }
-        return null;
+        return book;
     }
 
     @Override
-    public void deleteById(Long id) {
+    public boolean deleteById(Long id) {
         String sql = "DELETE FROM book WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new RuntimeException("At least one row was expected to be deleted");
-            }
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error deleting book from database.", e);
+            throw new DataProcessingException(String
+                    .format("Book with id = %d wasn't deleted", id), e);
         }
     }
 }
