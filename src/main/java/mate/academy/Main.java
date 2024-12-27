@@ -26,6 +26,6 @@ public class Main {
         updatedBook.setTitle("Planes");
         bookDao.update(updatedBook);
         bookDao.findAll().forEach(System.out::println);
-        bookDao.deleteById(3L);
+        bookDao.deleteById(book2.getId());
     }
 }
