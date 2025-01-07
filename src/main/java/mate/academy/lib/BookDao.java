@@ -1,6 +1,5 @@
 package mate.academy.lib;
 
-import mate.academy.lib.Book;
 import java.util.List;
 import java.util.Optional;
 

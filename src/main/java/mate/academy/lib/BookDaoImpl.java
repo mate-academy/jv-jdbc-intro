@@ -1,10 +1,5 @@
 package mate.academy.lib;
 
-import mate.academy.lib.BookDao;
-import mate.academy.lib.Dao;
-import mate.academy.lib.Book;
-import mate.academy.lib.DataProcessingException;
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
