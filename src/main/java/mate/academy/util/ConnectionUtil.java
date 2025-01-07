@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionUtil {
-    public static final String DB_URL = "jdbc:mysql://localhost:3306/test_dao_db";
-    public static final String DB_USER = ""; // put database user name
-    public static final String DB_PASSWORD = ""; // put database user password
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test_dao_db"; //change database URL if needed
+    private static final String DB_USER = "{USER NAME}"; // put database user name
+    private static final String DB_PASSWORD = "{PASSWORD}"; // put database user password
 
     public static Connection getConnection() {
         try {
