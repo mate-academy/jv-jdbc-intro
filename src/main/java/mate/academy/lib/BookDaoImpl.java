@@ -9,8 +9,8 @@ import java.util.Optional;
 @Dao
 public class BookDaoImpl implements BookDao {
     private static final String URL = "jdbc:mysql://localhost:3306/library?serverTimezone=UTC";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "Uen9opX";
+    private static final String USERNAME = "#####";
+    private static final String PASSWORD = "#####";
 
     @Override
     public Book create(Book book) {
