@@ -47,7 +47,7 @@ public class Book {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
