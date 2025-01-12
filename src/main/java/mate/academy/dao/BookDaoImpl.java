@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
              statement.setBigDecimal(2, book.getPrice());
 
              statement.executeUpdate();
-             int affectedRows = statement.getUpdateCount();
+             int affectedRows = statement.executeUpdate();
              if (affectedRows < 1) {
                  throw new SQLException("Creating book failed, no rows affected.");
              }
@@ -97,7 +97,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setObject(3, book.getId());
             statement.executeUpdate();
-            int affectedRows = statement.getUpdateCount();
+            int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new SQLException("Updating book failed, no rows affected.");
             }
@@ -113,14 +113,13 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            statement.executeUpdate();
-            int affectedRows = statement.getUpdateCount();
+            int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new SQLException("Deleting book failed, no rows affected.");
             }
         } catch (SQLException e) {
             throw new RuntimeException("Unable to delete book with id: " + id, e);
         }
-        return false;
+        return true;
     }
 }
