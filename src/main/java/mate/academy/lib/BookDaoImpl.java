@@ -74,10 +74,10 @@ public class BookDaoImpl implements BookDao {
             if (statement.executeUpdate() > 0) {
                 return book;
             }
+            throw new DataProcessException("No book with id " + book.getId(), null);
         } catch (SQLException e) {
             throw new DataProcessException("Couldn't update book in DB" + book, e);
         }
-        return null;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class BookDaoImpl implements BookDao {
 
     private static Book dataParser(ResultSet set) throws SQLException {
         Book book = new Book();
-        book.setId(set.getLong("id"));
+        book.setId(set.getObject("id", Long.class));
         book.setTitle(set.getString("title"));
         book.setPrice(set.getBigDecimal("price"));
         return book;
