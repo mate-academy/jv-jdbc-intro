@@ -18,12 +18,12 @@ public class Main {
         bookDao.create(book);
         System.out.println(bookDao.findById(1L));
 
-        Book apdateBook = new Book();
-        apdateBook.setId(1L);
-        apdateBook.setTitle("DEADSPACE");
-        apdateBook.setPrice(new BigDecimal(400));
+        Book updateBook = new Book();
+        updateBook.setId(1L);
+        updateBook.setTitle("DEADSPACE");
+        updateBook.setPrice(new BigDecimal(400));
 
-        bookDao.update(apdateBook);
+        bookDao.update(updateBook);
         System.out.println(bookDao.findById(1L));
 
         bookDao.create(book);

@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
@@ -65,23 +64,25 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        List<Optional<Book>> optionalResult = new ArrayList<>();
-        String sql = "SELECT MAX(id) FROM books";
+        List<Book> result = new ArrayList<>();
+        String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                int maxRows = resultSet.getInt("MAX(id)");
-                for (long i = 1L; i < maxRows + 1; i++) {
-                    optionalResult.add(findById(i));
-                }
-            } else {
+            if (!resultSet.next()) {
                 throw new DataProcessingException("Can't find any books");
+            }
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.setId(resultSet.getLong("id"));
+                book.setTitle(resultSet.getString("title"));
+                book.setPrice(resultSet.getBigDecimal("price"));
+                result.add(book);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create connection to thr DB", e);
         }
-        return convertOptionalList(optionalResult);
+        return result;
     }
 
     @Override
@@ -117,12 +118,5 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Cannot create connection to the DB", e);
         }
         return affectedRows > 0;
-    }
-
-    private List<Book> convertOptionalList(List<Optional<Book>> book) {
-        return book.stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
     }
 }
