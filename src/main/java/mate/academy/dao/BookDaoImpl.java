@@ -32,29 +32,23 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not add an entry to the DB",e);
+            throw new DataProcessingException("Can not add an entry to the table",e);
         }
         return book;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT  * from book WHERE id = ?";
+        String sql = "SELECT  * FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
+                return Optional.of(convertResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find entry in DB", e);
+            throw new DataProcessingException("Can not find entry in table", e);
         }
         return Optional.empty();
     }
@@ -62,23 +56,15 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT  * from book";
+        String sql = "SELECT * FROM book";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long bookId = resultSet.getLong("id");
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                Book book = new Book();
-                book.setId(bookId);
-                book.setTitle(title);
-                book.setPrice(price);
-                books.add(book);
+                books.add(convertResultSetToBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not fetch all books from the DB", e);
+            throw new DataProcessingException("Can not fetch all books from the table", e);
         }
         return books;
     }
@@ -98,7 +84,8 @@ public class BookDaoImpl implements BookDao {
                         + book.getId() + "to update");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while updating the book", e);
+            throw new DataProcessingException("Error while "
+                    + "updating the book with id: " + book.getId(), e);
         }
         return book;
     }
@@ -112,7 +99,24 @@ public class BookDaoImpl implements BookDao {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while deleting the book", e);
+            throw new DataProcessingException("Error while deleting "
+                    + "the book with id: " + id, e);
+        }
+    }
+
+    private Book convertResultSetToBook(ResultSet resultSet) {
+        try {
+            Long bookId = resultSet.getLong("id");
+            String title = resultSet.getString("title");
+            BigDecimal price = resultSet.getBigDecimal("price");
+
+            Book book = new Book();
+            book.setId(bookId);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can not convert result to book", e);
         }
     }
 }

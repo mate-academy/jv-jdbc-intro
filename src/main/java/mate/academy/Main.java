@@ -9,7 +9,7 @@ import mate.academy.model.Book;
 public class Main {
     public static void main(String[] args) {
         BookDao bookDao = new BookDaoImpl();
-        System.out.println(bookDao.findById(1L));
+        bookDao.findById(1L).ifPresent(System.out::println);
         System.out.println();
         Book programming = new Book();
         programming.setTitle("Java-8 Manual");
@@ -26,8 +26,9 @@ public class Main {
         programming.setTitle("Java-9 Manual");
         programming.setPrice(new BigDecimal("285.3"));
         bookDao.update(programming);
-        System.out.println(bookDao.findById(2L));
-        bookDao.deleteById(6L);
+        bookDao.findById(2L).ifPresent(System.out::println);
+        System.out.println(bookDao.deleteById(6L) ? "Deletion succeeded"
+                : "Deletion failed");
         books = bookDao.findAll();
         for (Book book : books) {
             System.out.println(book);
