@@ -29,12 +29,12 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException(
-                        "Expected to insert al least one row, but inserted 0 rows"
+                        "Expected to insert at least one row, but inserted 0 rows"
                 );
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
+            if (generatedKeys != null && generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }

@@ -23,9 +23,6 @@ public class Main {
         List<Book> bookList = bookDao.findAll();
         System.out.println(bookList);
 
-        // deleteById()
-        bookDao.deleteById(book3.getId());
-
         // findById()
         Long idToFind = book3.getId();
         Optional<Book> bookById = bookDao.findById(idToFind);
@@ -37,6 +34,9 @@ public class Main {
         } else {
             System.out.println("There is no book with id = " + idToFind);
         }
+
+        // deleteById()
+        bookDao.deleteById(book3.getId());
 
         // update()
         Book bookToUpdate = book1;
