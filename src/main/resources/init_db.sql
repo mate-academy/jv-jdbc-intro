@@ -1,0 +1,5 @@
+CREATE TABLE book(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(100),
+  price REAL
+);
