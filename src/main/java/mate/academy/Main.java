@@ -6,10 +6,10 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
-    private static final Injector ingector = Injector.getInstance("mate.academy");
+    private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) ingector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
         book.setTitle("12 years a slave");
         book.setPrice(BigDecimal.valueOf(99));
