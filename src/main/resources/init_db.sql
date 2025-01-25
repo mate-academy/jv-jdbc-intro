@@ -1,0 +1,9 @@
+CREATE
+DATABASE `f-book_store`;
+
+CREATE TABLE `books` (
+`id` bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`title` VARCHAR(255) DEFAULT NULL,
+`price` DECIMAL(10, 0) DEFAULT NULL,
+`is_deleted` tinyint NOT NULL DEFAULT '0'
+)
