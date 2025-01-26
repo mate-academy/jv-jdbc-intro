@@ -87,19 +87,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE book SET price = ? WHERE title = ?";
+        String sql = "UPDATE book SET price = ?, title = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql, 1)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(2, book.getTitle());
             statement.setBigDecimal(1, book.getPrice());
+            statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to insert at least 1 row, but was inserted 0");
-            }
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) {
-                Long id = resultSet.getObject(1, long.class);
-                book.setId(id);
             }
         } catch (SQLException ex) {
             throw new DataProcessingException("Failed to update book", ex);

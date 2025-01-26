@@ -30,6 +30,7 @@ public class Main {
         }
 
         book.setTitle(bookSecondTitle);
+        book.setId(44L);
         bookDao.create(book);
         List<Book> bookList = bookDao.findAll();
         for (Book b : bookList) {
