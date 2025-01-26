@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionUtil implements AutoCloseable {
+public class ConnectionUtil {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/jdbcintro";
     private static final Properties DB_PROPERTIES;
@@ -25,10 +25,5 @@ public class ConnectionUtil implements AutoCloseable {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
-    }
-
-    @Override
-    public void close() throws Exception {
-
     }
 }

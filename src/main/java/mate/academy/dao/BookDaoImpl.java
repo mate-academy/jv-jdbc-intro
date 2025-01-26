@@ -37,7 +37,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(rowId);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't execute create operation", e);
         }
         return book;
     }
@@ -63,7 +63,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't execute getById operation", e);
         }
         return Optional.empty();
     }
@@ -88,7 +88,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't execute findAll operation", e);
         }
         return books;
     }
@@ -110,7 +110,7 @@ public class BookDaoImpl implements BookDao {
                         + " but inserted 0 rows");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't execute update operation", e);
         }
 
         return book;
@@ -127,13 +127,13 @@ public class BookDaoImpl implements BookDao {
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected < 1) {
-                throw new RuntimeException("Expected to insert at least one row"
-                        + " but inserted 0 rows");
+                throw new RuntimeException("Expected to delete at least one row"
+                        + " but deleted 0 rows");
             } else {
                 return true;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't execute delete operation", e);
         }
     }
 }
