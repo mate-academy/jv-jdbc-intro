@@ -1,6 +1,5 @@
 package mate.academy.lib;
 
-import mate.academy.ConnectionUtil;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.ConnectionUtil;
 import mate.academy.model.Book;
 
 public class BookDaoImpl implements BookDao {
@@ -18,7 +18,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
-                     .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
@@ -49,7 +49,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new RuntimeException("Can not create a connection to the DB", e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+                ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
                 String title = resultSet.getString("title");

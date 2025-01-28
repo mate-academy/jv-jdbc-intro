@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URl = "your db url";
+    private static final String DB_URL = "your db url";
     private static final Properties DB_PROPERTIES;
 
     static {
@@ -22,6 +22,6 @@ public class ConnectionUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URl, DB_PROPERTIES);
+        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 }
