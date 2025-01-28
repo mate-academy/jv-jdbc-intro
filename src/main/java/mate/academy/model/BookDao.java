@@ -1,8 +1,8 @@
 package mate.academy.model;
 
-import mate.academy.lib.Dao;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.lib.Dao;
 
 @Dao
 public interface BookDao {
