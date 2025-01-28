@@ -1,11 +1,11 @@
 package mate.academy.model;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = DriverManager.getConnection(
                 URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(
-                     query, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(
+                        query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
@@ -43,7 +43,7 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = DriverManager.getConnection(
                 URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -65,7 +65,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(
                 URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
@@ -84,7 +84,7 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = DriverManager.getConnection(
                 URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -105,7 +105,7 @@ public class BookDaoImpl implements BookDao {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection connection = DriverManager.getConnection(
                 URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
