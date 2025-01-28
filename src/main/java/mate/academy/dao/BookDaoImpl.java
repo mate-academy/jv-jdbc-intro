@@ -26,7 +26,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                throw new RuntimeException(
+                throw new SQLException(
                         "Expected to insert at least one row, but inserted zero rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -83,7 +83,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                throw new RuntimeException(
+                throw new SQLException(
                         "Expected to update at least one row, but updated zero rows");
             }
         } catch (SQLException ex) {

@@ -17,8 +17,10 @@ public class Main {
         Book createdBook = bookDao.create(book);
         System.out.println("Book has been created: " + createdBook);
         Optional<Book> foundBook = bookDao.findById(createdBook.getId());
-        System.out.println("Book has been found by the index "
-                + createdBook.getId() + ": " + foundBook);
+        if (foundBook.isPresent()) {
+            System.out.println("Book has been found by the index "
+                    + createdBook.getId() + ": " + foundBook);
+        }
         book.setTitle("Crime and punishment");
         book.setPrice(BigDecimal.valueOf(750));
         Book updatedBook = bookDao.update(book);
