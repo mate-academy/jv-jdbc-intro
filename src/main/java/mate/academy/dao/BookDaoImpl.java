@@ -82,7 +82,6 @@ public class BookDaoImpl implements BookDao {
                 book.setTitle(title);
                 book.setPrice(price);
                 list.add(book);
-                return list;
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not connect to DB", e);
@@ -119,7 +118,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new RuntimeException("Expected to delete at least one row, "
-                        + "but inserted 0 rows");
+                        + "but deleted 0 rows");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not connect to DB", e);
