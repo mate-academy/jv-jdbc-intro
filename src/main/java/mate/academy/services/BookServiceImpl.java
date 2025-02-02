@@ -4,6 +4,7 @@ import java.util.List;
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
 import mate.academy.models.Book;
+import mate.academy.services.exceptions.CannotFindBookException;
 
 public class BookServiceImpl implements BookService {
 
@@ -17,7 +18,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book findById(Long id) {
         return bookDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cannot find book with id: " + id));
+                .orElseThrow(() -> new CannotFindBookException(
+                        "Cannot find book with id: " + id));
     }
 
     @Override

@@ -32,12 +32,12 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
                 throw new CreateBookException(
-                        "Expected to insert at list ine row, but was " + affectedRows);
+                        "Expected to insert at list one row, but was " + affectedRows);
             }
 
-            ResultSet generalKey = statement.getGeneratedKeys();
-            if (generalKey.next()) {
-                book.setId(generalKey.getObject(1, Long.class));
+            ResultSet generatedKey = statement.getGeneratedKeys();
+            if (generatedKey.next()) {
+                book.setId(generatedKey.getObject(1, Long.class));
             }
 
             return book;
@@ -115,7 +115,7 @@ public class BookDaoImpl implements BookDao {
 
             if (affectedRows < 1) {
                 throw new UpdateBookException(
-                        "Expected to update at list ine row, but was " + affectedRows);
+                        "Expected to update at list one row, but was " + affectedRows);
             }
 
             return book;
@@ -137,7 +137,7 @@ public class BookDaoImpl implements BookDao {
 
             if (affectedRows < 1) {
                 throw new DeleteBookException(
-                        "Expected to delete at list ine row, but was " + affectedRows);
+                        "Expected to delete at list one row, but was " + affectedRows);
             }
 
             return true;

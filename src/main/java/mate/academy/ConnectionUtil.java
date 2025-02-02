@@ -9,12 +9,16 @@ public class ConnectionUtil {
 
     private static final String URL = "jdbc:mysql://localhost:3306/mydb";
 
+    private static final String USERNAME = "root";
+
+    private static final String PASSWORD = "fdpgsp2425SS";
+
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "fdpgsp2425SS");
+        DB_PROPERTIES.put("user", USERNAME);
+        DB_PROPERTIES.put("password", PASSWORD);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
