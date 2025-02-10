@@ -12,8 +12,8 @@ public class ConnectionUtil {
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "M@shaf0x");
+        DB_PROPERTIES.put("user", System.getenv("DB_USER"));
+        DB_PROPERTIES.put("password", System.getenv("DB_PASSWORD"));
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

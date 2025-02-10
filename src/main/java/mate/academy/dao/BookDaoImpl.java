@@ -36,6 +36,8 @@ public class BookDaoImpl implements BookDao {
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
+            } else {
+                throw new RuntimeException("Error: Book was inserted but no ID was generated");
             }
             return book;
         } catch (SQLException e) {
@@ -58,7 +60,7 @@ public class BookDaoImpl implements BookDao {
                     ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can not create a connection to DB", e);
+            throw new RuntimeException("Error finding book by ID: " + id, e);
         }
         return Optional.empty();
     }
@@ -84,7 +86,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Book update(Book book) {
+    public Optional<Book> update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -95,12 +97,13 @@ public class BookDaoImpl implements BookDao {
 
             int updatedRows = statement.executeUpdate();
             if (updatedRows > 0) {
-                return book;
+                return Optional.of(book);
+            } else {
+                throw new RuntimeException("No book was updated with ID: " + book.getId());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error updating book", e);
         }
-        return null;
     }
 
     @Override
@@ -109,9 +112,10 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
-            return statement.executeUpdate() > 0;
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting book", e);
+            throw new RuntimeException("Error deleting book with ID: " + id, e);
         }
     }
 }
