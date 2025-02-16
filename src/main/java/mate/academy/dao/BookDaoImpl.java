@@ -60,7 +60,18 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        return false;
+        String sql = "delete from books where id = ?";
+        try (Connection connection = ConnectionUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setObject(1, id);
+            int update = preparedStatement.executeUpdate();
+            if (update < 1) {
+                throw new RuntimeException("Cannot delete the book with id " + id);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 
     private Book createBookFromDb(ResultSet resultSet) throws SQLException {
