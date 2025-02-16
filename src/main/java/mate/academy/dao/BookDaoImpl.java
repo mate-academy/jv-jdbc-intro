@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,10 +27,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                book.setTitle(resultSet.getString("title"));
+                Book book = createBookFromDb(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -40,7 +38,19 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        return List.of();
+        List<Book> books = new ArrayList<>();
+        String sql = "select * from books";
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Book book = createBookFromDb(resultSet);
+                books.add(book);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Cannot retrieve data", e);
+        }
+        return books;
     }
 
     @Override
@@ -51,5 +61,13 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         return false;
+    }
+
+    private Book createBookFromDb(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong("id"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        book.setTitle(resultSet.getString("title"));
+        return book;
     }
 }
