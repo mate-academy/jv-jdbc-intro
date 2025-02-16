@@ -4,10 +4,7 @@ import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +13,25 @@ import java.util.Optional;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        return null;
+        String sql = "insert into books (title, price) values (?, ?)";
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement = connection
+                     .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            int updateCount = preparedStatement.executeUpdate();
+            if (updateCount < 1) {
+                throw new RuntimeException("Expected to insert one row, but 0 was inserted");
+            }
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getLong("id");
+                book.setId(id);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return book;
     }
 
     @Override
@@ -62,7 +77,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "delete from books where id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, id);
             int update = preparedStatement.executeUpdate();
             if (update < 1) {
