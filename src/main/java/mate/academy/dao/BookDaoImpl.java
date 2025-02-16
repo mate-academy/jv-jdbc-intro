@@ -19,8 +19,8 @@ public class BookDaoImpl implements BookDao {
                      .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
-            int updateCount = preparedStatement.executeUpdate();
-            if (updateCount < 1) {
+            int createdCount = preparedStatement.executeUpdate();
+            if (createdCount < 1) {
                 throw new RuntimeException("Expected to insert one row, but 0 was inserted");
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -70,7 +70,23 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        return null;
+        String sql = "update books set title = ?, price = ? where id = ?";
+        findById(book.getId())
+                .orElseThrow(() -> new RuntimeException("Update" +
+                        " on non existent book is not allowed. Book id: " + book.getId()));
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setLong(3, book.getId());
+            int updatedCount = preparedStatement.executeUpdate();
+            if (updatedCount < 1) {
+                throw new RuntimeException("Expected to update one row, but 0 was updated");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Cannot update book with id " + book.getId(), e);
+        }
+        return book;
     }
 
     @Override
