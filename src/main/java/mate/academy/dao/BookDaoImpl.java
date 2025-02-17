@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -32,7 +33,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Cannot create new book: " + book, e);
         }
         return book;
     }
@@ -49,7 +50,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot find book with id = " + id, e);
+            throw new DataProcessingException("Cannot find book with id = " + id, e);
         }
         return Optional.empty();
     }
@@ -66,7 +67,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot retrieve data", e);
+            throw new DataProcessingException("Cannot retrieve data", e);
         }
         return books;
     }
@@ -87,7 +88,7 @@ public class BookDaoImpl implements BookDao {
                 throw new RuntimeException("Expected to update one row, but 0 was updated");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot update book with id " + book.getId(), e);
+            throw new DataProcessingException("Cannot update book with id " + book.getId(), e);
         }
         return book;
     }
@@ -100,10 +101,10 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setObject(1, id);
             int update = preparedStatement.executeUpdate();
             if (update < 1) {
-                throw new RuntimeException("Cannot delete the book with id " + id);
+                throw new RuntimeException("Expected to delete one row, but 0 was deleted");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Cannot delete book, id: " + id, e);
         }
         return true;
     }
