@@ -99,14 +99,11 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, id);
-            int update = preparedStatement.executeUpdate();
-            if (update < 1) {
-                throw new RuntimeException("Expected to delete one row, but 0 was deleted");
-            }
+            int deletedCount = preparedStatement.executeUpdate();
+            return deletedCount > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot delete book, id: " + id, e);
         }
-        return true;
     }
 
     private Book createBookFromDb(ResultSet resultSet) throws SQLException {
