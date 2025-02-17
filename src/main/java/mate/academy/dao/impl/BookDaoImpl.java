@@ -27,7 +27,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Create book failed, 0 rows affected");
+                throw new DataProcessingException("Create book failed, 0 rows affected");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Update book failed, 0 rows affected");
+                throw new DataProcessingException("Update book failed, 0 rows affected");
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update the Book: " + book, e);
@@ -100,8 +100,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete the book. Id: " + id, e);
         }
