@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
                 throw new DataProcessingException("Cant update book id db.Book: " + book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cant create new book" + book, e);
+            throw new DataProcessingException("Can't update book in db. Book:" + book, e);
         }
         return book;
     }
