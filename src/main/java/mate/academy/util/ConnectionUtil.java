@@ -19,7 +19,7 @@ public class ConnectionUtil {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can not loud JDBC driver", e);
+            throw new RuntimeException("Cannot loud JDBC driver", e);
         }
     }
 
