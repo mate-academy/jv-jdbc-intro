@@ -24,7 +24,12 @@ public class BookDaoImpl implements BookDao {
                         Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
-            updateBookInDb(book, preparedStatement);
+            updateBookInDb(preparedStatement);
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Long id = generatedKeys.getObject(1,Long.class);
+                book.setId(id);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Can't create book", e);
         }
@@ -66,13 +71,19 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String sqlCreate = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        String sqlFind = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(sqlCreate,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlCreate);
+                PreparedStatement selectStatement = connection.prepareStatement(sqlFind)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-            updateBookInDb(book, preparedStatement);
+            updateBookInDb(preparedStatement);
+            selectStatement.setLong(1, book.getId());
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                return getBookFromDb(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Can't create book", e);
         }
@@ -87,8 +98,8 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setString(1, id.toString());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least one row,"
-                        + " but inserted 0 rows");
+                throw new RuntimeException("Expected to delete at least one row,"
+                        + " but deleted 0 rows");
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't create connection", e);
@@ -107,16 +118,11 @@ public class BookDaoImpl implements BookDao {
         return newBook;
     }
 
-    private void updateBookInDb(Book book, PreparedStatement preparedStatement)
+    private void updateBookInDb(PreparedStatement preparedStatement)
             throws SQLException {
         int affectedRows = preparedStatement.executeUpdate();
         if (affectedRows < 1) {
-            throw new RuntimeException("Expected to insert at least one row, but inserted 0 rows");
-        }
-        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-        if (generatedKeys.next()) {
-            Long id = generatedKeys.getObject(1,Long.class);
-            book.setId(id);
+            throw new RuntimeException("Expected to modify at least one row, but modified 0 rows");
         }
     }
 }

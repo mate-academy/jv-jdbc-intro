@@ -25,7 +25,7 @@ public class Main {
         System.out.println(bookDao.findAll());
 
         // UPDATE
-        book.setTitle("Book Title Udated");
+        book.setTitle("Book Title Updated");
         book.setPrice(BigDecimal.valueOf(103));
         book.setId(3L);
         bookDao.update(book);
