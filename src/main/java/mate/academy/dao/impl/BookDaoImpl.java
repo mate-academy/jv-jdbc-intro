@@ -47,7 +47,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(getBookFromDb(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection", e);
+            throw new RuntimeException("Can't find book by id", e);
         }
         return Optional.empty();
     }
@@ -63,7 +63,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(getBookFromDb(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection", e);
+            throw new RuntimeException("Can't find all books", e);
         }
         return books;
     }
@@ -85,7 +85,7 @@ public class BookDaoImpl implements BookDao {
                 return getBookFromDb(resultSet);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create book", e);
+            throw new RuntimeException("Can't update book", e);
         }
         return book;
     }
@@ -102,7 +102,7 @@ public class BookDaoImpl implements BookDao {
                         + " but deleted 0 rows");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection", e);
+            throw new RuntimeException("Can't delete book by id", e);
         }
         return true;
     }
