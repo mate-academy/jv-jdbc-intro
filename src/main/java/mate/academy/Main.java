@@ -20,7 +20,7 @@ public class Main {
 
         System.out.println(bookDao.findById(1L));
 
-        System.out.println(bookDao.delete(book));
+        //System.out.println(bookDao.delete(book));
 
         System.out.println(bookDao.findAll());
     }
