@@ -4,17 +4,11 @@ import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.service.ConnectionUtil;
 
-import java.lang.annotation.Annotation;
 import java.sql.*;
 import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return BookDaoImpl.class;
-    }
-
     @Override
     public Book save(Book book) {
         String sql = "INSERT INTO info (book_name, author_name, price, quantity, publish_year) \n" +
@@ -47,7 +41,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book get(Long id) {
-        String sql = "SELECT * FROM car WHERE id = ?";
+        String sql = "SELECT * FROM info WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setLong(1, id);
@@ -88,4 +82,5 @@ public class BookDaoImpl implements BookDao {
     public boolean delete(Book book) {
         return false;
     }
+
 }

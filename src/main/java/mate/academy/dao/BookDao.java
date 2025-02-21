@@ -5,7 +5,7 @@ import mate.academy.model.Book;
 
 import java.util.Optional;
 
-public interface BookDao extends Dao {
+public interface BookDao {
     Book save(Book book);
 
     Book get(Long id);
