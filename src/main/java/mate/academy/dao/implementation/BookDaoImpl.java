@@ -30,7 +30,7 @@ public class BookDaoImpl implements BookDao {
             "UPDATE books SET books.title = ?, books.price = ? WHERE id = ?;";
     public static final String DELETE_STATEMENT =
             "DELETE FROM books WHERE books.id = ?;";
-    public static final String AT_LEAST_ONE_ROW_SHOULD_BE_INSERTED =
+    public static final String AT_LEAST_ONE_ROW_SHOULD_BE_UPDATED =
             "At least one row should be inserted.";
     public static final String AT_LEAST_ONE_ROW_SHOULD_BE_DELETED =
             "At least one row should be deleted";
@@ -115,7 +115,7 @@ public class BookDaoImpl implements BookDao {
                 preparedStatement.setLong(3, book.getId());
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows < 1) {
-                    throw new DataProcessingException(AT_LEAST_ONE_ROW_SHOULD_BE_INSERTED,
+                    throw new DataProcessingException(AT_LEAST_ONE_ROW_SHOULD_BE_UPDATED,
                             new RuntimeException());
                 }
                 return book;

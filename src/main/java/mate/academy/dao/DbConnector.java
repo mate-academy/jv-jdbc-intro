@@ -1,5 +1,7 @@
 package mate.academy.dao;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,14 +10,16 @@ import java.util.Properties;
 public final class DbConnector {
     public static final String ERROR_DURING_CONNECTION_CREATION =
             "Error during connection creation";
-    private static final String USER = "root";
-    private static final String PASSWORD = "Senkiv1905!";
     private final Properties properties;
 
     public DbConnector() {
         properties = new Properties();
-        properties.put("user", USER);
-        properties.put("password", PASSWORD);
+        try {
+            FileReader fr = new FileReader("src/main/resources/security.properties");
+            properties.load(fr);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Connection getConnection() {
