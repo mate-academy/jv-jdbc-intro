@@ -32,11 +32,11 @@ public class Book {
         this.author = author;
     }
 
-    public Long getId () {
+    public Long getId() {
         return id;
     }
 
-    public void setId (Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -58,13 +58,13 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", year=" + year +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", name='" + name + '\'' +
-                ", author='" + author + '\'' +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", year=" + year
+                + ", price=" + price
+                + ", quantity=" + quantity
+                + ", name='" + name + '\''
+                + ", author='" + author + '\''
+                + '}';
     }
 }
