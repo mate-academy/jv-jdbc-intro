@@ -1,4 +1,4 @@
-package mate.academy;
+package mate.academy.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,6 @@ import java.util.Properties;
 public class ConnectionUtil {
 
     public static final String DB_URL = "jdbc:mysql://localhost:3306/book_homework";
-
     public static final Properties DB_PROPERTIES;
 
     static {

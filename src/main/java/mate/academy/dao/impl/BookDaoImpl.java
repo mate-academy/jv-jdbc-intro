@@ -9,11 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -48,18 +48,17 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    String title = resultSet.getString("title");
-                    BigDecimal price = resultSet.getBigDecimal("price");
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String title = resultSet.getString("title");
+                BigDecimal price = resultSet.getBigDecimal("price");
 
-                    Book book = new Book();
-                    book.setId(id);
-                    book.setTitle(title);
-                    book.setPrice(price);
+                Book book = new Book();
+                book.setId(id);
+                book.setTitle(title);
+                book.setPrice(price);
 
-                    return Optional.of(book);
-                }
+                return Optional.of(book);
             }
 
         } catch (SQLException e) {
