@@ -1,9 +1,11 @@
 package mate.academy.model;
 
+import java.math.BigDecimal;
+
 public class Book {
     private Long id;
     private int year;
-    private float price;
+    private BigDecimal price;
     private int quantity;
     private String name;
     private String author;
@@ -40,11 +42,11 @@ public class Book {
         this.id = id;
     }
 
-    public float getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
