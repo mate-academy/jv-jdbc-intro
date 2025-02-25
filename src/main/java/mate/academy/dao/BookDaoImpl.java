@@ -101,7 +101,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 Statement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery(sql);
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 Book book = parseRow(resultSet);
                 result.add(book);
             }
@@ -171,10 +171,9 @@ public class BookDaoImpl implements BookDao {
             book.setId(resultSet.getLong("id"));
             return book;
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new DataProcessingException("Can not set parameters for book");
         }
     }
-
 
 }

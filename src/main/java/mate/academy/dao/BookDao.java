@@ -10,6 +10,7 @@ public interface BookDao {
     Book get(Long id);
 
     Optional<Book> findById(Long id);
+
     List<Book> findAll();
 
     Book update(Book book);
