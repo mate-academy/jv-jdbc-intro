@@ -3,7 +3,6 @@ package mate.academy;
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
 import mate.academy.model.Book;
-
 import java.math.BigDecimal;
 
 public class Main {

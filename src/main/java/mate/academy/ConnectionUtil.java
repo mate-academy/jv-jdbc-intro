@@ -13,12 +13,14 @@ public class ConnectionUtil {
         PROPERTIES = new Properties();
         PROPERTIES.put("user", "root");
         PROPERTIES.put("password", "yourpassword");
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Error during connection creation",e);
         }
     }
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, PROPERTIES);
     }

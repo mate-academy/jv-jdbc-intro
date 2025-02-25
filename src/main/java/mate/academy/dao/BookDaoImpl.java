@@ -21,14 +21,16 @@ public class BookDaoImpl implements BookDao {
     public static final String UPDATE_SQL = "UPDATE car SET model = ?, year = ? WHERE id = ?";
     public static final String CREATE_EXCEPTION = "Error during creation of the book \"%s\"";
     public static final String FIND_BY_ID_EXCEPTION = "Error during finding the book by id \"%s\"";
-    public static final String FIND_ALL_EXCEPTION = "Error during finding of list of the books \"%s\"";
+    public static final String FIND_ALL_EXCEPTION
+            = "Error during finding of list of the books \"%s\"";
     public static final String DELETE_EXCEPTION = "Error during deleting the book \"%s\"";
     public static final String UPDATE_EXCEPTION = "Error during updating the book \"%s\"";
 
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement prStatement = connection.prepareStatement(CREATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement prStatement = connection.prepareStatement(CREATE_SQL
+                     , Statement.RETURN_GENERATED_KEYS)) {
             prStatement.setString(1,book.getTitle());
             prStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = prStatement.executeUpdate();
@@ -42,7 +44,6 @@ public class BookDaoImpl implements BookDao {
 
             }
             return book;
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
