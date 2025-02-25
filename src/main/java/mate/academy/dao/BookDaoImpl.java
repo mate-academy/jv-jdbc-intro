@@ -14,11 +14,11 @@ import java.util.Optional;
 import mate.academy.model.Book;
 
 public class BookDaoImpl implements BookDao {
-    public static final String CREATE_SQL = "INSERT INTO car(model,year) VALUES(?,?)";
-    public static final String FIND_BY_ID_SQL = "SELECT * FROM car WHERE id = ?";
-    public static final String FIND_ALL_SQL = "SELECT * FROM car";
+    public static final String CREATE_SQL = "INSERT INTO books(model,year) VALUES(?,?)";
+    public static final String FIND_BY_ID_SQL = "SELECT * FROM books WHERE id = ?";
+    public static final String FIND_ALL_SQL = "SELECT * FROM books";
     public static final String DELETE_SQL = "DELETE FROM books WHERE id = ?";
-    public static final String UPDATE_SQL = "UPDATE car SET model = ?, year = ? WHERE id = ?";
+    public static final String UPDATE_SQL = "UPDATE books SET model = ?, year = ? WHERE id = ?";
     public static final String CREATE_EXCEPTION = "Error during creation of the book \"%s\"";
     public static final String FIND_BY_ID_EXCEPTION = "Error during finding the book by id \"%s\"";
     public static final String FIND_ALL_EXCEPTION
@@ -35,7 +35,7 @@ public class BookDaoImpl implements BookDao {
             prStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = prStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException(CREATE_EXCEPTION, new RuntimeException());
+                throw new DataProcessingException(CREATE_EXCEPTION, new SQLException());
             }
             ResultSet generatedKeys = prStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -65,7 +65,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException(FIND_BY_ID_EXCEPTION, new RuntimeException());
+            throw new DataProcessingException(FIND_BY_ID_EXCEPTION, new SQLException());
         }
         return Optional.empty();
     }
@@ -87,7 +87,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException(FIND_ALL_EXCEPTION, new RuntimeException());
+            throw new DataProcessingException(FIND_ALL_EXCEPTION, new SQLException());
         }
         return books;
     }
@@ -101,12 +101,12 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException(UPDATE_EXCEPTION, new RuntimeException());
+                throw new DataProcessingException(UPDATE_EXCEPTION, new SQLException());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return book;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1,id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException(DELETE_EXCEPTION, new RuntimeException());
+            throw new DataProcessingException(DELETE_EXCEPTION, new SQLException());
         }
     }
 }

@@ -18,7 +18,6 @@ public class Main {
         Book book3 = new Book();
         book3.setPrice(BigDecimal.valueOf(1000));
         book3.setTitle("THIS");
-        System.out.println(bookDao.create(book1));
         System.out.println(bookDao.create(book2));
         System.out.println(bookDao.create(book3));
         System.out.println(bookDao.findAll());
