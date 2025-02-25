@@ -2,7 +2,6 @@ package mate.academy.dao;
 
 import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
-import mate.academy.model.Book;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.model.Book;
 
 public class BookDaoImpl implements BookDao {
     public static final String CREATE_SQL = "INSERT INTO car(model,year) VALUES(?,?)";
@@ -75,7 +75,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
-        ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Book book = new Book();
                 Long id = resultSet.getObject("id", Long.class);
