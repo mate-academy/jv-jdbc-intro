@@ -18,15 +18,14 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sql = "INSERT INTO book (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql,
+                PreparedStatement statement = connection.prepareStatement(sql,
                        Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at leas one row," +
-                        " but inserted 0 rows.");
+                throw new RuntimeException("Expected to insert, but inserted 0 rows.");
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -93,8 +92,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at leas one row," +
-                        " but inserted 0 rows.");
+                throw new RuntimeException("Expected to insert, but inserted 0 rows.");
             } else {
                 return book;
             }
