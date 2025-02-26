@@ -4,35 +4,9 @@ import java.math.BigDecimal;
 
 public class Book {
     private Long id;
-    private int year;
     private BigDecimal price;
-    private int quantity;
-    private String name;
-    private String author;
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    private String title;
 
     public Long getId() {
         return id;
@@ -50,23 +24,20 @@ public class Book {
         this.price = price;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public String getTitle() {
+        return title;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
     public String toString() {
         return "Book{"
                 + "id=" + id
-                + ", year=" + year
                 + ", price=" + price
-                + ", quantity=" + quantity
-                + ", name='" + name + '\''
-                + ", author='" + author + '\''
+                + ", title='" + title + '\''
                 + '}';
     }
 }

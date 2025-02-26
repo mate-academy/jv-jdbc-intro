@@ -14,11 +14,8 @@ public class Main {
         System.out.println(bookDao.get(1L));
 
         Book book = new Book();
-        book.setId(3L);
-        book.setYear(1800);
-        book.setQuantity(510);
-        book.setName("Siiuuuu");
-        book.setAuthor("N1k");
+        book.setId(1L);
+        book.setTitle("Siiuuuu");
         book.setPrice(BigDecimal.valueOf(200));
         Book updatedBook = bookDao.save(book);
         System.out.println(updatedBook);
