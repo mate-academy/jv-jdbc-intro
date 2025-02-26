@@ -25,6 +25,5 @@ public class Main {
         System.out.println(update);
         boolean deleted = bookDao.delete(book);
         System.out.println(deleted);
-
     }
 }

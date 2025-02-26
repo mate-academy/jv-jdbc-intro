@@ -41,7 +41,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create a connection to the DB");
+            throw new DataProcessingException("Can not create a connection to the DB", e);
         }
         return book;
     }
@@ -62,7 +62,7 @@ public class BookDaoImpl implements BookDao {
                 book.setPrice(price);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create a connection to the DB");
+            throw new DataProcessingException("Can not create a connection to the DB", e);
         }
         return book;
     }
@@ -79,7 +79,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not connect to DB");
+            throw new DataProcessingException("Can not connect to DB", e);
         }
         return Optional.empty();
     }
@@ -96,14 +96,14 @@ public class BookDaoImpl implements BookDao {
                 result.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not connect to the DB");
+            throw new DataProcessingException("Can not connect to the DB", e);
         }
         return result;
     }
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE info SET title = ?, price = ?,"
+        String sql = "UPDATE books SET title = ?, price = ?"
                 + " WHERE id = ?;";
 
         try (Connection connection = ConnectionUtil.getConnection();
@@ -123,7 +123,7 @@ public class BookDaoImpl implements BookDao {
             return book;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot update book in the DB");
+            throw new DataProcessingException("Cannot update book with id: " + book.getId(), e);
         }
     }
 
@@ -135,7 +135,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, book.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not connect to the DB");
+            throw new DataProcessingException("Can not connect to the DB", e);
         }
     }
 
@@ -148,7 +148,7 @@ public class BookDaoImpl implements BookDao {
             return book;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not set parameters for book");
+            throw new DataProcessingException("Can not set parameters for book", e);
         }
     }
 
