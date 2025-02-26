@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.exception.DataProcessingException;
-import mate.academy.model.Book;
 import mate.academy.ConnectionUtil;
+import mate.academy.model.Book;
 
 public class BookDaoImpl implements BookDao {
-
 
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO book (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement statement = connection.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
@@ -43,7 +43,8 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql,
+                     Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, id);
 
             ResultSet resultSet = statement.executeQuery();
@@ -65,7 +66,8 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String sql = "SELECT * FROM book";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql,
+                     Statement.RETURN_GENERATED_KEYS)) {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -82,7 +84,8 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE book SET title = ?, price = ? WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql,
+                     Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -102,7 +105,8 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM book WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql,
+                     Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, id);
             int deleted_rows = statement.executeUpdate();
             return deleted_rows > 1;
