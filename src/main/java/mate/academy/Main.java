@@ -11,7 +11,7 @@ import java.util.Optional;
 public class Main {
     public static final Injector injector = Injector.getInstance("mate.academy.lib");
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao)injector.getInstance(BookDao.class);
 
         Book book = new Book();
         book.setId(null);
@@ -22,7 +22,6 @@ public class Main {
         Optional<Book> findBook = bookDao.findById(book.getId());
 
         List<Book> books = bookDao.findAll();
-
 
         book.setTitle("Java++");
         book.setPrice(new BigDecimal("70.0"));
