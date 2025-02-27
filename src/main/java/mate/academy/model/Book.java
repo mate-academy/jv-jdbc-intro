@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class Book {
     private Long id;
     private BigDecimal price;
-
     private String title;
 
     public Long getId() {
