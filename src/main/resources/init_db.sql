@@ -1,6 +1,5 @@
-CREATE TABLE info (
-    id INT NOT NULL AUTO_INCREMENT,
-    title VARCHAR(255) NOT null,
-    year INT,
-    PRIMARY KEY (id)
+CREATE TABLE books (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    price DECIMAL(10.2)
 );

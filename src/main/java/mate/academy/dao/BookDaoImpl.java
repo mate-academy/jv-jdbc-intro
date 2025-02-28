@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,9 +17,7 @@ import mate.academy.util.ConnectionUtil;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book save(Book book) {
-        String sql = "INSERT INTO books (title, "
-                + " price) \n"
-                + "VALUES (?, ?);\n";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
                         Statement.RETURN_GENERATED_KEYS)) {
@@ -41,28 +38,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create a connection to the DB", e);
-        }
-        return book;
-    }
-
-    @Override
-    public Book get(Long id) {
-        String sql = "SELECT * FROM books WHERE id = ?";
-        Book book = new Book();
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-
-                book.setId(id);
-                book.setPrice(price);
-            }
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can not create a connection to the DB", e);
+            throw new DataProcessingException("Can not add new book to the DB", e);
         }
         return book;
     }
@@ -79,7 +55,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not connect to DB", e);
+            throw new DataProcessingException("Can not find book from DB by id", e);
         }
         return Optional.empty();
     }
@@ -96,7 +72,7 @@ public class BookDaoImpl implements BookDao {
                 result.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not connect to the DB", e);
+            throw new DataProcessingException("Can not show book from DB", e);
         }
         return result;
     }
@@ -128,14 +104,14 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean delete(Book book) {
+    public boolean deleteById(Book book) {
         String sql = "DELETE FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, book.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not connect to the DB", e);
+            throw new DataProcessingException("Can not delete book from DB", e);
         }
     }
 

@@ -7,13 +7,11 @@ import mate.academy.model.Book;
 public interface BookDao {
     Book save(Book book);
 
-    Book get(Long id);
-
     Optional<Book> findById(Long id);
 
     List<Book> findAll();
 
     Book update(Book book);
 
-    boolean delete(Book book);
+    boolean deleteById(Book book);
 }
