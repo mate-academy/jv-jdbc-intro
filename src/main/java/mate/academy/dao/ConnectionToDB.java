@@ -22,7 +22,7 @@ public class ConnectionToDB {
             properties.put(PASSWORD, REAL_PASSWORD);
             return DriverManager.getConnection(URL_DB, properties);
         } catch (ClassNotFoundException | SQLException e) {
-            throw new DataProcessingException("Can not make a connection to BD",e);
+            throw new DataProcessingException("Can not make a connection to BD", e);
         }
     }
 }
