@@ -1,4 +1,4 @@
-package util;
+package mate.academy.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

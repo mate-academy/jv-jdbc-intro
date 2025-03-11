@@ -5,7 +5,7 @@ import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
-import util.DatabaseInitializer;
+import mate.academy.util.DatabaseInitializer;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
