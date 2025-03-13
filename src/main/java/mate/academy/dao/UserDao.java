@@ -10,7 +10,7 @@ public class UserDao {
 
     public void save(User user) {
         String sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?) ON CONFLICT (email) DO NOTHING";
-
+//
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
