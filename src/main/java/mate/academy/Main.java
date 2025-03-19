@@ -12,7 +12,6 @@ public class Main {
         final BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         Book book = new Book();
-        book.setId(1L);
         book.setTitle("Zibibibi");
         book.setPrice(new BigDecimal(450));
 

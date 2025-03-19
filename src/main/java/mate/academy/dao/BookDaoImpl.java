@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -34,7 +37,7 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not create a book", e);
         }
         return book;
     }
@@ -48,14 +51,14 @@ public class BookDaoImpl implements BookDao {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     Book book = new Book();
-                    book.setId(resultSet.getLong("id"));
-                    book.setTitle(resultSet.getString("title"));
-                    book.setPrice(resultSet.getBigDecimal("price"));
+                    book.setId(resultSet.getObject(1, Long.class));
+                    book.setTitle(resultSet.getObject(2, String.class));
+                    book.setPrice(resultSet.getObject(3, BigDecimal.class));
                     return Optional.of(book);
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not create a connection with db", e);
         }
         return Optional.empty();
     }
@@ -69,13 +72,13 @@ public class BookDaoImpl implements BookDao {
                 ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
+                book.setId(resultSet.getObject(1, Long.class));
+                book.setTitle(resultSet.getObject(2, String.class));
+                book.setPrice(resultSet.getObject(3, BigDecimal.class));
                 booksList.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not create a connection with db", e);
         }
         return booksList;
     }
@@ -91,7 +94,7 @@ public class BookDaoImpl implements BookDao {
             statement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create a connection to db", e);
+            throw new DataProcessingException("Could not create a connection to db", e);
         }
     }
 
@@ -103,7 +106,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not create a connection with db", e);
         }
     }
 }
