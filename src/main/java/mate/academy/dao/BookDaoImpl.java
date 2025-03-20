@@ -57,7 +57,7 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not find a book with id: " + id, e);
         }
         return Optional.empty();
     }
@@ -77,7 +77,7 @@ public class BookDaoImpl implements BookDao {
                 booksList.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not retrieve all books", e);
         }
         return booksList;
     }
@@ -93,7 +93,7 @@ public class BookDaoImpl implements BookDao {
             statement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not create a connection to db", e);
+            throw new DataProcessingException("Could not update book: " + book, e);
         }
     }
 
@@ -105,7 +105,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not create a connection with db", e);
+            throw new DataProcessingException("Could not delete book with id: " + id, e);
         }
     }
 }
