@@ -34,8 +34,8 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error occurred while inserting book into the database: "
-                    + book, e);
+            throw new DataProcessingException("Error occurred while inserting book "
+                    + "into the database: " + book, e);
         }
         return book;
     }
@@ -55,7 +55,8 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error occurred while retrieving the book by ID: " + id, e);
+            throw new DataProcessingException("Error occurred while retrieving the book by ID: "
+                    + id, e);
         }
         return Optional.empty();
     }
@@ -75,7 +76,8 @@ public class BookDaoImpl implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error while retrieving all books from the database.", e);
+            throw new DataProcessingException("Error while retrieving all books "
+                    + "from the database.", e);
         }
         return books;
     }
@@ -93,7 +95,7 @@ public class BookDaoImpl implements BookDao {
                 throw new RuntimeException("No rows affected, update failed.");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Error occurred while updating the book in the database: "
+            throw new DataProcessingException("Error occurred while updating the book: "
                     + book, e);
         }
         return book;
@@ -108,7 +110,8 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Error occurred while deleting the book by ID: " + id, e);
+            throw new DataProcessingException("Error occurred while deleting the book by ID: "
+                    + id, e);
         }
     }
 }
