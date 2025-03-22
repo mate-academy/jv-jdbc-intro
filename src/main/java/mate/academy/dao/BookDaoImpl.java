@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
+import mate.academy.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
@@ -33,7 +34,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while inserting book into the database: "
+            throw new DataProcessingException("Error occurred while inserting book into the database: "
                     + book, e);
         }
         return book;
@@ -54,7 +55,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while retrieving the book by ID: " + id, e);
+            throw new DataProcessingException("Error occurred while retrieving the book by ID: " + id, e);
         }
         return Optional.empty();
     }
@@ -74,7 +75,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error while retrieving all books from the database.", e);
+            throw new DataProcessingException("Error while retrieving all books from the database.", e);
         }
         return books;
     }
@@ -92,7 +93,7 @@ public class BookDaoImpl implements BookDao {
                 throw new RuntimeException("No rows affected, update failed.");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while updating the book in the database: "
+            throw new DataProcessingException("Error occurred while updating the book in the database: "
                     + book, e);
         }
         return book;
@@ -107,7 +108,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while deleting the book by ID: " + id, e);
+            throw new DataProcessingException("Error occurred while deleting the book by ID: " + id, e);
         }
     }
 }
