@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
@@ -17,7 +18,7 @@ import mate.academy.model.Book;
 public class BookDaoImp implements BookDao {
 
     @Override
-    public Book create(Book book) {
+    public Book create(Book book) throws DataProcessingException {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
@@ -33,7 +34,7 @@ public class BookDaoImp implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add book: " + book, e);
+            throw new DataProcessingException("Can't add book: " + book, e);
         }
         return book;
     }
@@ -63,12 +64,12 @@ public class BookDaoImp implements BookDao {
     }
 
     @Override
-    public List<Book> findAll() {
+    public List<Book> findAll() throws DataProcessingException {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM books_db.books";
+        String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery(sql);
             while (resultSet.next()) {
                 Book book = new Book();
                 book.setId(resultSet.getObject(1, Long.class));
@@ -77,41 +78,41 @@ public class BookDaoImp implements BookDao {
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't creat connection", e);
+            throw new DataProcessingException("Can't create connection", e);
         }
         return books;
     }
 
     @Override
-    public Book update(Book book) {
+    public Book update(Book book) throws DataProcessingException {
         String updateSql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(updateSql)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-            preparedStatement.executeUpdate();
+//            preparedStatement.executeUpdate();
             if (preparedStatement.executeUpdate() < 1) {
                 throw new RuntimeException("Failed to update book, book id: "
                         + book.getId() + " doesnt exist in DB");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Update book failed", e);
+            throw new DataProcessingException("Update book failed", e);
         }
         return book;
     }
 
     @Override
-    public boolean deleteById(Long id) {
+    public boolean deleteById(Long id) throws DataProcessingException {
         String deleteSql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteSql)) {
             preparedStatement.setLong(1, id);
             int updatedRows = preparedStatement.executeUpdate();
-            preparedStatement.executeUpdate();
+//            preparedStatement.executeUpdate();
             return updatedRows > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Delete book with id: " + id + " failed", e);
+            throw new DataProcessingException("Delete book with id: " + id + " failed", e);
         }
     }
 }
