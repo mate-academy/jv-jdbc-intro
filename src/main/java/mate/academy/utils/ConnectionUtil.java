@@ -22,7 +22,6 @@ public class ConnectionUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        System.out.println("call");
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 }

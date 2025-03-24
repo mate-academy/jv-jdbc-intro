@@ -23,7 +23,6 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query,
                         Statement.RETURN_GENERATED_KEYS)) {
 
-            System.out.println(statement);
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
@@ -100,7 +99,7 @@ public class BookDaoImpl implements BookDao {
 
     private Book parseBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getLong("id"));
+        resultSet.getObject("id", Long.class);
         book.setTitle(resultSet.getString("title"));
         book.setPrice(resultSet.getBigDecimal("price"));
         return book;
