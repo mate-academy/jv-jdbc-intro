@@ -27,14 +27,16 @@ public class BookDaoImpl implements BookDao {
             int result = statement.executeUpdate();
             if (result < 1) {
                 throw new DataProcessingException("No rows were affected executing query. "
-                        + "Something went wrong.", new SQLException());
+                        + statement
+                        + "Something went wrong."
+                        + "Unable to add book row:" + book, new SQLException());
             }
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 book.setId(resultSet.getLong(1));
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new RuntimeException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Can't create connection to DB.", de);
         }
         return book;
     }
@@ -56,7 +58,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.empty();
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new RuntimeException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Can't create connection to DB.", de);
         }
     }
 
@@ -69,13 +71,14 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book book = new Book();
-                book.setId(resultSet.getLong("id"));
+                book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getString("title"));
-                book.setPrice(BigDecimal.valueOf(resultSet.getDouble("price")));
+                book.setPrice(resultSet.getBigDecimal("price"));
                 books.add(book);
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new RuntimeException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Unable to select books from table."
+                    + "May be something is wrong to DB connection.", de);
         }
         return books;
     }
@@ -89,13 +92,14 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             int result = statement.executeUpdate();
-            if (result >= 1) {
-                return book;
+            if (result < 1) {
+                throw new DataProcessingException("Unable to update book row"
+                        + book, new SQLException());
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new RuntimeException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Can't create connection to DB.", de);
         }
-        return null;
+        return book;
     }
 
     @Override
@@ -105,9 +109,12 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
             statement.setLong(1, id);
             int result = statement.executeUpdate();
-            return result >= 1;
+            if (result < 1) {
+                throw new DataProcessingException("Failed to update row with ID: " + id, new SQLException());
+            }
+            return true;
         } catch (DataProcessingException | SQLException de) {
-            throw new RuntimeException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Can't create connection to DB.", de);
         }
     }
 }

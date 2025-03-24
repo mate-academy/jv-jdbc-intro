@@ -2,9 +2,9 @@ CREATE DATABASE hw_books;
 USE hw_books;
 
 CREATE TABLE books (
-                       id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                       id BIGINT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                        title VARCHAR(255) NOT NULL,
-                       price INT(16)
+                       price DECIMAL(16)
 );
 
 INSERT INTO books (title, price) VALUES('The Mythical Man-Month', 260);
