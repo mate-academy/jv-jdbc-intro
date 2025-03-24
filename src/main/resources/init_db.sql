@@ -2,8 +2,8 @@ CREATE DATABASE hw_books;
 USE hw_books;
 
 CREATE TABLE books (
-                       id BIGINT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                       title VARCHAR(255) NOT NULL,
+                       id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                       title VARCHAR(255) NOT NULL ,
                        price DECIMAL(16)
 );
 

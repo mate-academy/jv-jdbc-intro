@@ -36,7 +36,9 @@ public class BookDaoImpl implements BookDao {
                 book.setId(resultSet.getLong(1));
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new DataProcessingException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Can't create new row in DB. "
+                    + "Please check connection to database. "
+                    + "So book ro wasn't created" + book, de);
         }
         return book;
     }
@@ -58,7 +60,9 @@ public class BookDaoImpl implements BookDao {
                 return Optional.empty();
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new DataProcessingException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Unable to get book by ID: "
+                    + id + ". "
+                    + "Please check the database connection.", de);
         }
     }
 
@@ -97,7 +101,8 @@ public class BookDaoImpl implements BookDao {
                         + book, new SQLException());
             }
         } catch (DataProcessingException | SQLException de) {
-            throw new DataProcessingException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Unable o update row for book"
+                    + book, de);
         }
         return book;
     }
@@ -111,10 +116,13 @@ public class BookDaoImpl implements BookDao {
             int result = statement.executeUpdate();
             if (result < 1) {
                 throw new DataProcessingException("Failed to update row with ID: " + id, new SQLException());
+            } else {
+                return true;
             }
-            return true;
         } catch (DataProcessingException | SQLException de) {
-            throw new DataProcessingException("Can't create connection to DB.", de);
+            throw new DataProcessingException("Can't delete the book with ID: "
+                    + id
+                    + " Please check the connection to database", de);
         }
     }
 }
