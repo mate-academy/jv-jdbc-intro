@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -115,7 +114,8 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             int result = statement.executeUpdate();
             if (result < 1) {
-                throw new DataProcessingException("Failed to update row with ID: " + id, new SQLException());
+                throw new DataProcessingException("Failed to update row with ID: "
+                        + id, new SQLException());
             } else {
                 return true;
             }
