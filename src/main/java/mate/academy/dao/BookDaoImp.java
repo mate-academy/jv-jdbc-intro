@@ -18,7 +18,7 @@ import mate.academy.model.Book;
 public class BookDaoImp implements BookDao {
 
     @Override
-    public Book create(Book book) throws DataProcessingException {
+    public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
@@ -57,19 +57,19 @@ public class BookDaoImp implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to find book, book id: "
+            throw new DataProcessingException("Failed to find book, book id: "
                     + id + " doesnt exist in DB", e);
         }
         return Optional.empty();
     }
 
     @Override
-    public List<Book> findAll() throws DataProcessingException {
+    public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = preparedStatement.executeQuery(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Book book = new Book();
                 book.setId(resultSet.getObject(1, Long.class));
@@ -84,14 +84,13 @@ public class BookDaoImp implements BookDao {
     }
 
     @Override
-    public Book update(Book book) throws DataProcessingException {
+    public Book update(Book book) {
         String updateSql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(updateSql)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-//            preparedStatement.executeUpdate();
             if (preparedStatement.executeUpdate() < 1) {
                 throw new RuntimeException("Failed to update book, book id: "
                         + book.getId() + " doesnt exist in DB");
@@ -103,13 +102,12 @@ public class BookDaoImp implements BookDao {
     }
 
     @Override
-    public boolean deleteById(Long id) throws DataProcessingException {
+    public boolean deleteById(Long id) {
         String deleteSql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteSql)) {
             preparedStatement.setLong(1, id);
             int updatedRows = preparedStatement.executeUpdate();
-//            preparedStatement.executeUpdate();
             return updatedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Delete book with id: " + id + " failed", e);
