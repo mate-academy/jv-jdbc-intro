@@ -33,7 +33,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Car{"
+        return "Book{"
                 + "id=" + id
                 + ", title='" + title + '\''
                 + ", price=" + price
