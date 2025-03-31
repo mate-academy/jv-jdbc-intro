@@ -46,7 +46,7 @@ public class BookDaoImpl implements BookDao{
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                foundBook = getBookFromQuery(id, resultSet);
+                foundBook = getBookFromQueryWithId(id, resultSet);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get a book by id " + id, e);
@@ -62,7 +62,7 @@ public class BookDaoImpl implements BookDao{
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                bookList.add(getBookFromQuery(resultSet));
+                bookList.add(getBookFromQueryWithId(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books", e);
@@ -101,13 +101,13 @@ public class BookDaoImpl implements BookDao{
         return deletedRow > 0;
     }
 
-    private Book getBookFromQuery(ResultSet resultSet) throws SQLException {
+    private Book getBookFromQueryWithId(ResultSet resultSet) throws SQLException {
         return new Book(resultSet.getObject("id", Long.class),
                 resultSet.getString("title"),
                 resultSet.getBigDecimal("price"));
     }
 
-    private Book getBookFromQuery(Long id, ResultSet resultSet) throws SQLException {
+    private Book getBookFromQueryWithId(Long id, ResultSet resultSet) throws SQLException {
         return new Book(id,
                 resultSet.getString("title"),
                 resultSet.getBigDecimal("price"));
