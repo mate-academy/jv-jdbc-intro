@@ -45,7 +45,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't create book: " + book.getTitle(), e);
         }
 
         return book;
@@ -76,7 +76,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't find book with id: " + id, e);
         }
 
         return Optional.empty();
@@ -89,9 +89,9 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
 
         try (Connection connection = ConnectionUtill.getConnection();
-                Statement statement = connection.createStatement();) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
 
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = preparedStatement.executeQuery(sql);
             while (resultSet.next()) {
                 Book book = new Book();
 
@@ -116,7 +116,7 @@ public class BookDaoImpl implements BookDao {
 
         try (Connection connection = ConnectionUtill.getConnection();
                 PreparedStatement preparedStatement = connection
-                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+                        .prepareStatement(sql);) {
 
             if (book.getTitle() == null || book.getPrice() == null || book.getId() == null) {
                 throw new RuntimeException("Book id, title or price cannot be null");
@@ -131,14 +131,8 @@ public class BookDaoImpl implements BookDao {
                 throw new RuntimeException("Failed to insert book " + book.getTitle());
             }
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
-                book.setId(id);
-            }
-
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection",e);
+            throw new DataProcessingException("Can't update book: " + book, e);
         }
         return book;
     }
@@ -157,10 +151,14 @@ public class BookDaoImpl implements BookDao {
                 throw new RuntimeException("Book deletion failed " + id);
             }
 
+            if (affectedRows == 1) {
+                return true;
+            }
+
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create connection", e);
+            throw new DataProcessingException("Can't delete book with id: " + id, e);
         }
 
-        return true;
+        return false;
     }
 }

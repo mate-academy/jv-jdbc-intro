@@ -13,7 +13,6 @@ public class Main {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         Book bookFirst = new Book();
-        bookFirst.setId(1L);
         bookFirst.setTitle("Book 1");
         bookFirst.setPrice(BigDecimal.valueOf(30.20));
 
@@ -23,7 +22,6 @@ public class Main {
         List<Book> findAll = bookDao.findAll();
 
         Book bookSecond = new Book();
-        bookSecond.setId(2L);
         bookSecond.setTitle("Book 2");
         bookSecond.setPrice(BigDecimal.valueOf(50.00));
 
