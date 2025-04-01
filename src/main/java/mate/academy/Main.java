@@ -1,11 +1,10 @@
 package mate.academy;
 
-import mate.academy.dao.BookDao;
-import mate.academy.lib.Injector;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.dao.BookDao;
+import mate.academy.lib.Injector;
 
 public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
@@ -22,7 +21,6 @@ public class Main {
 
         Optional<Book> findById = bookDao.findById(1L);
         List<Book> findAll = bookDao.findAll();
-
 
         Book bookSecond = new Book();
         bookSecond.setId(2L);

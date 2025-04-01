@@ -1,15 +1,18 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.academy.Book;
 import mate.academy.ConnectionUtill;
 import mate.academy.DataProcessingException;
 import mate.academy.lib.Dao;
-
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -18,9 +21,9 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
 
-        try(Connection connection = ConnectionUtill.getConnection();
-            PreparedStatement preparedStatement = connection
-                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = ConnectionUtill.getConnection();
+                PreparedStatement preparedStatement = connection
+                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             if (book.getTitle() == null || book.getPrice() == null) {
                 throw new RuntimeException("Book title or price cannot be null");
@@ -52,8 +55,8 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
 
-        try(Connection connection = ConnectionUtill.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectionUtill.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
 
@@ -85,8 +88,8 @@ public class BookDaoImpl implements BookDao {
 
         String sql = "SELECT * FROM books";
 
-        try(Connection connection = ConnectionUtill.getConnection();
-            Statement statement = connection.createStatement();) {
+        try (Connection connection = ConnectionUtill.getConnection();
+                Statement statement = connection.createStatement();) {
 
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
@@ -111,8 +114,9 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
 
-        try(Connection connection = ConnectionUtill.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+        try (Connection connection = ConnectionUtill.getConnection();
+                PreparedStatement preparedStatement = connection
+                        .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
 
             if (book.getTitle() == null || book.getPrice() == null || book.getId() == null) {
                 throw new RuntimeException("Book id, title or price cannot be null");
@@ -143,8 +147,8 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
 
-        try(Connection connection = ConnectionUtill.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectionUtill.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
             int affectedRows = preparedStatement.executeUpdate();
