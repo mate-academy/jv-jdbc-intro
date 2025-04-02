@@ -10,7 +10,8 @@ public class ReadSqlScriptDaoImp implements ReadSqlScriptDao {
 
     @Override
     public String readSqlScript(String fileName) {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+        try (InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream(fileName)) {
             if (inputStream == null) {
                 throw new RuntimeException("File not found: " + fileName);
             }

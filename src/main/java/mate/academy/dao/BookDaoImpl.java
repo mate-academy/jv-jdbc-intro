@@ -27,18 +27,13 @@ public class BookDaoImpl implements BookDao {
     private static final String TITLE = "title";
     private static final String PRICE = "price";
     private static final String ID = "id";
-    private final ReadSqlScriptDao readSqlScriptDao = new ReadSqlScriptDaoImp();
+    private static final ReadSqlScriptDao readSqlScriptDao = new ReadSqlScriptDaoImp();
+    private static final String SQL_CREATE_TABLE = readSqlScriptDao.readSqlScript(FILE_NAME);
 
     @Override
     public Book create(Book book) {
-        String sqlCreate = readSqlScriptDao.readSqlScript(FILE_NAME);
         try (Connection connection = ConnectionUtil.getConnection()) {
-            try (PreparedStatement prepStatement = connection.prepareStatement(sqlCreate)) {
-                prepStatement.executeUpdate(sqlCreate);
-                System.out.println("Table created successfully (if it doesn't exist).");
-            } catch (SQLException e) {
-                System.out.println("Table might already exist, skipping creation.");
-            }
+
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BOOK,
                     Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(FIRST_PARAMETER, book.getTitle());
@@ -56,7 +51,10 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not create book", e);
+            String errorMessage = String.format(
+                    "Failed to create book with title '%s' and price '%s'.",
+                    book.getTitle(), book.getPrice());
+            throw new DataProcessingException(errorMessage, e);
         }
     }
 
@@ -102,8 +100,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BOOK,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BOOK)) {
             preparedStatement.setString(FIRST_PARAMETER, book.getTitle());
             preparedStatement.setBigDecimal(SECOND_PARAMETER, book.getPrice());
             preparedStatement.setLong(THIRD_PARAMETER, book.getId());
@@ -126,12 +123,21 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(FIRST_PARAMETER, id);
             int effectedRows = preparedStatement.executeUpdate();
             if (effectedRows < FIRST_PARAMETER) {
-                throw new RuntimeException("Expected to insert at least one row, but inserted: "
-                        + effectedRows);
+                return false;
             }
             return true;
         } catch (SQLException e) {
             throw new DataProcessingException("Can not find book by this id: " + id, e);
+        }
+    }
+
+    static {
+        try (Connection connection = ConnectionUtil.getConnection();
+                Statement statement = connection.createStatement()) {
+            statement.execute(SQL_CREATE_TABLE);
+            System.out.println("Table created successfully (if it doesn't exist).");
+        } catch (SQLException e) {
+            throw new DataProcessingException("Error while initializing the database", e);
         }
     }
 }
