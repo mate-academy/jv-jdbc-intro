@@ -106,11 +106,10 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(THIRD_PARAMETER, book.getId());
             int effectedRows = preparedStatement.executeUpdate();
             if (effectedRows < FIRST_PARAMETER) {
-                throw new RuntimeException("Expected to insert at least one row, but inserted: "
-                        + effectedRows);
+                return null;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not updated book", e);
+            throw new DataProcessingException("Can not updated book by id:" + book.getId(), e);
         }
         return book;
     }
