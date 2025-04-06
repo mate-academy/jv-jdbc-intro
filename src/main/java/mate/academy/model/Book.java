@@ -8,7 +8,6 @@ public class Book {
     private BigDecimal price;
 
     public Book(String title, BigDecimal price) {
-//        this.id = id;
         this.title = title;
         this.price = price;
     }
