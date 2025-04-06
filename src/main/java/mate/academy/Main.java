@@ -24,7 +24,7 @@ public class Main {
             });
             bookDao.deleteById(newBook.getId());
         } catch (DataProcessingException e) {
-            throw new RuntimeException("Data processing error occurred", e);
+            throw new DataProcessingException("Data processing error occurred", e);
         }
     }
 }

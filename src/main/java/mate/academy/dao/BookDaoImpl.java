@@ -19,7 +19,7 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection
+                    PreparedStatement statement = connection
                         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -42,9 +42,17 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
+
             if (resultSet.next()) {
                 Book book = new Book();
-                book.setId((Long) resultSet.getObject("id"));
+
+                Long bookId = (Long) resultSet.getObject("id");
+                if (bookId != null) {
+                    book.setId(bookId);
+                } else {
+                    throw new DataProcessingException("Book ID is null for book with ID: " + id);
+                }
+
                 book.setTitle(resultSet.getString("title"));
                 book.setPrice(resultSet.getBigDecimal("price"));
                 return Optional.of(book);
@@ -64,7 +72,14 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book book = new Book();
-                book.setId((Long) resultSet.getObject("id"));
+
+                Long id = resultSet.getObject("id", Long.class);
+                if (id != null) {
+                    book.setId(id);
+                } else {
+                    throw new DataProcessingException("Found a book with null ID in the database");
+                }
+
                 book.setTitle(resultSet.getString("title"));
                 book.setPrice(resultSet.getBigDecimal("price"));
                 books.add(book);
