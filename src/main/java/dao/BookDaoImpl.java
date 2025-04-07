@@ -54,7 +54,7 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
                 book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getString("title"));
-                book.setPrice(BigDecimal.valueOf(resultSet.getInt("price")));
+                book.setPrice(resultSet.getBigDecimal("price"));
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -75,7 +75,7 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
                 book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getString("title"));
-                book.setPrice(BigDecimal.valueOf(resultSet.getInt("price")));
+                book.setPrice(resultSet.getBigDecimal("price"));
                 booksList.add(book);
             }
             return booksList;
