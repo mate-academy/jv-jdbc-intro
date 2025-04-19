@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
-        Book book = new Book(null, "Mein Kampf", new BigDecimal("9.99"));
+        Book book = new Book(null, "The Adventure", new BigDecimal("11.99"));
         book = bookDao.create(book);
         System.out.println("Created: " + book);
 
