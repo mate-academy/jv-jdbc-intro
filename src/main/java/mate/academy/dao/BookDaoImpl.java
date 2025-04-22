@@ -37,7 +37,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't connect to database", e);
         }
-        return null;
+        return book;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find book by id", e);
+            throw new DataProcessingException("Cannot find book by id", e);
         }
         return Optional.empty();
     }
@@ -109,7 +109,7 @@ public class BookDaoImpl implements BookDao {
                 return true;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not delete book with id " + id, e);
+            throw new DataProcessingException("Cannot delete book with id " + id, e);
         }
         return false;
     }
