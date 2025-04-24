@@ -5,18 +5,22 @@ public class User {
     private final String name;
     private final String email;
     private final String password;
+    private final String fileData;
 
-    public User(int id, String name, String email, String password) {
+    public User(String name, String email, String password, String fileData) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.fileData = fileData;
+    }
+
+
+    public User(int id, String name, String email, String password, String fileData) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
+        this.fileData = fileData;
     }
 
     public int getId() {
@@ -35,6 +39,10 @@ public class User {
         return password;
     }
 
+    public String getFileData() {
+        return fileData;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -42,6 +50,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", fileData(length)=" + (fileData != null ? fileData.length() : 0) +
                 '}';
     }
 }
