@@ -24,8 +24,8 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
-            int affecetedRows = statement.executeUpdate();
-            if (affecetedRows < 1) {
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows < 1) {
                 throw new RuntimeException("Expected to insert at least one row, "
                         + "but inserted 0 rows");
             }
