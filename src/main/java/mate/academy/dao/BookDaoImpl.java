@@ -24,9 +24,9 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
-            int affecetRows = statement.executeUpdate();
-            if (affecetRows < 1) {
-                throw new RuntimeException("Expected to insert at least ine row, "
+            int affecetedRows = statement.executeUpdate();
+            if (affecetedRows < 1) {
+                throw new RuntimeException("Expected to insert at least one row, "
                         + "but inserted 0 rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -67,7 +67,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection(); Statement statement
-                = connection.prepareStatement(sql)) {
+                = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 books.add(new Book(resultSet.getLong("id"), resultSet.getString("title"),
@@ -84,9 +84,9 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
                 = connection.prepareStatement(sql)) {
-            statement.setLong(1, book.getId());
-            statement.setString(2, book.getTitle());
-            statement.setBigDecimal(3, book.getPrice());
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
             statement.executeUpdate();
             return book;
 

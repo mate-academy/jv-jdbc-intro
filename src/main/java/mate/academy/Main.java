@@ -20,7 +20,7 @@ public class Main {
         book2.setPrice(BigDecimal.valueOf(350.00));
 
         Injector injector = Injector.getInstance("mate.academy");
-        BookDao bookDao = (BookDaoImpl) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
 
         System.out.println(bookDao.create(book) + System.lineSeparator());
         System.out.println(bookDao.create(book2) + System.lineSeparator());

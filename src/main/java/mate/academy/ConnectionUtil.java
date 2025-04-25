@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import mate.academy.lib.Dao;
 
-@Dao
 public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/book_store";
     private static final Properties DB_PROPERTIES;
