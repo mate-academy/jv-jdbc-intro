@@ -2,7 +2,6 @@ package mate.academy;
 
 import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
-import mate.academy.dao.BookDaoImpl;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
@@ -12,7 +11,7 @@ public class Main {
 
         Book book = new Book();
         book.setId(1);
-        book.setTitle("Триумфальна акрка");
+        book.setTitle("Триумфальна арка");
         book.setPrice(BigDecimal.valueOf(235.00));
         Book book2 = new Book();
         book2.setId(2);
