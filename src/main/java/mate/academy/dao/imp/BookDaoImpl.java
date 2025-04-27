@@ -18,8 +18,8 @@ import mate.academy.model.Book;
 @Dao
 public class BookDaoImpl implements BookDao {
     private static final String URL = "jdbc:mysql://localhost:3306/book_store?serverTimezone=UTC";
-    private static final String USERNAME = "your_db_username";
-    private static final String PASSWORD = "your_db_password";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "1234";
 
     @Override
     public Book create(Book book) {
