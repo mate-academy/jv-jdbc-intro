@@ -22,7 +22,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection
                         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
-            statement.setInt(2, book.getPrice().intValue());
+            statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
