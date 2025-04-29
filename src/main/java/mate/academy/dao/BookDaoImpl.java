@@ -17,7 +17,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title,year) VALUES (?, ?)";
+        String sql = "INSERT INTO books (title,price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
