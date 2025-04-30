@@ -88,6 +88,7 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Cannot update book: " + book.getTitle(), e);
         }
@@ -101,6 +102,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Cannot delete book: " + id, e);
         }

@@ -14,11 +14,10 @@ public class Main {
         Book book = new Book(1L, "Kobzar", BigDecimal.valueOf(25));
         Book book2 = new Book(2L, "Harry Potter", BigDecimal.valueOf(40));
         // test other methods from BookDao
-        bookDao.create(book);
-        bookDao.update(book2);
+        bookDao.create(book2);
+        bookDao.update(book);
         bookDao.findAll();
         bookDao.findById(1L);
         bookDao.deleteById(book.getId());
-
     }
 }
