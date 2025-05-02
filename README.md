@@ -1,50 +1,56 @@
-# Task description
+# HW 02
 
-Your task is to create a Book entity class and BookDao repository interface, and it's implementation.
+## Project description
+The aim of current and following lessons is to create a basic `taxi service` project.
+Its' functionality should include: 
+* create new car/manufacturer
+* display all drivers/cars/cars by driver/manufacturers
+* add a driver to car
 
-Here are the steps you need to do in this HW:
-- Establish connection to your Database. Be sure you have installed DB and you are able to create a new schema for this task.
-- Create `init_db.sql` file in `src/main/resources` folder. In this file, put the scripts for creating required table.
-- Create `Book` model.
-- Create DAO  layer for `Book` model. Below you can see the list of required methods.
+First, you will create software representation of `driver`, `car`, `manufacturer` 
+and relations between them. To make this data long-term accessible DB is a must-have. And of course, we will add a User Interface layer to our app so you can easily manipulate the data. <br>
+But let's take one step at a time: in the current course, you will take care of the data storing part by implementing a layer in the application, here is your first task: 
+
+
+- Establish connection to your Database.
+- Create `init_db.sql` file in `src/main/resources` folder.
+- Create `Manufacturer` model.
+- Create DAO  layer for `Manufacturer` model. Below you can see the list of required methods.
 - You're already given an injector and `@Dao` annotation. Do not forget to use it for Dao implementations.
 - Return [Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html) when you can return null in DAO.
-  For example: ```public Optional<Book> findById(Long id);```
-- In the `main` method call all CRUD methods. It may look like:
+  For example: ```public Optional<Manufacturer> get(Long id);```
+- In the `main` method call CRUD methods. It may look like:
 ```java
 public class Main {
     private static final Injector injector = Injector.getInstance("YOUR_PACKAGE");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book();
+        ManufacturerDao manufacturerDao = (ManufacturerDao) injector.getInstance(ManufacturerDao.class);
+        Manufacturer manufacturer = new Manufacturer();
         // initialize field values using setters or constructor
-        bookDao.create(book);
-        // test other methods from BookDao
+        manufacturerDao.create(manufacturer);
+        // test other methods from ManufacturerDao
     }
 }
 ```
 **WARNING!!!** Path to your project must contain only english letters. Also, it mustn't contain spaces. In other case `Injector` won't work correctly.
-- Your table should be named `books` and contain these columns: `id`, `title`, `price`.
+- Your table should be named `manufacturers` and contain these columns: `id`, `name`, `country`, and `is_deleted`.
 ### Java classes structure:
-- Book
-
+- Manufacturer
 ```java
-import java.math.BigDecimal;
-
-public class Book {
-  private Long id;
-  private String title;
-  private BigDecimal price;
+public class Manufacturer {
+    private Long id;
+    private String name;
+    private String country;
 }
 ```
 
-### BookDao methods:
-    - Book create(Book book);
-    - Optional<Book> findById(Long id);
-    - List<Book> findAll();
-    - Book update(Book book);
-    - boolean deleteById(Long id);
+### ManufacturerDao methods:
+    - Manufacturer create(Manufacturer manufacturer);
+    - Optional<Manufacturer> get(Long id);
+    - List<Manufacturer> getAll();
+    - Manufacturer update(Manufacturer manufacturer);
+    - boolean delete(Long id);
     
 ### Create custom exception
 `e.printStackTrace()` - is a bad practice! Let's create custom exception `DataProcessingException`
@@ -59,4 +65,4 @@ Example: <br>
 `...localhost:3306/your_schema?serverTimezone=UTC` <br>
 Or you can set a timezone in MySql directly by running command: `SET GLOBAL time_zone = '+3:00'`;
 
-__You can check yourself using this__ [checklist](checklist.md)
+__You can check yourself using this__ [checklist](https://mate-academy.github.io/jv-program-common-mistakes/java-JDBC/jdbc-intro/JDBC-intro_checklist.html)
