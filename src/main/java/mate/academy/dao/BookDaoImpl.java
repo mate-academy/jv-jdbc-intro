@@ -112,7 +112,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
             int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows < 1) {
+            if (affectedRows == 0) {
                 throw new DataProcessingException(
                         "Can't update book with id: "
                                 + book.getId()

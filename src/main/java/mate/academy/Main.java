@@ -34,7 +34,8 @@ public class Main {
             }
 
         } catch (DataProcessingException e) {
-            throw new DataProcessingException("Data processing error occurred", e);
+            e.printStackTrace();
+            System.err.println("Data processing error occurred");
         }
     }
 }
