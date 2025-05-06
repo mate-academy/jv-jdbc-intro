@@ -57,7 +57,7 @@ Good: `books.title`
 * Let's save each query in a separate variable.
     - Bad practice:
         ```java
-            public List<Book> findAll() {
+            import mate.academy.utils.ConnectionUtil;public List<Book> findAll() {
                 try (Connection connection = ConnectionUtil.getConnection()
                     PreparedStatement preparedStatement = connection
                         .prepareStatement("SELECT * FROM books")) { // it's bad
@@ -67,9 +67,9 @@ Good: `books.title`
                 }
             }
         ``` 
-    - Good practice: 
+    - Good practice:
         ```java
-            public List<Book> findAll() {
+            import mate.academy.utils.ConnectionUtil;public List<Book> findAll() {
                 String query = "SELECT * FROM books"; // it's good
                 try (Connection connection = ConnectionUtil.getConnection();
                     PreparedStatement preparedStatement = connection.prepareStatement(query)) {
