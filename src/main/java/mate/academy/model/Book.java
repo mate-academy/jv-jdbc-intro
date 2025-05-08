@@ -1,0 +1,65 @@
+package mate.academy.model;
+
+import java.math.BigDecimal;
+
+public class Book {
+    private Long id;
+    private String title;
+    private BigDecimal price;
+
+    private Book(Long id, String title, BigDecimal price) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+    }
+
+    private Book(String title, BigDecimal price) {
+        this.title = title;
+        this.price = price;
+    }
+
+    public static Book of(Long id, String title, BigDecimal price) {
+        return new Book(id, title, price);
+    }
+
+    public static Book of(String title, BigDecimal price) {
+        return new Book(title, price);
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{"
+                + "id="
+                + id
+                + ", title='"
+                + title
+                + '\''
+                + ", price="
+                + price
+                + '}';
+    }
+}
