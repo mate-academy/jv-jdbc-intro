@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Injector {
     private static final Map<String, Injector> injectors = new HashMap<>();
-    private final List<Class<?>> classes = new ArrayList<>();
+    private static final List<Class<?>> classes = new ArrayList<>();
 
     private Injector(String mainPackageName) {
         try {
@@ -31,12 +31,12 @@ public class Injector {
         return injector;
     }
 
-    public Object getInstance(Class<?> certainInterface) {
+    public static Object getDaoInstance(Class<?> certainInterface) {
         Class<?> clazz = findClassExtendingInterface(certainInterface);
         return createInstance(clazz);
     }
 
-    private Class<?> findClassExtendingInterface(Class<?> certainInterface) {
+    private static Class<?> findClassExtendingInterface(Class<?> certainInterface) {
         for (Class<?> clazz : classes) {
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> singleInterface : interfaces) {
@@ -51,7 +51,7 @@ public class Injector {
                 + " interface and has valid annotation (Dao or Service)");
     }
 
-    private Object createInstance(Class<?> clazz) {
+    private static Object createInstance(Class<?> clazz) {
         Object newInstance;
         try {
             Constructor<?> classConstructor = clazz.getConstructor();
