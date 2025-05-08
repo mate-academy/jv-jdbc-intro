@@ -58,7 +58,7 @@ Good: `books.title`
     - Bad practice:
         ```java
             public List<Book> findAll() {
-                try (Connection connection = ConnectionUtil.getConnection()
+                try (Connection connection = mate.academy.ConnectionUtil.getConnection()
                     PreparedStatement preparedStatement = connection
                         .prepareStatement("SELECT * FROM books")) { // it's bad
                     ...
@@ -71,7 +71,7 @@ Good: `books.title`
         ```java
             public List<Book> findAll() {
                 String query = "SELECT * FROM books"; // it's good
-                try (Connection connection = ConnectionUtil.getConnection();
+                try (Connection connection = mate.academy.ConnectionUtil.getConnection();
                     PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                     ...
                 } catch (SQLException ex) {
