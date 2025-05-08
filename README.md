@@ -17,9 +17,9 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book();
+        Book books = new Book();
         // initialize field values using setters or constructor
-        bookDao.create(book);
+        bookDao.create(books);
         // test other methods from BookDao
     }
 }
@@ -40,10 +40,10 @@ public class Book {
 ```
 
 ### BookDao methods:
-    - Book create(Book book);
+    - Book create(Book books);
     - Optional<Book> findById(Long id);
     - List<Book> findAll();
-    - Book update(Book book);
+    - Book update(Book books);
     - boolean deleteById(Long id);
     
 ### Create custom exception
