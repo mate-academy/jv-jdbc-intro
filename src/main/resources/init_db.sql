@@ -1,0 +1,10 @@
+CREATE SCHEMA IF NOT EXISTS `library_service` DEFAULT CHARACTER SET utf8;
+
+DROP TABLE IF EXISTS `books`;
+CREATE TABLE `books`
+(
+    `id`    BIGINT(11) NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(225) NOT NULL,
+    `price` DECIMAL NULL,
+    PRIMARY KEY (`id`)
+);
