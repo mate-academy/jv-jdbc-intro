@@ -1,0 +1,6 @@
+CREATE DATABASE `book`;
+CREATE TABLE `book`.`books` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(50) NOT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (`id`));
