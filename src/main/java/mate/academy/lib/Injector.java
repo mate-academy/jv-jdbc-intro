@@ -82,7 +82,8 @@ public class Injector {
         List<File> dirs = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
+            String decodedPath = java.net.URLDecoder.decode(resource.getFile(), "UTF-8");
+            dirs.add(new File(decodedPath));
         }
         ArrayList<Class<?>> classes = new ArrayList<>();
         for (File directory : dirs) {
