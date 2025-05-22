@@ -88,9 +88,9 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
         try (PreparedStatement preparedStatement = ConnectionUtil.getConnection()
                 .prepareStatement(sql)) {
-            preparedStatement.setObject(3, book.getId());
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setObject(3, book.getId());
             int effectedRow = preparedStatement.executeUpdate();
             if (effectedRow < 1) {
                 throw new DataProcessingException("Can not update book: " + book, new Throwable());
