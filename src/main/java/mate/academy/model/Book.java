@@ -1,18 +1,17 @@
 package mate.academy.model;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class Book {
-    private BigInteger id;
+    private Long id;
     private String title;
     private BigDecimal price;
 
-    public BigInteger getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

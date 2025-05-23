@@ -1,7 +1,6 @@
 package mate.academy;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
@@ -17,15 +16,15 @@ public class Main {
         book.setPrice(new BigDecimal("50.45"));
         bookDao.create(book);
 
-        System.out.println(bookDao.findById(BigInteger.valueOf(1)));
+        System.out.println(bookDao.findById(1L));
 
         Book updatedBook = new Book();
-        updatedBook.setId(BigInteger.valueOf(1));
+        updatedBook.setId(1L);
         updatedBook.setTitle("Design patterns");
         updatedBook.setPrice(BigDecimal.valueOf(30.50));
         bookDao.update(updatedBook);
 
-        bookDao.deleteById(BigInteger.valueOf(2));
+        bookDao.deleteById(1L);
         System.out.println(bookDao.findAll());
     }
 }

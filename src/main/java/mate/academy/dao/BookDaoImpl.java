@@ -1,7 +1,6 @@
 package mate.academy.dao;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,10 +8,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -30,7 +29,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                BigInteger id = generatedKeys.getObject(1, BigInteger.class);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
             }
         } catch (SQLException e) {
@@ -40,7 +39,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Optional<Book> findById(BigInteger id) {
+    public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?;";
         try (PreparedStatement preparedStatement = ConnectionUtil.getConnection()
                 .prepareStatement(sql)) {
@@ -91,7 +90,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean deleteById(BigInteger id) {
+    public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (PreparedStatement preparedStatement = ConnectionUtil.getConnection()
                 .prepareStatement(sql)) {
@@ -104,7 +103,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book parseRow(ResultSet resultSet) throws SQLException {
-        BigInteger id = resultSet.getObject("id", BigInteger.class);
+        Long id = resultSet.getObject("id", Long.class);
         String title = resultSet.getString("title");
         BigDecimal price = resultSet.getObject("price", BigDecimal.class);
         Book book = new Book();
