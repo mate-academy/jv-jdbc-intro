@@ -56,17 +56,6 @@ public class BookDaoImpl implements BookDao {
         return Optional.empty();
     }
 
-    private Book parseRow(ResultSet resultSet) throws SQLException {
-        BigInteger id = resultSet.getObject("id", BigInteger.class);
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-        Book book = new Book();
-        book.setId(id);
-        book.setTitle(title);
-        book.setPrice(price);
-        return book;
-    }
-
     @Override
     public List<Book> findAll() {
         String sql = "SELECT * FROM books;";
@@ -112,5 +101,16 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can not delete book with id: " + id, e);
         }
+    }
+
+    private Book parseRow(ResultSet resultSet) throws SQLException {
+        BigInteger id = resultSet.getObject("id", BigInteger.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }
