@@ -7,7 +7,7 @@ import mate.academy.model.Book;
 public interface BookDao {
     Book create(Book book);
 
-    Optional<Book> findbyId(Long id);
+    Optional<Book> findById(Long id);
 
     List<Book> findAll();
 

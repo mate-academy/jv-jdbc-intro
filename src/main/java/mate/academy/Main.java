@@ -16,7 +16,7 @@ public class Main {
                 new BigDecimal("19.99"));
         bookDao.create(newBook);
 
-        Optional<Book> bookFound = bookDao.findbyId(newBook.getId());
+        Optional<Book> bookFound = bookDao.findById(newBook.getId());
         bookFound.ifPresent(book -> System.out.println("Book found: " + book.getTitle()));
 
         newBook.setPrice(new BigDecimal("20.99"));
