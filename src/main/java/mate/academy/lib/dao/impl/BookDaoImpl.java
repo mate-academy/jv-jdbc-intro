@@ -5,15 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.lib.dao.Dao;
+import mate.academy.lib.Dao;
+import mate.academy.lib.dao.BookDao;
 import mate.academy.lib.exception.DataProcessingException;
 import mate.academy.lib.model.Book;
 import mate.academy.util.ConnectionUtil;
 
-@mate.academy.lib.Dao
-public class BookDao implements Dao<Book> {
+@Dao
+public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -46,11 +48,7 @@ public class BookDao implements Dao<Book> {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                return Optional.of(book);
+                return Optional.of(createBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book by id = " + id + ".", e);
@@ -60,17 +58,13 @@ public class BookDao implements Dao<Book> {
     
     @Override
     public List<Book> findAll() {
-        List<Book> books = new java.util.ArrayList<>();
+        List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                books.add(book);
+                books.add(createBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find all books.", e);
@@ -109,5 +103,13 @@ public class BookDao implements Dao<Book> {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id = " + id + ".", e);
         }
+    }
+    
+    private Book createBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getLong("id"));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }
