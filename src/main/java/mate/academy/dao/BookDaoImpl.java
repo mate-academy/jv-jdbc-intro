@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
@@ -29,7 +30,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getLong(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't insert book: " + book, e);
+            throw new DataProcessingException("Can't insert book: " + book, e);
         }
         return book;
     }
@@ -51,7 +52,9 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection to the DB", e);
+            throw new DataProcessingException(
+                    "Can't get a book by id: " + id, e
+            );
         }
         return Optional.empty();
     }
@@ -68,7 +71,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update book: " + book, e);
+            throw new DataProcessingException("Can't update book: " + book, e);
         }
         return book;
     }
@@ -84,7 +87,7 @@ public class BookDaoImpl implements BookDao {
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book: " + book, e);
+            throw new DataProcessingException("Can't delete book: " + book, e);
         }
     }
 }
