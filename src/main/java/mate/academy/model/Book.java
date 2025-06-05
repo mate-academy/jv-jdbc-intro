@@ -1,9 +1,9 @@
 package mate.academy.model;
 
 public class Book {
-    Long id;
-    String title;
-    int price;
+    private Long id;
+    private String title;
+    private int price;
 
     public Long getId() {
         return id;
@@ -31,10 +31,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
