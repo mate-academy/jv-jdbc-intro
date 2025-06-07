@@ -8,6 +8,14 @@
     <artifactId>jv-jdbc-intro</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version>
+        </dependency>
+    </dependencies>
+
     <properties>
         <jdk.version>17</jdk.version>
         <maven.compiler.source>17</maven.compiler.source>
@@ -17,7 +25,6 @@
             https://raw.githubusercontent.com/mate-academy/style-guides/master/java/checkstyle.xml
         </maven.checkstyle.plugin.configLocation>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -38,6 +45,7 @@
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
                 </configuration>
+
             </plugin>
         </plugins>
         <pluginManagement>
