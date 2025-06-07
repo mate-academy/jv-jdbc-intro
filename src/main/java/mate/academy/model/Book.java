@@ -8,7 +8,9 @@ public class Book {
 
     private int price;
 
-    public Book() {}
+    public Book() {
+    }
+
     public Book(Long id, String tittle, int price) {
         this.id = id;
         this.title = tittle;
@@ -41,8 +43,12 @@ public class Book {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Book book = (Book) o;
         return Double.compare(book.price, price) == 0 && id.equals(book.id)
                 && title.equals(book.title);
@@ -55,10 +61,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
