@@ -22,7 +22,7 @@ public class BookDaoImpl implements BookDao {
     private static final String CREATE_QUERY = "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM books WHERE id = ? "
             + "AND is_deleted = FALSE";
-    private static final String FIND_ALL_BY_ID_QUERY = "SELECT * FROM books "
+    private static final String FIND_ALL_QUERIES = "SELECT * FROM books "
             + "WHERE is_deleted = FALSE";
     private static final String UPDATE_QUERY = "UPDATE books SET title = ?, price = ? WHERE id = ? "
             + "AND is_deleted = FALSE";
@@ -31,6 +31,9 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
+        if (book == null) {
+            return null;
+        }
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(CREATE_QUERY,
                         Statement.RETURN_GENERATED_KEYS)) {
@@ -60,8 +63,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(FIND_BY_ID_QUERY)) {
             preparedStatement.setLong(1, id);
-            preparedStatement.executeQuery();
-            ResultSet resultSet = preparedStatement.getResultSet();
+            ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(getBookFromResultSet(resultSet));
             }
@@ -76,7 +78,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
-                        connection.prepareStatement(FIND_ALL_BY_ID_QUERY)) {
+                        connection.prepareStatement(FIND_ALL_QUERIES)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 books.add(getBookFromResultSet(resultSet));
@@ -95,10 +97,15 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
 
-            preparedStatement.executeUpdate();
-            return book;
+            if (preparedStatement.executeUpdate() > 0) {
+                return book;
+            } else {
+                throw new RuntimeException("At least one row should have been updated,"
+                        + " but none were updated");
+            }
+
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add new book " + book, e);
+            throw new DataProcessingException("Can't update new book " + book, e);
         }
     }
 
@@ -110,7 +117,7 @@ public class BookDaoImpl implements BookDao {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete book with id + " + id, e);
+            throw new DataProcessingException("Can't delete book with id " + id, e);
         }
     }
 
