@@ -37,7 +37,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add new book to the DB" + book, e);
         }
-        return null;
+        return book;
     }
 
     public Optional<Book> findById(Long id) {
@@ -58,7 +58,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create connection to the DB", e);
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<Book> findAll() {
@@ -98,7 +98,7 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book" + book, e);
         }
-        return null;
+        return book;
     }
 
     public boolean deleteById(Long id) {
