@@ -85,7 +85,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, priCe = ? WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, book.getTitle());
