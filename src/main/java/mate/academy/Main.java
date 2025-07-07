@@ -11,7 +11,7 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        BookDao bookDao = (BookDao)injector.getInstance(BookDao.class);
 
         Book firstBook = new Book();
         firstBook.setTitle("The Little Prince");
@@ -24,16 +24,16 @@ public class Main {
 
         if (foundBookOptional.isPresent()) {
             System.out.println("Find book by id: " + foundBookOptional.get());
+
+            Book bookToUpdate = foundBookOptional.get();
+            bookToUpdate.setTitle("The Little Prince (Updated Edition)");
+            bookToUpdate.setPrice(new BigDecimal("19.99"));
+            Book updatedBook = bookDao.update(bookToUpdate);
+
+            System.out.println("Updated book: " + updatedBook);
         } else {
             System.out.println("Book with id" + bookId + " not found.");
         }
-
-        Book bookToUpdate = foundBookOptional.get();
-        bookToUpdate.setTitle("The Little Prince (Updated Edition)");
-        bookToUpdate.setPrice(new BigDecimal("19.99"));
-        Book updatedBook = bookDao.update(bookToUpdate);
-
-        System.out.println("Updated book: " + updatedBook);
 
         Book secondBook = new Book();
         secondBook.setTitle("Tom Sawyer");
