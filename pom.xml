@@ -18,6 +18,14 @@
         </maven.checkstyle.plugin.configLocation>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version> <!-- IMPORTANT: Use a version compatible with your MySQL Server 8.0.41 -->
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
