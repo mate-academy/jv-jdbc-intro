@@ -26,7 +26,7 @@ public class BookDaoImpl implements BookDao {
 
             int i = preparedStatement.executeUpdate();
             if (i < 1) {
-                throw new DataProcessingException("Can`t create book" + book, null);
+                throw new DataProcessingException("Can't create book " + book, null);
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -35,10 +35,10 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getLong(1));
                 return book;
             }
+            throw new DataProcessingException("Failed to get generated key for book: " + book, null);
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t create book" + book, e);
+            throw new DataProcessingException("Can't create book " + book, e);
         }
-        return null;
     }
 
     @Override
