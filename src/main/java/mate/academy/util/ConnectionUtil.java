@@ -1,5 +1,7 @@
 package mate.academy.util;
 
+import mate.academy.exception.DataProcessingException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,7 +15,7 @@ public class ConnectionUtil {
         try {
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't connect to DB", e);
+            throw new DataProcessingException("Can't connect to DB", e);
         }
     }
 }
