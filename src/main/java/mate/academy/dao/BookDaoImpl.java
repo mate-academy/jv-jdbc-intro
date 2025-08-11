@@ -18,7 +18,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books(title, price) VALUES(?, ?)";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection
                         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -28,7 +28,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
-                book.setId(resultSet.getLong(1));
+                book.setId(resultSet.getObject("id", Long.class));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not create a book" + book, e);
