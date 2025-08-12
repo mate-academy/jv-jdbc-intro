@@ -24,7 +24,12 @@ public class BookDaoImpl implements BookDao {
                         .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-            statement.executeUpdate();
+            int changedRows = statement.executeUpdate();
+
+            if (changedRows < 1) {
+                throw new DataProcessingException("Expected at least one row to update,"
+                        + " but was zero");
+            }
 
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
@@ -84,8 +89,12 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
+            int changedRows = statement.executeUpdate();
 
-            statement.executeUpdate();
+            if (changedRows < 1) {
+                throw new DataProcessingException("Expected at least one row to update,"
+                        + " but was zero");
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not update book " + book, e);
         }
