@@ -28,7 +28,7 @@ public class Main {
         Book updatedBook = bookDao.update(bookToUpdate);
         System.out.println("Updated book: " + updatedBook);
 
-        boolean deleted = bookDao.delete(updatedBook);
+        boolean deleted = bookDao.deleteById(updatedBook.getId());
         System.out.println("Book deleted: " + deleted);
     }
 }

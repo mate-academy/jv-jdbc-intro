@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +25,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to insert" + book
+                throw new DataProcessingException("Expected to insert: " + book
                         + " , but 0 rows were inserted.");
             }
 
@@ -34,7 +35,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Create Book failed" + book + "\n", e);
+            throw new DataProcessingException("Create Book failed: " + book + "\n", e);
         }
         return book;
     }
@@ -47,14 +48,10 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                return Optional.of(book);
+                return Optional.of(createBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Find by id failed" + id + "\n", e);
+            throw new DataProcessingException("Find by id failed: " + id + "\n", e);
         }
         return Optional.empty();
     }
@@ -72,20 +69,29 @@ public class BookDaoImpl implements BookDao {
                 throw new DataProcessingException("No rows updated for book:" + book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Update Book failed" + book, e);
+            throw new DataProcessingException("Update Book failed: " + book, e);
         }
         return book;
     }
 
     @Override
-    public boolean delete(Book book) {
+    public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, book.getId());
+            statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (RuntimeException | SQLException e) {
-            throw new DataProcessingException("Delete Book failed" + book, e);
+            throw new DataProcessingException("Delete Book failed: " + id, e);
         }
+    }
+
+    private Book createBook(ResultSet rs) throws SQLException {
+        Book book = new Book();
+        book.setTitle(rs.getObject("title", String.class));
+        book.setPrice(rs.getObject("price", BigDecimal.class));
+        book.setId(rs.getObject("id", Long.class));
+
+        return book;
     }
 }
