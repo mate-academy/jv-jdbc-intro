@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    // Add the serverTimezone parameter
     private static final String DB_URL = "jdbc:mysql://localhost:3306/book?serverTimezone=UTC";
     private static final Properties DB_PROPERTIES = new Properties();
 
