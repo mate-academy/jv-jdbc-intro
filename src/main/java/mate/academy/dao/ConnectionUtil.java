@@ -1,4 +1,4 @@
-package mate.academy.util;
+package mate.academy.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,17 +6,18 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/book?serverTimezone=UTC";
-    private static final Properties DB_PROPERTIES = new Properties();
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/init_db";
+    private static final Properties DB_PROPERTIES;
 
     static {
+        DB_PROPERTIES = new Properties();
         DB_PROPERTIES.put("user", "root");
-        DB_PROPERTIES.put("password", "WerMaLud123@@");
+        DB_PROPERTIES.put("password", "220606.Lilka");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can not load JDBC driver", e);
+            throw new RuntimeException("Can not load JDBC driver",e);
         }
     }
 
