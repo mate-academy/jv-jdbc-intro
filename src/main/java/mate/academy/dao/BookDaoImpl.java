@@ -50,11 +50,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-
+                Book book = parseBook(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -69,14 +65,10 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
 
         try (Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-
+                Book book = parseBook(resultSet);
                 booksResult.add(book);
             }
         } catch (SQLException e) {
@@ -110,9 +102,19 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            return statement.execute();
+            int updated = statement.executeUpdate();
+            return updated > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to delete entity by id = " + id, e);
         }
+    }
+
+    private Book parseBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+
+        return book;
     }
 }
