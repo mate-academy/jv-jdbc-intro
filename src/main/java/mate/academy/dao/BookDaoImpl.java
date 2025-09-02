@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import mate.academy.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
@@ -28,20 +26,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                Long idFromDb = resultSet.getObject("id", Long.class);
-                if (idFromDb == null) {
-                    throw new RuntimeException("Invalid id");
-                }
-                if (Objects.equals(id, idFromDb)) {
-                    String title = resultSet.getNString("title");
-                    BigDecimal price = resultSet.getBigDecimal("price");
-
-                    Book book = new Book();
-                    book.setId(id);
-                    book.setTitle(title);
-                    book.setPrice(price);
-                    return Optional.of(book);
-                }
+                return Optional.of(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to find by ID", e);
@@ -60,15 +45,16 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
             if (book.getId() == null) {
-                throw new RuntimeException("ID cannot be null.");
+                throw new DataProcessingException("ID cannot be null.");
             }
             int rowsAffected = statement.executeUpdate();
-            if (rowsAffected < 0) {
-                throw new RuntimeException("Book with id: " + book.getId() + " weren't updated");
+            if (rowsAffected == 0) {
+                throw new DataProcessingException("Book with id: "
+                        + book.getId() + " weren't updated");
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed to update item from DB", e);
+            throw new DataProcessingException("Failed to update book id: " + book.getId(), e);
         }
     }
 
@@ -84,9 +70,8 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            System.out.println("Rows affected: " + affectedRows);
             if (affectedRows < 1) {
-                throw new RuntimeException("Affected rows cannot be less than 1!");
+                throw new DataProcessingException("Affected rows cannot be less than 1!");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -94,7 +79,8 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed to insert item into DB", e);
+            throw new DataProcessingException("Failed to insert item into DB. Book: "
+                    + book.getTitle(), e);
         }
         return book;
     }
@@ -109,11 +95,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getNString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                books.add(book);
+                books.add(mapToBook(resultSet));
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Failed to fetch books from DB", e);
@@ -131,7 +113,15 @@ public class BookDaoImpl implements BookDao {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Failed to delete by ID from DB.", e);
+            throw new DataProcessingException("Failed to delete by ID from DB. Item id: " + id, e);
         }
+    }
+
+    private Book mapToBook(ResultSet rs) throws SQLException {
+        Book book = new Book();
+        book.setId(rs.getObject("id", Long.class));
+        book.setTitle(rs.getNString("title"));
+        book.setPrice(rs.getBigDecimal("price"));
+        return book;
     }
 }
