@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,11 +15,6 @@ import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    private BookResultSetHandler bookResultSetHandler;
-
-    public BookDaoImpl() {
-        bookResultSetHandler = new BookResultSetHandlerImpl();
-    }
 
     @Override
     public Book create(Book book) {
@@ -35,10 +31,9 @@ public class BookDaoImpl implements BookDao {
                         + "one row but inserted 0 rows");
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
-            Long id = bookResultSetHandler.handleGeneratedId(generatedKeys);
-            book.setId(id);
+            book = getGeneratedIDandSetToBook(generatedKeys, book);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add new book" + book, e);
+            throw new DataProcessingException("Can't add new book" + book, e);
         }
         return book;
     }
@@ -46,16 +41,20 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        Book book;
+        Book book = null;
+        ResultSet resultSet;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            book = bookResultSetHandler.handleBookResultSet(resultSet);
+            statement.setObject(1, id);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                book = parseBook(resultSet);
+                return Optional.of(book);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot execute the sql query", e);
+            throw new DataProcessingException("Can't find book by id=" + id, e);
         }
-        return Optional.of(book);
+        return Optional.empty();
     }
 
     @Override
@@ -65,9 +64,11 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
-            listOfBooks.add(bookResultSetHandler.handleBookResultSet(resultSet));
+            while (resultSet.next()) {
+                listOfBooks.add(parseBook(resultSet));
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot execute the sql query", e);
+            throw new DataProcessingException("Cannot find all books:", e);
         }
         return listOfBooks;
     }
@@ -86,8 +87,7 @@ public class BookDaoImpl implements BookDao {
                         + "one row, but inserted 0 rows.");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot add modify book with id: "
-                    + book.getId(), e);
+            throw new DataProcessingException("Can't update book=" + book, e);
         }
         return book;
     }
@@ -101,8 +101,29 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             affectedRows = statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot delete the book with id: " + id, e);
+            throw new DataProcessingException("Can't delete book by id=" + id, e);
         }
         return affectedRows > 0;
+    }
+
+    private Book parseBook(ResultSet rs) throws SQLException {
+        Book book = new Book();
+        Long id = rs.getObject("id", Long.class);
+        String title = rs.getString("title");
+        BigDecimal price = rs.getObject("price", BigDecimal.class);
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
+    }
+
+    private Book getGeneratedIDandSetToBook(ResultSet generatedKeys, Book book)
+                throws SQLException {
+        Long id = null;
+        if (generatedKeys.next()) {
+            id = generatedKeys.getLong(1);
+        }
+        book.setId(id);
+        return book;
     }
 }
