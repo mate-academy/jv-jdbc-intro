@@ -58,7 +58,7 @@ public class BookDaoImpl implements BookDao {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get find book by id " + id, e);
+            throw new DataProcessingException("Can't get a book by id " + id, e);
         }
     }
 
@@ -84,14 +84,18 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-            statement.executeUpdate();
 
-            return book;
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new DataProcessingException("Can't update book with id " + book.getId() + ". Book not found.", null);
+            }
+
+           return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book, e);
         }
