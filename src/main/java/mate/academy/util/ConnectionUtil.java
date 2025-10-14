@@ -16,6 +16,7 @@ public class ConnectionUtil {
             throw new RuntimeException("Can't load JDBC driver",e);
         }
     }
+
     public static Connection getConnection() {
         try {
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);

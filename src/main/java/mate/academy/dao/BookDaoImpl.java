@@ -1,14 +1,16 @@
 package mate.academy.dao;
 
-
-import mate.academy.exception.DataProcessingException;
-import mate.academy.model.Book;
-import mate.academy.util.ConnectionUtil;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.DataProcessingException;
+import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -16,8 +18,8 @@ public class BookDaoImpl implements BookDao {
     public Book create(Book book) {
         String insertQuery = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(
+                        insertQuery, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -38,7 +40,7 @@ public class BookDaoImpl implements BookDao {
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -58,8 +60,8 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String query = "SELECT * FROM books";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
                 Book book = new Book();
@@ -78,7 +80,7 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String updateQuery = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
@@ -102,7 +104,7 @@ public class BookDaoImpl implements BookDao {
         String deleteQuery = "DELETE FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
 
             preparedStatement.setLong(1, id);
 
