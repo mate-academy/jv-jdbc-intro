@@ -31,17 +31,15 @@ public class Main {
         System.out.println("\n=== Testing FIND BY ID ===");
         Long searchId = createdBook1.getId();
         Optional<Book> foundBook = bookDao.findById(searchId);
-
-        if (foundBook.isPresent()) {
-            System.out.println("Found book with id " + searchId + ": " + foundBook.get());
-        } else {
-            System.out.println("Book with id " + searchId + " not found");
-        }
+        foundBook.ifPresentOrElse(
+                book -> System.out.println("Found book with id " + searchId + ": " + book),
+                () -> System.out.println("Book with id " + searchId + " not found")
+        );
 
         // Test finding non-existent book
         Optional<Book> notFoundBook = bookDao.findById(999L);
         System.out.println("Book with id 999: "
-                + (notFoundBook.isPresent() ? notFoundBook.get() : "Not found"));
+                + notFoundBook.map(Book::toString).orElse("Not found"));
 
         // Test FIND ALL
         System.out.println("\n=== Testing FIND ALL ===");
@@ -58,7 +56,7 @@ public class Main {
 
         // Verify update
         Optional<Book> verifyUpdate = bookDao.findById(updatedBook.getId());
-        System.out.println("Verified update: " + verifyUpdate.get());
+        verifyUpdate.ifPresent(book -> System.out.println("Verified update: " + book));
 
         // Test DELETE BY ID
         System.out.println("\n=== Testing DELETE BY ID ===");
@@ -68,7 +66,8 @@ public class Main {
 
         // Verify deletion
         Optional<Book> deletedBook = bookDao.findById(deleteId);
-        System.out.println("Verify deletion (should be empty): " + deletedBook);
+        System.out.println("Verify deletion (should be empty): "
+                + (deletedBook.isEmpty() ? "Successfully deleted" : "Still exists"));
 
         // Show remaining books
         System.out.println("\n=== Remaining books ===");
@@ -77,4 +76,3 @@ public class Main {
         remainingBooks.forEach(System.out::println);
     }
 }
-
