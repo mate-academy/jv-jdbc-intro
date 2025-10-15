@@ -23,7 +23,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
-                            Statement.RETURN_GENERATED_KEYS)) {
+                        Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             int affectedRows = statement.executeUpdate();
@@ -32,10 +32,11 @@ public class BookDaoImpl implements BookDao {
                         "Expected to insert at least one row, but inserted 0 rows",
                         new SQLException());
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
-                book.setId(id);
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    Long id = generatedKeys.getObject(1, Long.class);
+                    book.setId(id);
+                }
             }
             return book;
         } catch (SQLException e) {
