@@ -43,9 +43,10 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(mapRowToBook(resultSet));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapRowToBook(resultSet));
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find Book with id: " + id, e);
