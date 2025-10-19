@@ -16,6 +16,7 @@ public class Main {
 
         Book book1 = new Book("The Silent Patient", new BigDecimal("18.50"));
         Book book2 = new Book("Where the Crawdads Sing", new BigDecimal("14.99"));
+
         Book createdBook1 = bookDao.create(book1);
         bookDao.create(book2);
 
