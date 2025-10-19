@@ -24,6 +24,7 @@ public class Main {
         Long idToFind = createdBook1.getId();
         Optional<Book> foundBook = bookDao.findById(idToFind);
 
+        // 4. UPDATE
         if (foundBook.isPresent()) {
             Book bookToUpdate = foundBook.get();
             bookToUpdate.setPrice(new BigDecimal("22.00"));
