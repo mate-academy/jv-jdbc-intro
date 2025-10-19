@@ -37,9 +37,10 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.executeUpdate();
 
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-            if (rs.next()) {
-                book.setId(rs.getObject(1, Long.class));
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    book.setId(rs.getObject(1, Long.class));
+                }
             }
             return book;
         } catch (SQLException e) {
@@ -55,10 +56,11 @@ public class BookDaoImpl implements BookDao {
                         .prepareStatement(FIND_BY_ID_QUERY)
         ) {
             preparedStatement.setLong(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next()) {
-                return Optional.of(extractBookFromResultSet(rs));
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(extractBookFromResultSet(rs));
+                }
             }
             return Optional.empty();
         } catch (SQLException e) {
