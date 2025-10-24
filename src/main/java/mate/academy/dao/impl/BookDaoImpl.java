@@ -7,6 +7,7 @@ import mate.academy.model.Book;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,12 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO books (title, author, price) VALUES (?, ?, ?)";
+        String query = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement statement =
                      connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
-            statement.setString(2, book.getAuthor());
-            statement.setBigDecimal(3, book.getPrice());
+            statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
@@ -61,7 +61,7 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-             Statement statement = connection.createStatement()) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet rs = statement.executeQuery(query);
             while (rs.next()) {
                 books.add(parseBook(rs));
@@ -100,10 +100,9 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book parseBook(ResultSet rs) throws SQLException {
-        Long id = rs.getLong("id");
+        Long id = rs.getObject("id", Long.class);
         String title = rs.getString("title");
-        String author = rs.getString("author");
         BigDecimal price = rs.getBigDecimal("price");
-        return new Book(id, title, author, price);
+        return new Book(id, title, price);
     }
 }
