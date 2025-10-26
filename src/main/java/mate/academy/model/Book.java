@@ -10,7 +10,7 @@ public class Book {
     public Book() {
     }
 
-    public Book(Long id, String title,  BigDecimal price) {
+    public Book(Long id, String title, BigDecimal price) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -47,10 +47,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
