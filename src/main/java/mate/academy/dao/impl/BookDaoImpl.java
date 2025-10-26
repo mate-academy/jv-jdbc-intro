@@ -32,11 +32,12 @@ public class BookDaoImpl implements BookDao {
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
+                Long generatedId = rs.getObject(1, Long.class);
                 book.setId(rs.getLong(1));
             }
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't insert book" + book, e);
+            throw new DataProcessingException("Can't insert book " + book, e);
         }
     }
 
@@ -63,7 +64,7 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 books.add(parseBook(rs));
             }
