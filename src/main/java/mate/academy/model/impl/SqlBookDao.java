@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +60,8 @@ public class SqlBookDao implements BookDao {
     public List<Book> findAll() {
         String query = "SELECT id, title, price FROM `books`;";
         try (Connection conn = ConnectionUtil.getConnection();
-                Statement statement = conn.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(query);
+                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             List<Book> resultList = new ArrayList<>();
             while (resultSet.next()) {
                 Book book = new Book();
