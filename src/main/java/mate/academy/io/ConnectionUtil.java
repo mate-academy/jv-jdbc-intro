@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class ConnectionUtil {
 
-    private static final String URL = "jdbc:mysql://localhost:3310/mate_academy";
+    private static final String URL = "jdbc:mysql://localhost:3310/mate_academy?serverTimezone=UTC";
     private static final Properties INFO = new Properties();
 
     static {
