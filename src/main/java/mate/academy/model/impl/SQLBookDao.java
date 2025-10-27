@@ -81,6 +81,7 @@ public class SQLBookDao implements BookDao {
              PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setObject(3, book.getId());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
                 throw new SQLException("Update statement affected rows: " + affectedRows);
