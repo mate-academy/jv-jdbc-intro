@@ -44,11 +44,7 @@ public class SqlBookDao implements BookDao {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                return Optional.of(book);
+                return Optional.of(createBookFrom(resultSet));
             }
             return Optional.empty();
         } catch (SQLException ex) {
@@ -64,16 +60,20 @@ public class SqlBookDao implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Book> resultList = new ArrayList<>();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getObject("id", Long.class));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                resultList.add(book);
+                resultList.add(createBookFrom(resultSet));
             }
             return resultList;
         } catch (SQLException ex) {
             throw new DataProcessingException("Cannot get books from database", ex);
         }
+    }
+
+    private static Book createBookFrom(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 
     @Override
