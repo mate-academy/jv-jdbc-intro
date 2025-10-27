@@ -17,7 +17,7 @@ public class SQLBookDao implements BookDao {
     public Book create(Book book) throws DataProcessingException {
         String query = "INSERT INTO `books` (title, price) VALUES (?, ?);";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             int affectedRows = preparedStatement.executeUpdate();
@@ -38,7 +38,7 @@ public class SQLBookDao implements BookDao {
     public Optional<Book> findById(Long id) {
         String query = "SELECT title, price FROM `books` WHERE id = ? LIMIT 1;";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -58,7 +58,7 @@ public class SQLBookDao implements BookDao {
     public List<Book> findAll() {
         String query = "SELECT id, title, price FROM `books`;";
         try (Connection conn = ConnectionUtil.getConnection();
-             Statement statement = conn.createStatement()) {
+                Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery(query);
             List<Book> resultList = new ArrayList<>();
             while (resultSet.next()) {
@@ -78,7 +78,7 @@ public class SQLBookDao implements BookDao {
     public Book update(Book book) {
         String query = "UPDATE `books` SET title = ?, price = ? WHERE id = ?;";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setObject(3, book.getId());
@@ -96,7 +96,7 @@ public class SQLBookDao implements BookDao {
     public boolean deleteById(Long id) {
         String query = "DELETE FROM `books` WHERE id = ?;";
         try (Connection conn = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setObject(1, id);
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows >= 1;
