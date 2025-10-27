@@ -15,7 +15,7 @@ import mate.academy.model.Book;
 import mate.academy.model.BookDao;
 
 @Dao
-public class SQLBookDao implements BookDao {
+public class SqlBookDao implements BookDao {
     @Override
     public Book create(Book book) throws DataProcessingException {
         String query = "INSERT INTO `books` (title, price) VALUES (?, ?);";
