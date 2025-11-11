@@ -39,7 +39,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create Book", e);
+            throw new DataProcessingException("Can't create book " + book, e);
         }
         return book;
     }
@@ -57,8 +57,7 @@ public class BookDaoImpl implements BookDao {
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
 
-                Book book = new Book(id, title, price);
-                return Optional.of(book);
+                return Optional.of(mapResultSetFunction(resultSet));
             }
 
         } catch (SQLException e) {
@@ -78,10 +77,7 @@ public class BookDaoImpl implements BookDao {
             List<Book> books = new ArrayList<>();
 
             while (resultSet.next()) {
-                Book book = new Book(resultSet.getLong("id"),
-                        resultSet.getString("title"),
-                        resultSet.getBigDecimal("price"));
-                books.add(book);
+                books.add(mapResultSetFunction(resultSet));
             }
 
             return books;
@@ -123,5 +119,12 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete by id: " + id, e);
         }
+    }
+
+    private Book mapResultSetFunction(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject("id", Long.class);
+        String title = resultSet.getString("title");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        return new Book(id, title, price);
     }
 }
