@@ -15,6 +15,8 @@ public class Main {
         Book book = new Book(id, "Title", price);
         bookDao.create(book);
         bookDao.findById(book.getId());
+        bookDao.findAll();
         bookDao.update(book);
+        bookDao.deleteById(book.getId());
     }
 }
