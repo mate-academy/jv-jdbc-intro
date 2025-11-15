@@ -18,43 +18,45 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String query = "INSERT INTO books (title, price) VALUES (?, ?);";
+
         try (Connection connection = ConnectionUtil.getConnection();
-                 PreparedStatement preparedStatement =
-                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setBigDecimal(2, book.getPrice());
+                 PreparedStatement ps = connection.prepareStatement(
+                         query, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.executeUpdate();
-            ResultSet rs = preparedStatement.getGeneratedKeys();
+            ps.setString(1, book.getTitle());
+            ps.setBigDecimal(2, book.getPrice());
+            ps.executeUpdate();
 
-            if (rs.next()) {
-                book.setId(rs.getObject(1, Long.class));
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    book.setId(rs.getObject(1, Long.class));
+                }
             }
             return book;
+
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add book: " + book, e);
+            throw new DataProcessingException("Can't create book: " + book, e);
         }
     }
 
     @Override
     public Optional<Book> findById(Long id) {
         String query = "SELECT * FROM books WHERE id = ?;";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setLong(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next()) {
-                Book book = new Book();
-                book.setId(rs.getLong("id"));
-                book.setTitle(rs.getString("title"));
-                book.setPrice(rs.getBigDecimal("price"));
-                return Optional.of(book);
+        try (Connection connection = ConnectionUtil.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(query)) {
+
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    return Optional.of(mapToBook(rs));
+                }
             }
-
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find the book with id: " + id, e);
+            throw new DataProcessingException("Can't find book id=" + id, e);
         }
+
         return Optional.empty();
     }
 
@@ -62,34 +64,35 @@ public class BookDaoImpl implements BookDao {
     public List<Book> findAll() {
         String query = "SELECT * FROM books;";
         List<Book> books = new ArrayList<>();
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet rs = preparedStatement.executeQuery();
+
+        try (Connection connection = ConnectionUtil.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(query);
+                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Book book = new Book();
-                book.setId(rs.getLong("id"));
-                book.setTitle(rs.getString("title"));
-                book.setPrice(rs.getBigDecimal("price"));
-                books.add(book);
+                books.add(mapToBook(rs));
             }
-            return books;
+
         } catch (SQLException e) {
-            throw new DataProcessingException("Could not retrieve all books from the database", e);
+            throw new DataProcessingException("Can't get all books", e);
         }
+
+        return books;
     }
 
     @Override
-    public void update(Book book) {
+    public Book update(Book book) {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-            preparedStatement.setString(1, book.getTitle());
-            preparedStatement.setBigDecimal(2, book.getPrice());
-            preparedStatement.setLong(3, book.getId());
+        try (Connection connection = ConnectionUtil.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(query)) {
 
-            preparedStatement.executeUpdate();
+            ps.setString(1, book.getTitle());
+            ps.setBigDecimal(2, book.getPrice());
+            ps.setLong(3, book.getId());
+            ps.executeUpdate();
+
+            return book;
 
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book: " + book, e);
@@ -99,14 +102,23 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         String query = "DELETE FROM books WHERE id = ?;";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setLong(1, id);
-            int rows = preparedStatement.executeUpdate();
-            return rows > 0;
+
+        try (Connection connection = ConnectionUtil.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(query)) {
+
+            ps.setLong(1, id);
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete the book with id: " + id, e);
+            throw new DataProcessingException("Can't delete book id=" + id, e);
         }
+    }
+
+    private Book mapToBook(ResultSet rs) throws SQLException {
+        Book book = new Book();
+        book.setId(rs.getObject("id", Long.class));
+        book.setTitle(rs.getString("title"));
+        book.setPrice(rs.getBigDecimal("price"));
+        return book;
     }
 }
