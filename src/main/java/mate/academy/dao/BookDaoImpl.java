@@ -17,10 +17,10 @@ import mate.academy.util.ConnectionUtil;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        String query = "INSERT INTO products (title, price) VALUES (?, ?);";
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        String query = "INSERT INTO books (title, price) VALUES (?, ?);";
+        try (Connection connection = ConnectionUtil.getConnection();
+                 PreparedStatement preparedStatement =
+                         connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
 
@@ -28,7 +28,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet rs = preparedStatement.getGeneratedKeys();
 
             if (rs.next()) {
-                book.setId(rs.getLong(1));
+                book.setId(rs.getObject(1, Long.class));
             }
             return book;
         } catch (SQLException e) {
@@ -38,7 +38,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String query = "SELECT * FROM products WHERE id = ?;";
+        String query = "SELECT * FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);
@@ -60,7 +60,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        String query = "SELECT * FROM products;";
+        String query = "SELECT * FROM books;";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -75,13 +75,13 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't read the database", e);
+            throw new DataProcessingException("Could not retrieve all books from the database", e);
         }
     }
 
     @Override
-    public Book update(Book book) {
-        String query = "UPDATE products SET title = ?, price = ? WHERE id = ?;";
+    public void update(Book book) {
+        String query = "UPDATE books SET title = ?, price = ? WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
@@ -92,14 +92,13 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update the database", e);
+            throw new DataProcessingException("Can't update book: " + book, e);
         }
-        return book;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String query = "DELETE FROM products WHERE id = ?;";
+        String query = "DELETE FROM books WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setLong(1, id);

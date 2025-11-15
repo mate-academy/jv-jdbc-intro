@@ -18,6 +18,8 @@ public class Book {
     }
 
     public Book(String title, BigDecimal price) {
+        this.title = title;
+        this.price = price;
     }
 
     public String getTitle() {

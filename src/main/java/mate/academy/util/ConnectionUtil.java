@@ -5,7 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionUtil {
-    private static final String url = "jdbc:mysql://localhost:3306/book_db?useSSL=false&serverTimezone=UTC";
+    private static final String url =
+            "jdbc:mysql://localhost:3306/book_db?useSSL=false&serverTimezone=UTC";
     private static final String user = "root";
     private static final String password = "Jarek.sendecki@op.pl1";
 
