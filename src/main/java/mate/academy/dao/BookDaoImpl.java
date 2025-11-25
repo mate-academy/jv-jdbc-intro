@@ -26,7 +26,7 @@ public class BookDaoImpl implements BookDao {
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
-                book.setId(rs.getLong(1));
+                book.setId(rs.getObject("id", Long.class));
             }
             return book;
         } catch (SQLException e) {
@@ -95,7 +95,7 @@ public class BookDaoImpl implements BookDao {
 
     private Book parseBook(ResultSet rs) throws SQLException {
         Book book = new Book();
-        book.setId(rs.getLong("id"));
+        book.setId(rs.getObject("id", Long.class));
         book.setTitle(rs.getString("title"));
         book.setPrice(rs.getBigDecimal("price"));
         return book;
