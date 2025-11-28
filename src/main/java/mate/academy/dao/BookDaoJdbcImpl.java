@@ -9,14 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.exception.DataProcessingException;
+import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
 
+@Dao
 public class BookDaoJdbcImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO book (title, price) VALUES (?, ?)";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
