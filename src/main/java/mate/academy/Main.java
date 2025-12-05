@@ -18,11 +18,10 @@ public class Main {
         dao.create(book2);
         dao.create(book3);
 
-        dao.update(new Book(5L, "The Silent Patient", new BigDecimal("32.01")));
-
-        dao.deleteById(2L);
+        dao.update(new Book(1L, "The Silent Patient", new BigDecimal("32.01")));
 
         System.out.println(dao.findById(2L));
+        dao.deleteById(2L);
         System.out.println(dao.findAll());
     }
 }
