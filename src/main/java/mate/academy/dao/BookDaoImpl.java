@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
@@ -19,6 +20,7 @@ public class BookDaoImpl implements BookDao {
     private static final String FIND_ALL = "SELECT * FROM books";
     private static final String FIND_BY_ID = "SELECT * FROM books WHERE id = ?";
     private static final String UPDATE = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final int PARAMETER_ZERO = 0;
     private static final int PARAMETER_OR_COLUMN_ONE = 1;
     private static final int PARAMETER_OR_COLUMN_TWO = 2;
     private static final int PARAMETER_OR_COLUMN_THREE = 3;
@@ -43,7 +45,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can`t add new book : " + book, e);
+            throw new DataProcessingException("Can't save a book " + book, e);
         }
         return book;
     }
@@ -57,15 +59,11 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Book book = new Book();
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                book = parseBook(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get book by id: " + id, e);
+            throw new DataProcessingException("Can't get book by id " + id, e);
         }
         return Optional.empty();
     }
@@ -78,17 +76,11 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(FIND_ALL)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Book book = new Book();
-                Long id = resultSet.getObject("id", Long.class);
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getObject("price", BigDecimal.class);
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = parseBook(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't find all books : ", e);
+            throw new DataProcessingException("Can't get all books : ", e);
         }
         return books;
     }
@@ -107,7 +99,7 @@ public class BookDaoImpl implements BookDao {
                         "Expected to update at least one row, but updated 0 rows");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update book: " + book, e);
+            throw new DataProcessingException("Can't update book " + book, e);
         }
         return book;
     }
@@ -119,13 +111,24 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID)) {
             preparedStatement.setLong(PARAMETER_OR_COLUMN_ONE, id);
             int executed = preparedStatement.executeUpdate();
-            if (executed < PARAMETER_OR_COLUMN_ONE) {
-                throw new RuntimeException(
-                        "Expected to delete at least one row, but deleted 0 rows.");
-            }
-            return true;
+            return executed > PARAMETER_ZERO;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book: " + id, e);
+            throw new DataProcessingException("Can't delete book " + id, e);
+        }
+    }
+
+    private Book parseBook(ResultSet rs) {
+        try {
+            Book book = new Book();
+            Long id = rs.getObject("id", Long.class);
+            String title = rs.getString("title");
+            BigDecimal price = rs.getObject("price", BigDecimal.class);
+            book.setId(id);
+            book.setTitle(title);
+            book.setPrice(price);
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can`t parse parameters book for methods ", e);
         }
     }
 }
