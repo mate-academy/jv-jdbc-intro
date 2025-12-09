@@ -16,9 +16,9 @@ public class Main {
         book.setTitle("How beautiful world");
         book.setPrice(decimal);
         System.out.println(bookDao.create(book));
-        System.out.println(bookDao.deleteById(1L));
-        System.out.println(bookDao.update(book));
         System.out.println(bookDao.findById(10L));
+        System.out.println(bookDao.update(book));
         System.out.println(bookDao.findAll());
+        System.out.println(bookDao.deleteById(1L));
     }
 }

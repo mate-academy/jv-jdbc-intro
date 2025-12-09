@@ -36,8 +36,9 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(PARAMETER_OR_COLUMN_TWO, book.getPrice());
             int executed = statement.executeUpdate();
             if (executed < PARAMETER_OR_COLUMN_ONE) {
-                throw new RuntimeException(
-                        "Expected to insert at leas one row, but inserted 0 rows.");
+                throw new DataProcessingException(
+                        "Expected to insert at leas one row, but inserted 0 rows.",
+                        new RuntimeException());
             }
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
@@ -58,8 +59,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(PARAMETER_OR_COLUMN_ONE, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Book book = new Book();
-                book = parseBook(resultSet);
+                Book book = parseBook(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -95,8 +95,9 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(PARAMETER_OR_COLUMN_THREE, book.getId());
             int executeUpdate = statement.executeUpdate();
             if (executeUpdate < PARAMETER_OR_COLUMN_ONE) {
-                throw new RuntimeException(
-                        "Expected to update at least one row, but updated 0 rows");
+                throw new DataProcessingException(
+                        "Expected to update at least one row, but updated 0 rows",
+                        new RuntimeException());
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book, e);

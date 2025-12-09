@@ -1,5 +1,5 @@
-CREATE DATABASE books;
-USE books;
+CREATE DATABASE test;
+USE test;
 CREATE TABLE books (
     id BIGINT NOT NULL AUTO_INCREMENT,
     title VARCHAR(255),
