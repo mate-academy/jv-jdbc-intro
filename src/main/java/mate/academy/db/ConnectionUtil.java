@@ -1,4 +1,4 @@
-package db;
+package mate.academy.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,6 +14,7 @@ public class ConnectionUtil {
         properties.put("user", "root");
         properties.put("password", "mateacad26");
     }
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, properties);
     }

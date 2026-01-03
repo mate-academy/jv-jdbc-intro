@@ -49,10 +49,10 @@ public class Book {
 ### Create custom exception
 `e.printStackTrace()` - is a bad practice! Let's create custom exception `DataProcessingException`
 and constructor with two parameters: `String message` and `Throwable ex`.  
-It should be extended from `RuntimeException`. You should rethrow this exception in `catch` block on dao layer.
+It should be extended from `RuntimeException`. You should rethrow this exception in `catch` block on mate.academy.dao layer.
     
 #### DB connection error: 
-If you can't connect to your db because of this error: <br>
+If you can't connect to your mate.academy.db because of this error: <br>
 `The server time zone value ‘EEST’ is unrecognized or represents more than one time zone`. <br>
 Try to set timezone explicitly in your connection URL. <br>
 Example: <br>

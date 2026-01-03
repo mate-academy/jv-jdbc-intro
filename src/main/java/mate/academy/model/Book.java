@@ -1,4 +1,4 @@
-package mate.academy.Objects;
+package mate.academy.model;
 
 import java.math.BigDecimal;
 
@@ -6,6 +6,15 @@ public class Book {
     private Long id;
     private String title;
     private BigDecimal price;
+
+    public Book() {
+    }
+
+    public Book(String title, Long id, BigDecimal price) {
+        this.title = title;
+        this.id = id;
+        this.price = price;
+    }
 
     public Long getId() {
         return id;
@@ -31,21 +40,12 @@ public class Book {
         this.price = price;
     }
 
-    public Book() {
-    }
-
-    public Book(String title, Long id, BigDecimal price) {
-        this.title = title;
-        this.id = id;
-        this.price = price;
-    }
-
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
