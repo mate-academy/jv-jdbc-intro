@@ -1,11 +1,10 @@
-package mate.academy.Connection;
-
-import mate.academy.exception.DataProcessingException;
+package mate.academy.connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
     public static final String DB_URL = "jdbc:mysql://localhost:3306/test";
@@ -22,6 +21,7 @@ public class ConnectionUtil {
             throw new DataProcessingException("Can't load JDBC driver", e);
         }
     }
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
