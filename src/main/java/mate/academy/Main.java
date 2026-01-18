@@ -16,22 +16,15 @@ public class Main {
         Book book = new Book();
         book.setPrice(BigDecimal.valueOf(300));
         book.setTitle("Golden rabbit");
-        book.setId(4L);
-        StringBuilder stringBuilder = new StringBuilder();
-        Book createdBook = bookDao.create(book);
-        stringBuilder.append(createdBook);
-        stringBuilder.append(System.lineSeparator());
-        Optional<Book> findById = bookDao.findById(2L);
-        stringBuilder.append(findById);
-        stringBuilder.append(System.lineSeparator());
-        Book updated = bookDao.update(book);
-        stringBuilder.append(updated);
-        stringBuilder.append(System.lineSeparator());
-        List<Book> allBooks = bookDao.findAll();
-        stringBuilder.append(allBooks);
-        stringBuilder.append(System.lineSeparator());
-        boolean deleted = bookDao.deleteById(10L);
-        stringBuilder.append(deleted);
-        System.out.println(stringBuilder);
+        System.out.println(bookDao.create(book));
+        Book bookUpdate = new Book();
+        bookUpdate.setTitle("Chocolate factory");
+        bookUpdate.setPrice(BigDecimal.valueOf(200));
+        bookUpdate.setId(4L);
+        System.out.println(bookDao.update(bookUpdate));
+        System.out.println(bookDao.findAll());
+        System.out.println(bookDao.findById(2L));
+        bookDao.deleteById(10L);
+
     }
 }

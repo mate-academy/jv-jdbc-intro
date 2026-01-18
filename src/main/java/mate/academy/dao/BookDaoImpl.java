@@ -9,13 +9,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.connection.ConnectionUtil;
+import mate.academy.util.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    Throwable e;
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (price, title) VALUES (?, ?)";
@@ -27,7 +28,7 @@ public class BookDaoImpl implements BookDao {
 
             int updatedRows = preparedStatement.executeUpdate();
             if (updatedRows < 1) {
-                throw new RuntimeException("Expected insert atleast 1 row, but inserted 0 rows!");
+                throw new DataProcessingException("Expected insert atleast 1 row, but inserted 0 rows!", e);
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -89,8 +90,8 @@ public class BookDaoImpl implements BookDao {
             statement.setObject(3, book.getId());
             int affectiveRows = statement.executeUpdate();
             if (affectiveRows == 0) {
-                throw new RuntimeException("Expected to insert atleast 1 row, "
-                       + "but inserted 0 rows!");
+                throw new DataProcessingException("Expected to insert atleast 1 row, "
+                       + "but inserted 0 rows!", e);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book with id: " + book.getId(), e);
