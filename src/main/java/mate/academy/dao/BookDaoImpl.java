@@ -9,14 +9,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.util.ConnectionUtil;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
-    Throwable e;
+
+    private Throwable throwableException;
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (price, title) VALUES (?, ?)";
@@ -28,7 +30,9 @@ public class BookDaoImpl implements BookDao {
 
             int updatedRows = preparedStatement.executeUpdate();
             if (updatedRows < 1) {
-                throw new DataProcessingException("Expected insert atleast 1 row, but inserted 0 rows!", e);
+                throw new DataProcessingException("Expected insert atleast 1 row, "
+                        + "but inserted 0 rows!",
+                        throwableException);
             }
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -91,7 +95,7 @@ public class BookDaoImpl implements BookDao {
             int affectiveRows = statement.executeUpdate();
             if (affectiveRows == 0) {
                 throw new DataProcessingException("Expected to insert atleast 1 row, "
-                       + "but inserted 0 rows!", e);
+                       + "but inserted 0 rows!", throwableException);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update book with id: " + book.getId(), e);
@@ -110,7 +114,8 @@ public class BookDaoImpl implements BookDao {
                 return true;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete book by id: " + id, e);
+            throw new DataProcessingException("Can't delete book by id: "
+                    + id, throwableException);
         }
         return false;
     }
