@@ -1,5 +1,5 @@
 CREATE TABLE books (
-    id INT PRIMARY KEY,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
-    price INT NOT NULL
+    price DECIMAL(10, 2) NOT NULL
 );
