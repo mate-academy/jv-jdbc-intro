@@ -32,7 +32,8 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert 1 row, but was" + affectedRows);
+                throw new DataProcessingException("Expected to insert 1 row, but was"
+                        + affectedRows);
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -41,8 +42,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot create the book with id = "
-                    + book.getId(), e);
+            throw new DataProcessingException("Couldn't create book in the DB", e);
         }
         return book;
     }
@@ -82,15 +82,12 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(FIND_BY_ID)) {
             preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery(FIND_BY_ID);
-            long foundId = resultSet.getLong(1);
-            String title = resultSet.getString(2);
-            BigDecimal price = resultSet.getBigDecimal(3);
-            Book book = new Book();
-            book.setId(id);
-            book.setTitle(title);
-            book.setPrice(price);
-            return Optional.of(book);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(getBookFromResultSet(resultSet));
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not find a book with this id:" + id, e);
         }
