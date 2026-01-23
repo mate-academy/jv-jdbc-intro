@@ -47,7 +47,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create a book", e);
+            throw new DataProcessingException("Can't create a book" + book, e);
         }
         return book;
 
@@ -66,7 +66,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find book by id", e);
+            throw new DataProcessingException("Can't find book by id" + id, e);
         }
         return Optional.empty();
     }
@@ -76,8 +76,8 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
 
         try (Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(FIND_ALL);
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL)) {
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Book book = parseBook(resultSet);
                 books.add(book);
@@ -101,7 +101,7 @@ public class BookDaoImpl implements BookDao {
                         + "be inserted, but 0 rows were inserted.");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't change a book", e);
+            throw new DataProcessingException("Can't change a book" + book, e);
         }
         return book;
     }
@@ -113,7 +113,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(COLUMN_ONE, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delet book by id" + id, e);
+            throw new DataProcessingException("Can't delete book by id" + id, e);
         }
     }
 
