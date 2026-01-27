@@ -61,7 +61,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM car WHERE id = ?";
+        String sql = "SELECT * FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -75,7 +75,7 @@ public class BookDaoImpl implements BookDao {
             }
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Cannot get car by id: " + id, e);
+                    "Cannot get a book by id: " + id, e);
         }
 
         return Optional.empty();
@@ -122,7 +122,7 @@ public class BookDaoImpl implements BookDao {
 
     private Book mapRow(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getLong("id"));
+        book.setId(resultSet.getObject("id", Long.class));
         book.setTitle(resultSet.getString("title"));
         book.setPrice(resultSet.getBigDecimal("price"));
         return book;

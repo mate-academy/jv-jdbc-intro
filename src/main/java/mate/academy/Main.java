@@ -15,9 +15,11 @@ public class Main {
         book.setPrice(BigDecimal.valueOf(12.5));
         Book bookUpdated = bookDao.create(book);
         System.out.println(bookUpdated);
+        bookDao.deleteById(8L);
+        bookDao.findById(15L)
+                .ifPresent(System.out::println);
         bookUpdated.setPrice(BigDecimal.valueOf(220));
         bookDao.update(bookUpdated);
-        bookDao.deleteById(8L);
         bookDao.findAll().forEach(System.out::println);
     }
 }
