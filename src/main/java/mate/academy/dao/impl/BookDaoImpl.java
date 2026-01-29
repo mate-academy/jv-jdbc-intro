@@ -3,8 +3,6 @@ package mate.academy.dao.impl;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
-import mate.academy.model.Book;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.model.Book;
 import mate.academy.util.ConnectionUtil;
 
 @Dao
@@ -32,7 +31,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet keys = statement.getGeneratedKeys();
             if (keys.next()) {
-                book.setId(keys.getLong(1));
+                book.setId(keys.getObject(1, Long.class));
             }
             return book;
         } catch (SQLException e) {
@@ -65,9 +64,9 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
 
         try (Connection connection = ConnectionUtil.getConnection();
-             Statement statement = connection.createStatement()) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 books.add(getBookFromResultSet(rs));
             }
@@ -76,6 +75,7 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException("Can't get all books", e);
         }
     }
+
 
     @Override
     public Book update(Book book) {
@@ -110,7 +110,7 @@ public class BookDaoImpl implements BookDao {
 
     private Book getBookFromResultSet(ResultSet rs) throws SQLException {
         Book book = new Book();
-        book.setId(rs.getLong("id"));
+        book.setId(rs.getObject("id", Long.class));
         book.setTitle(rs.getString("title"));
         book.setPrice(rs.getBigDecimal("price"));
         return book;
