@@ -87,11 +87,12 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
 
         try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(SELECT_ALL)) {
+            PreparedStatement stmt = conn.prepareStatement(SELECT_ALL)) {
 
-            while (rs.next()) {
-                books.add(mapResultSetToBook(rs));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    books.add(mapResultSetToBook(rs));
+                }
             }
 
         } catch (SQLException e) {
@@ -139,7 +140,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapResultSetToBook(ResultSet rs) throws SQLException {
-        Long id = rs.getLong("id");
+        Long id = rs.getObject("id", Long.class);
         String title = rs.getString("title");
         BigDecimal price = rs.getBigDecimal("price");
         return new Book(id, title, price);
