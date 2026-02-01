@@ -1,7 +1,12 @@
 package mate.academy.dao;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +41,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(INSERT_BOOK, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement stmt = conn.prepareStatement(
+                     INSERT_BOOK, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, book.getTitle());
             stmt.setBigDecimal(2, book.getPrice());
@@ -65,7 +71,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID)) {
+            PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID)) {
 
             stmt.setLong(1, id);
 
@@ -105,7 +111,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(UPDATE_BOOK)) {
+            PreparedStatement stmt = conn.prepareStatement(UPDATE_BOOK)) {
 
             stmt.setString(1, book.getTitle());
             stmt.setBigDecimal(2, book.getPrice());
@@ -127,7 +133,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(DELETE_BY_ID)) {
+            PreparedStatement stmt = conn.prepareStatement(DELETE_BY_ID)) {
 
             stmt.setLong(1, id);
 
