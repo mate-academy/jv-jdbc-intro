@@ -8,7 +8,7 @@ import java.util.Properties;
 public class ConnectionUtil {
     private static final String DB_USERNAME = "root";
     private static final String DB_PASSWORD = "StrongPassword!1";
-    private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
     private static final Properties DB_PROPERTIES;
 
     static {
@@ -18,6 +18,6 @@ public class ConnectionUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_DRIVER, DB_PROPERTIES);
+        return DriverManager.getConnection(DB_URL, DB_PROPERTIES);
     }
 }
