@@ -1,6 +1,7 @@
 package mate.academy.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Book {
     private Long id;
@@ -38,5 +39,21 @@ public class Book {
                 + ", title='" + title + '\''
                 + ", price=" + price
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Book book = (Book) o;
+        return Objects.equals(getId(), book.getId())
+                && Objects.equals(getTitle(), book.getTitle())
+                && Objects.equals(getPrice(), book.getPrice());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getTitle(), getPrice());
     }
 }
