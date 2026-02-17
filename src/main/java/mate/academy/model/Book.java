@@ -12,10 +12,12 @@ public class Book {
         this.title = null;
         this.price = null;
     }
+
     public Book(String title, BigDecimal price) {
         this.title = title;
         this.price = price;
     }
+
     public Book(Long id, String title, BigDecimal price) {
         this.id = id;
         this.title = title;
@@ -25,6 +27,7 @@ public class Book {
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -32,6 +35,7 @@ public class Book {
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -39,6 +43,7 @@ public class Book {
     public BigDecimal getPrice() {
         return price;
     }
+
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
@@ -46,7 +51,13 @@ public class Book {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Book [id=").append(id).append(", title=").append(title).append(", price=").append(price).append("]");
+        sb.append("Book [id=")
+                .append(id)
+                .append(", title=")
+                .append(title)
+                .append(", price=")
+                .append(price)
+                .append("]");
         return sb.toString();
     }
 }
