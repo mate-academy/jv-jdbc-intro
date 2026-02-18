@@ -16,6 +16,17 @@ import mate.academy.util.ConnectionUtil;
 @Dao
 public class BookDaoImpl implements BookDao {
     @Override
+    public Book getBookFromResultSet(ResultSet rs) {
+        try {
+            return new Book(rs.getObject("id", Long.class),
+                    rs.getString("title"),
+                    rs.getBigDecimal("price"));
+        } catch (SQLException e) {
+            throw new DataProcessingException("Cannot get Book from ResultSet", e);
+        }
+    }
+
+    @Override
     public Book create(Book book) {
         String sql = "INSERT INTO BOOKS (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -49,11 +60,7 @@ public class BookDaoImpl implements BookDao {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    Book book = new Book(resultSet.getObject("id", Long.class),
-                            resultSet.getString("title"),
-                            resultSet.getBigDecimal("price"));
-                    preparedStatement.close();
-                    resultSet.close();
+                    Book book = getBookFromResultSet(resultSet);
                     return Optional.of(book);
                 }
             }
@@ -72,9 +79,7 @@ public class BookDaoImpl implements BookDao {
                 ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.isBeforeFirst()) {
                 while (resultSet.next()) {
-                    books.add(new Book(resultSet.getObject("id", Long.class),
-                            resultSet.getString("title"),
-                            resultSet.getBigDecimal("price")));
+                    books.add(getBookFromResultSet(resultSet));
                 }
             } else {
                 return books;

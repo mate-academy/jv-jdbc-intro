@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.model.Book;
@@ -11,6 +12,8 @@ public interface BookDao {
     //- List<Book> findAll();
     //- Book update(Book book);
     //- boolean deleteById(Long id);
+
+    public Book getBookFromResultSet(ResultSet rs);
 
     public Book create(Book book);
 
