@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book("10 Facts", BigDecimal.valueOf(15.40));
+        Book book = new Book("111 Facts", BigDecimal.valueOf(15.40));
 
         bookDao.create(book);
 
@@ -18,9 +18,9 @@ public class Main {
 
         bookDao.update(book);
 
-        bookDao.findById(1L);
+        System.out.println(bookDao.findById(2L));
 
-        bookDao.deleteById(9L);
+        bookDao.deleteById(13L);
 
         bookDao.findAll().forEach(System.out::println);
     }
