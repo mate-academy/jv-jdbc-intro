@@ -10,18 +10,18 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book("Alphabet", BigDecimal.valueOf(15));
+        Book book = new Book("10 Facts", BigDecimal.valueOf(15.40));
 
         bookDao.create(book);
 
-        book.setTitle("Alphabet 2");
+        book.setTitle("101 Facts about Life");
 
         bookDao.update(book);
 
         bookDao.findById(1L);
 
-        bookDao.deleteById(5L);
+        bookDao.deleteById(9L);
 
-        bookDao.findAll();
+        bookDao.findAll().forEach(System.out::println);
     }
 }
