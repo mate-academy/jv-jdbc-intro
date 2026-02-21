@@ -1,4 +1,4 @@
-package mate.academy.dao;
+package mate.academy.model;
 
 import java.math.BigDecimal;
 import java.util.Objects;
