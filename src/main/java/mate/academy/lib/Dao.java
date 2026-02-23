@@ -5,4 +5,11 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Dao {
+    //create
+
+    //read
+
+    //update
+
+    //delete
 }
