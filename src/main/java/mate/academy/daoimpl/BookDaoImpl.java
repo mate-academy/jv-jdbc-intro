@@ -1,15 +1,18 @@
 package mate.academy.daoimpl;
 
-import mate.academy.Conection.DBConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import mate.academy.conection.DBconnection;
 import mate.academy.dao.BookDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -17,8 +20,9 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
-        try (Connection con = DBConnection.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try (Connection con = DBconnection.getConnection()) {
+            PreparedStatement preparedStatement =
+                    con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
@@ -38,7 +42,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        try (Connection connection = DBConnection.getConnection()) {
+        try (Connection connection = DBconnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setLong(1, id);
@@ -60,7 +64,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         String sql = "SELECT * FROM books";
-        try (Connection connection = DBConnection.getConnection()) {
+        try (Connection connection = DBconnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Book> books = new ArrayList<>();
@@ -80,7 +84,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
-        try (Connection connection = DBConnection.getConnection()) {
+        try (Connection connection = DBconnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
@@ -95,7 +99,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean delete(long id) {
         String sql = "DELETE FROM books WHERE id = ?";
-        try (Connection connection = DBConnection.getConnection()) {
+        try (Connection connection = DBconnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             return preparedStatement.execute();

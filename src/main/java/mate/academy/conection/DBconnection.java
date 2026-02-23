@@ -1,11 +1,11 @@
-package mate.academy.Conection;
+package mate.academy.conection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DBConnection {
+public class DBconnection {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/jv_jdbc_intro";
     private static final Properties DB_PROPERTIES;
 
