@@ -30,7 +30,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                book.setId(resultSet.getLong(1));
+                book.setId(resultSet.getObject(1, Long.class));
             }
             return book;
 
@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Optional<Book> findById(long id) {
+    public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection connection = DBconnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -51,11 +51,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.empty();
             }
 
-            Book book = new Book();
-            book.setId(resultSet.getLong("id"));
-            book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
-            return Optional.of(book);
+            return Optional.of(getBookFromResultSet(resultSet));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id " + id, e);
         }
@@ -69,11 +65,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                books.add(book);
+                books.add(getBookFromResultSet(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -97,14 +89,23 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean delete(long id) {
+    public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = DBconnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
-            return preparedStatement.execute();
+            int updatedRows = preparedStatement.executeUpdate(); // int
+            return updatedRows > 0; // boolean;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book with id " + id, e);
         }
+    }
+
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }
