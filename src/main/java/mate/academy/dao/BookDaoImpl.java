@@ -1,12 +1,21 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.lib.ConnectionUtil;
 import mate.academy.lib.Dao;
+import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
     /**
      * create: INSERT ... RETURN_GENERATED_KEYS, встанови id згенерований.
      * @param book entity
@@ -25,6 +34,31 @@ public class BookDaoImpl implements BookDao {
      */
     @Override
     public Optional<Book> findById(Long id) {
+        String sql = "SELECT * FROM books WHERE id = ?";
+        try (Connection connection = ConnectionUtil.getConnection(); PreparedStatement statement
+                = connection.prepareStatement(sql);) {
+
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+                Book book = new Book();
+                bookDao.create(book);
+
+                String title = resultSet.getString("title");
+                double price = resultSet.getDouble("price");
+
+                book.setId((Long) id);
+                book.setTitle(title);
+                book.setPrice(BigDecimal.valueOf(price));
+
+                return Optional.of(book);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return Optional.empty();
     }
 

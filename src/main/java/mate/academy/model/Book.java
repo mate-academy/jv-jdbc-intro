@@ -47,6 +47,13 @@ public class Book {
     }
 
     @Override
+    public String toString() {
+        return "Book{" + "id=" + id + ", title='"
+                + title + '\''
+                + ", price=" + price + '}';
+    }
+
+    @Override
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + Objects.hashCode(title);
