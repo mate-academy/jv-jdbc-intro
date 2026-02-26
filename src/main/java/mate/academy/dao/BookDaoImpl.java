@@ -41,7 +41,12 @@ public class BookDaoImpl implements BookDao {
         }
         return book;
     }
-
+//todo review these two points in BookDaoImpl.java for future reference.
+// First, you have some duplicated code for creating a Book object from a ResultSet
+// in findById and findAll; this could be moved to a private helper method to follow
+// Second, in findById, the book's ID should be retrieved from the resultSet rather
+// than the method parameter to ensure the object's data is consistent with the database.
+// Addressing these points will make your code even better.
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT * FROM " + BOOKS_DB_NAME + " WHERE id = ?";
