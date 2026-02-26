@@ -11,14 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import mate.academy.lib.ConnectionUtil;
 import mate.academy.lib.Dao;
-import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 @Dao
 public class BookDaoImpl implements BookDao {
     public static final String BOOKS_DB_NAME = "books";
-    private static final Injector injector
-            = Injector.getInstance("mate.academy");
 
     @Override
     public Book create(Book book) {
@@ -99,7 +96,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+        String sql = "UPDATE " + BOOKS_DB_NAME + " SET title = ?, price = ? WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -116,7 +113,7 @@ public class BookDaoImpl implements BookDao {
 
             return book;
 
-        } catch (SQLException | RuntimeException e) {
+        } catch (SQLException e) {
             throw new DataProcessingException("Can't update book " + book, e);
         }
     }
