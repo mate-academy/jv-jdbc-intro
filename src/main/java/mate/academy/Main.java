@@ -1,14 +1,13 @@
 package mate.academy;
 
-import mate.academy.dao.BookDao;
-import mate.academy.lib.ConnectionUtil;
-import mate.academy.lib.Injector;
-import mate.academy.model.Book;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import mate.academy.dao.BookDao;
+import mate.academy.lib.ConnectionUtil;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
 
 /**
  * У main отримай BookDao через injector і протестуй всі CRUD-методи:
@@ -28,7 +27,6 @@ public class Main {
         Connection connection = ConnectionUtil.getConnection();
         String sql = "SELECT * FROM books";
         PreparedStatement statement = connection.prepareStatement(sql);
-//        statement.setString(1, "books");
 
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
@@ -37,8 +35,6 @@ public class Main {
             double price = resultSet.getDouble("price");
             System.out.print(id + " " + title + " " + price);
         }
-
-
         try {
             connection.close();
         } catch (SQLException e) {

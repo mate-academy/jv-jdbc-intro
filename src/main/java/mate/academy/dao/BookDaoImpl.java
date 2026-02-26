@@ -9,8 +9,8 @@ import mate.academy.model.Book;
 public class BookDaoImpl implements BookDao {
     /**
      * create: INSERT ... RETURN_GENERATED_KEYS, встанови id згенерований.
-     * @param book
-     * @return
+     * @param book entity
+     * @return Book
      */
     @Override
     public Book create(Book book) {
@@ -20,8 +20,8 @@ public class BookDaoImpl implements BookDao {
     /**
      * findById: SELECT ... WHERE id = ?, якщо запис знайдений — поверни Optional.of(book),
      * інакше Optional.empty().
-     * @param id
-     * @return
+     * @param id entity
+     * @return Optional
      */
     @Override
     public Optional<Book> findById(Long id) {
@@ -30,7 +30,7 @@ public class BookDaoImpl implements BookDao {
 
     /**
      * findAll: SELECT * FROM books, пробіжи ResultSet, збирай у список.
-     * @return
+     * @return List
      */
     @Override
     public List<Book> findAll() {
@@ -40,8 +40,8 @@ public class BookDaoImpl implements BookDao {
     /**
      * update: UPDATE books SET title = ?, price = ? WHERE id = ?, поверни оновлений об’єкт
      * або кинь DataProcessingException при помилці.
-     * @param book
-     * @return
+     * @param book entity
+     * @return Book
      */
     @Override
     public Book update(Book book) {
@@ -50,8 +50,8 @@ public class BookDaoImpl implements BookDao {
 
     /**
      * deleteById: DELETE FROM books WHERE id = ?, поверни true якщо affectedRows > 0.
-     * @param id
-     * @return
+     * @param id entity
+     * @return boolean
      */
     @Override
     public boolean deleteById(Long id) {
