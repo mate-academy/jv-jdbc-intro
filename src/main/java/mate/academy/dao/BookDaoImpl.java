@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Couldn't create book", e);
         }
         return book;
     }
@@ -69,16 +69,12 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Book not found with id: " + id + " ", e);
         }
 
         return Optional.empty();
     }
 
-    /**
-     * findAll: SELECT * FROM books, пробіжи ResultSet, збирай у список.
-     * @return List
-     */
     @Override
     public List<Book> findAll() {
         String sql = "SELECT * FROM " + BOOKS_DB_NAME;
@@ -97,21 +93,34 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Can't get all books", e);
+            throw new DataProcessingException("Can't get all books", e);
         }
 
         return books;
     }
 
-    /**
-     * update: UPDATE books SET title = ?, price = ? WHERE id = ?, поверни оновлений об’єкт
-     * або кинь DataProcessingException при помилці.
-     * @param book entity
-     * @return Book
-     */
     @Override
     public Book update(Book book) {
-        return null;
+        String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
+
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, book.getTitle());
+            statement.setBigDecimal(2, book.getPrice());
+            statement.setLong(3, book.getId());
+
+            int updatedRows = statement.executeUpdate();
+
+            if (updatedRows == 0) {
+                throw new RuntimeException("Can't update book with id " + book.getId());
+            }
+
+            return book;
+
+        } catch (SQLException | RuntimeException e) {
+            throw new DataProcessingException("Can't update book " + book, e);
+        }
     }
 
     /**
