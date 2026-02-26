@@ -15,7 +15,8 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao dao = new BookDaoImpl();
+        BookDao dao = (BookDao) injector.getInstance(BookDao.class);
+
         Optional<Book> byId = dao.findById(2L);
         byId.ifPresent(System.out::println);
 
@@ -24,6 +25,12 @@ public class Main {
         book.setPrice(BigDecimal.valueOf(17.74));
         dao.create(book);
         System.out.println(book);
+
+        book.setTitle("Black arrow");
+        book.setPrice(BigDecimal.valueOf(25.75));
+
+        System.out.println(dao.update(book));
+        System.out.println(dao.deleteById(6L));
 
         System.out.println(dao.findAll());
     }

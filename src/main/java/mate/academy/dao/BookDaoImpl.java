@@ -55,9 +55,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                //BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
                 Book book = new Book();
-                //bookDao.create(book);
 
                 String title = resultSet.getString("title");
                 double price = resultSet.getDouble("price");
