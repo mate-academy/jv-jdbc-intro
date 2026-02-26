@@ -24,5 +24,7 @@ public class Main {
         book.setPrice(BigDecimal.valueOf(17.74));
         dao.create(book);
         System.out.println(book);
+
+        System.out.println(dao.findAll());
     }
 }

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.lib.ConnectionUtil;
@@ -19,11 +20,6 @@ public class BookDaoImpl implements BookDao {
     private static final Injector injector
             = Injector.getInstance("mate.academy");
 
-    /**
-     * create: INSERT ... RETURN_GENERATED_KEYS, встанови id згенерований.
-     * @param book entity
-     * @return Book
-     */
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO " + BOOKS_DB_NAME + " (title, price) VALUES (?, ?)";
@@ -85,7 +81,26 @@ public class BookDaoImpl implements BookDao {
      */
     @Override
     public List<Book> findAll() {
-        return List.of();
+        String sql = "SELECT * FROM " + BOOKS_DB_NAME;
+        List<Book> books = new ArrayList<>();
+
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.setId(resultSet.getLong("id"));
+                book.setTitle(resultSet.getString("title"));
+                book.setPrice(resultSet.getBigDecimal("price"));
+                books.add(book);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't get all books", e);
+        }
+
+        return books;
     }
 
     /**
