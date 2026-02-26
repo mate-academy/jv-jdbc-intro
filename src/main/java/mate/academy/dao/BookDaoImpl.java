@@ -40,7 +40,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't create book", e);
+            throw new DataProcessingException("Couldn't create book " + book, e);
         }
         return book;
     }
@@ -58,11 +58,11 @@ public class BookDaoImpl implements BookDao {
                 Book book = new Book();
 
                 String title = resultSet.getString("title");
-                double price = resultSet.getDouble("price");
+                BigDecimal price = resultSet.getBigDecimal("price");
 
                 book.setId((Long) id);
                 book.setTitle(title);
-                book.setPrice(BigDecimal.valueOf(price));
+                book.setPrice(price);
 
                 return Optional.of(book);
             }
