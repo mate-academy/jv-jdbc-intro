@@ -1,5 +1,6 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.dao.BookDaoImpl;
@@ -15,7 +16,13 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao dao = new BookDaoImpl();
-        Optional<Book> byId = dao.findById(1L);
+        Optional<Book> byId = dao.findById(2L);
         byId.ifPresent(System.out::println);
+
+        Book book = new Book();
+        book.setTitle("J.London, White fang");
+        book.setPrice(BigDecimal.valueOf(17.74));
+        dao.create(book);
+        System.out.println(book);
     }
 }
