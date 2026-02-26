@@ -1,6 +1,5 @@
 package mate.academy;
 
-import mate.academy.model.Book;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 

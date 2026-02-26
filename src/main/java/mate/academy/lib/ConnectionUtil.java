@@ -12,8 +12,10 @@ public class ConnectionUtil {
     private static String url;
     private static String user;
     private static String pass;
+
     static {
-        try (InputStream in = ConnectionUtil.class.getClassLoader().getResourceAsStream(PROPS_FILE)) {
+        try (InputStream in = ConnectionUtil.class.getClassLoader()
+                .getResourceAsStream(PROPS_FILE)) {
             Properties props = new Properties();
             if (in == null) {
                 throw new RuntimeException("Properties file not found: " + PROPS_FILE);
@@ -28,6 +30,7 @@ public class ConnectionUtil {
             throw new RuntimeException("Can't load DB properties", e);
         }
     }
+
     public static Connection getConnection() {
         try {
             return DriverManager.getConnection(url, user, pass);
