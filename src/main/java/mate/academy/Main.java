@@ -1,5 +1,6 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,6 +34,11 @@ public class Main {
             Object id = resultSet.getObject("id");
             String title = resultSet.getString("title");
             double price = resultSet.getDouble("price");
+
+            book.setId((Long) id);
+            book.setTitle(title);
+            book.setPrice(BigDecimal.valueOf(price));
+
             System.out.print(id + " " + title + " " + price);
         }
         try {
