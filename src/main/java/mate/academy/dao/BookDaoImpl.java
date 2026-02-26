@@ -123,13 +123,21 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    /**
-     * deleteById: DELETE FROM books WHERE id = ?, поверни true якщо affectedRows > 0.
-     * @param id entity
-     * @return boolean
-     */
     @Override
     public boolean deleteById(Long id) {
-        return false;
+        String sql = "DELETE FROM books WHERE id = ?";
+
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+
+            int deletedRows = statement.executeUpdate();
+
+            return deletedRows > 0;
+
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't delete book with id " + id, e);
+        }
     }
 }
