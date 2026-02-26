@@ -81,7 +81,7 @@ public class BookDaoImpl implements BookDao {
 
             while (resultSet.next()) {
                 Book book = new Book();
-                book.setId(resultSet.getLong("id"));
+                book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getString("title"));
                 book.setPrice(resultSet.getBigDecimal("price"));
                 books.add(book);
@@ -120,7 +120,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
+        String sql = "DELETE FROM " + BOOKS_DB_NAME + " WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
