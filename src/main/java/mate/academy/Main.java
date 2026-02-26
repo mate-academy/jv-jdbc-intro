@@ -13,6 +13,6 @@ public class Main {
         BookDao bookDao;
         Injector injector = Injector.getInstance("mate.academy");
 
-        bookDao.create(new Book());
+        //bookDao.create(new Book());
     }
 }

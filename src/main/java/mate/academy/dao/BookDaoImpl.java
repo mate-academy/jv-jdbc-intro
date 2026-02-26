@@ -2,7 +2,6 @@ package mate.academy.dao;
 
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +9,7 @@ import java.util.Optional;
 public class BookDaoImpl implements BookDao {
     /**
      * create: INSERT ... RETURN_GENERATED_KEYS, встанови id згенерований.
-      * @param book
+     * @param book
      * @return
      */
     @Override
