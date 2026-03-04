@@ -9,20 +9,15 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
-        book.setTitle("I'm legend 2");
+        book.setId(8L);
+        book.setTitle("I'm legend 3");
         book.setPrice(BigDecimal.valueOf(55.99));
-        bookDao.create(book);
 
-        Book book1 = new Book();
-        book1.setId(1L);
-        book.setTitle("Matrix");
-        book.setPrice(BigDecimal.valueOf(15));
-        bookDao.update(book1);
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        bookDao.create(book);
+        bookDao.update(book);
         bookDao.findAll();
-        bookDao.findById(1L);
-        bookDao.deleteById(4L);
     }
 }
 
