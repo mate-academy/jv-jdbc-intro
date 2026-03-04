@@ -16,7 +16,8 @@ public class Main {
         bookDao.create(book);
 
         Book book1 = new Book();
-        book.setTitle("Spirit retern");
+        book1.setId(1L);
+        book.setTitle("Matrix");
         book.setPrice(BigDecimal.valueOf(15));
         bookDao.update(book1);
         bookDao.findAll();

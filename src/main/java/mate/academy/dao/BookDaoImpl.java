@@ -29,7 +29,7 @@ public class BookDaoImpl implements BookDao {
             }
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    book.setId(generatedKeys.getLong(1));
+                    book.setId(generatedKeys.getObject(1, Long.class));
                 } else {
                     throw new DataProcessingException("Creating book failed, no ID obtained.");
                 }
@@ -74,7 +74,7 @@ public class BookDaoImpl implements BookDao {
 
                 while (resultSet.next()) {
                     Book book = new Book();
-                    book.setId(resultSet.getLong("id"));
+                    book.setId(resultSet.getObject("id", Long.class));
                     book.setTitle(resultSet.getString("title"));
                     book.setPrice(resultSet.getBigDecimal("price"));
                     allBooks.add(book);
