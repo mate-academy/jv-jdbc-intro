@@ -78,9 +78,9 @@ public class BookDaoImpl implements BookDao {
 
             while (resultSet.next()) {
                 Book book = new Book();
-                book.setId(resultSet.getLong("id"));
+                book.setId(resultSet.getObject("id", Long.class));
                 book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
+                book.setPrice(resultSet.getObject("price", BigDecimal.class));
                 books.add(book);
             }
 
@@ -104,7 +104,7 @@ public class BookDaoImpl implements BookDao {
             statement.executeUpdate();
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update book:" + book, e);
+            throw new DataProcessingException("Can't update book:" + book, e);
         }
     }
 
@@ -118,7 +118,7 @@ public class BookDaoImpl implements BookDao {
             return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book by id" + id, e);
+            throw new DataProcessingException("Can't delete book by id" + id, e);
         }
     }
 }
