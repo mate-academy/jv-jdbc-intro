@@ -29,7 +29,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to insert at least 1 row.");
+                throw new DataProcessingException("Expected to insert at least 1 row.", null);
             }
 
             ResultSet rs = preparedStatement.getGeneratedKeys();
@@ -65,7 +65,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t get book from DB." + id, e);
+            throw new DataProcessingException("Can`t get book from DB by id: " + id, e);
         }
         return Optional.empty();
     }
