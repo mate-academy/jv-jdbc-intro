@@ -19,7 +19,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        String sql = "Insert INTO books (title, price) VALUES (?, ?)";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement =
@@ -45,7 +45,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "Select * FROM books WHERE id = ?";
+        String sql = "SELECT * FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -55,7 +55,7 @@ public class BookDaoImpl implements BookDao {
 
             if (rs.next()) {
                 Book book = new Book();
-                Long bookId = rs.getLong("id");
+                Long bookId = rs.getObject("id", Long.class);
                 String bookName = rs.getString("title");
                 BigDecimal bookPrice = rs.getBigDecimal("price");
                 book.setId(bookId);
@@ -65,7 +65,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(book);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t get book from DB.", e);
+            throw new DataProcessingException("Can`t get book from DB." + id, e);
         }
         return Optional.empty();
     }
@@ -82,7 +82,7 @@ public class BookDaoImpl implements BookDao {
 
             while (rs.next()) {
                 Book book = new Book();
-                Long bookId = rs.getLong("id");
+                Long bookId = rs.getObject("id", Long.class);
                 String bookName = rs.getString("title");
                 BigDecimal bookPrice = rs.getBigDecimal("price");
                 book.setId(bookId);
@@ -130,13 +130,10 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = pr.executeUpdate();
 
-            if (affectedRows < 1) {
-                return false;
-            }
+            return affectedRows > 0;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can`t delete book from DB!", e);
+            throw new DataProcessingException("Can`t delete book from DB: " + id, e);
         }
-        return true;
     }
 }
