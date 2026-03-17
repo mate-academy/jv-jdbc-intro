@@ -29,7 +29,7 @@ public class Main {
         System.out.println(booksFindAll);
 
         book.setTitle(BOOK_TITLE_UPDATE);
-        Optional<Book> bookUpdate = bookDao.update(book);
+        Book bookUpdate = bookDao.update(book);
         System.out.println(bookUpdate);
 
         boolean bookDelete = bookDao.deleteById(bookCreate.getId());
