@@ -19,12 +19,12 @@ public class BookDaoImpl implements BookDao {
     private static final String ID_LABEL = "id";
     private static final String TITLE_LABEL = "title";
     private static final String PRICE_LABEL = "price";
-    private static final String CREATE_OPERATION = "create";
-    private static final String UPDATE_OPERATION = "update";
+    private static final String CREATE_OPERATION = "CREATE";
+    private static final String UPDATE_OPERATION = "UPDATE";
 
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title, price) VALUES(?, ?)";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement
                         = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -115,9 +115,7 @@ public class BookDaoImpl implements BookDao {
         if (affectedRows < EXPECTED_ROWS) {
             throw new DataProcessingException("Expected to "
                     + operationType
-                    + " at least one row, but was "
-                    + operationType
-                    + " 0 rows");
+                    + " at least one row, but 0 rows was affected");
         }
     }
 
