@@ -19,6 +19,8 @@ public class BookDaoImpl implements BookDao {
     private static final String ID_LABEL = "id";
     private static final String TITLE_LABEL = "title";
     private static final String PRICE_LABEL = "price";
+    private static final String CREATE_OPERATION = "create";
+    private static final String UPDATE_OPERATION = "update";
 
     @Override
     public Book create(Book book) {
@@ -30,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            checkAffectedRows(affectedRows);
+            checkAffectedRows(affectedRows, CREATE_OPERATION);
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -87,7 +89,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            checkAffectedRows(affectedRows);
+            checkAffectedRows(affectedRows, UPDATE_OPERATION);
 
             return book;
         } catch (SQLException e) {
@@ -109,9 +111,13 @@ public class BookDaoImpl implements BookDao {
         }
     }
 
-    private void checkAffectedRows(int affectedRows) {
+    private void checkAffectedRows(int affectedRows, String operationType) {
         if (affectedRows < EXPECTED_ROWS) {
-            throw new RuntimeException("Expected to insert at least one row, but inserted 0 rows");
+            throw new DataProcessingException("Expected to "
+                    + operationType
+                    + " at least one row, but was "
+                    + operationType
+                    + " 0 rows");
         }
     }
 
