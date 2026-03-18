@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS my_project_db;
+
+USE my_project_db;
+
+CREATE TABLE IF NOT EXISTS books (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    price DECIMAL(10,2)
+);
