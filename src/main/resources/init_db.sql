@@ -1,5 +1,5 @@
-CREATE TABLE book (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE books (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100),
-    price INT
+    price DECIMAL(10,2)
 );
