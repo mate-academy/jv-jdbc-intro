@@ -1,6 +1,4 @@
-package mate.academy.Exception;
-
-import java.sql.SQLException;
+package mate.academy.exception;
 
 public class DataProcessingException extends RuntimeException {
 
