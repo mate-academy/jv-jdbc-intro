@@ -25,7 +25,7 @@ public class BookDaoImpl implements BookDao {
             int resultSet = statement.executeUpdate();
 
             if (resultSet < 1) {
-                throw new DataProcessingException("Expected to insert at least one row "
+                throw new RuntimeException("Expected to insert at least one row "
                         + ", but inserted zero");
             }
 
@@ -36,7 +36,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create book - " + book);
+            throw new DataProcessingException("Can't create book - " + book, e);
         }
 
         return book;
@@ -53,7 +53,7 @@ public class BookDaoImpl implements BookDao {
                 return Optional.of(parseBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find book by id - " + id);
+            throw new DataProcessingException("Can't find book by id - " + id, e);
         }
 
         return Optional.empty();
@@ -71,7 +71,7 @@ public class BookDaoImpl implements BookDao {
                 books.add(parseBook(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find all books");
+            throw new DataProcessingException("Can't find all books", e);
         }
 
         return books;
@@ -88,12 +88,12 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update at least one row "
+                throw new RuntimeException("Expected to update at least one row "
                         + ", but updated zero");
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book - " + book);
+            throw new DataProcessingException("Can't update book - " + book, e);
         }
 
         return book;
@@ -110,10 +110,10 @@ public class BookDaoImpl implements BookDao {
             deletedRows = preparedStatement.executeUpdate();
 
             if (deletedRows < 1) {
-                throw new DataProcessingException("Deleted nothing, but expected at least one");
+                throw new RuntimeException("Deleted nothing, but expected at least one");
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete book with id  " + id);
+            throw new DataProcessingException("Can't delete book with id  " + id, e);
         }
 
         return deletedRows > 0;
