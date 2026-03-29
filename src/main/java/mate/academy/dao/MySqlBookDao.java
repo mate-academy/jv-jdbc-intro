@@ -34,12 +34,11 @@ public class MySqlBookDao implements BookDao {
                     return book.withId(resultSet.getObject(1, Long.class));
                 }
             }
-
-            throw new RuntimeException("Cannot insert a book: " + book);
-
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot connect to the database via JDBC.", e);
+            throw new DataProcessingException("Cannot insert a book: " + book, e);
         }
+
+        throw new DataProcessingException("Cannot insert a book: " + book);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class MySqlBookDao implements BookDao {
 
             return Optional.empty();
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot connect to the database via JDBC.", e);
+            throw new DataProcessingException("Cannot find a book by id: " + id, e);
         }
     }
 
@@ -78,7 +77,7 @@ public class MySqlBookDao implements BookDao {
             return books;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot connect to the database via JDBC.", e);
+            throw new DataProcessingException("Cannot get all books.", e);
         }
     }
 
@@ -98,11 +97,10 @@ public class MySqlBookDao implements BookDao {
             if (affectedRows > 0) {
                 return book;
             }
-
-            throw new RuntimeException("Cannot update a book: " + book);
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot connect to the database via JDBC.", e);
+            throw new DataProcessingException("Cannot update a book: " + book, e);
         }
+        throw new DataProcessingException("Cannot update a book: " + book);
     }
 
     @Override
@@ -116,7 +114,7 @@ public class MySqlBookDao implements BookDao {
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Cannot connect to the database via JDBC.", e);
+            throw new DataProcessingException("Cannot delete a book by id " + id, e);
         }
     }
 
