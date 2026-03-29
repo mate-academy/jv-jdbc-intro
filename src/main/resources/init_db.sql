@@ -3,6 +3,6 @@ USE jdbc_test;
 
 CREATE TABLE IF NOT EXISTS books (
     id BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    price DECIMAL(10, 2) NOT NULL
+    title VARCHAR(255),
+    price DECIMAL(10, 2)
 );
