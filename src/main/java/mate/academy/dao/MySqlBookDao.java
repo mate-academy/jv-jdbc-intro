@@ -1,10 +1,5 @@
 package mate.academy.dao;
 
-import mate.academy.lib.Dao;
-import mate.academy.model.Book;
-import mate.academy.util.DataProcessingException;
-import mate.academy.util.MySQLConnectionUtil;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,16 +8,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.lib.Dao;
+import mate.academy.model.Book;
+import mate.academy.util.DataProcessingException;
+import mate.academy.util.MySqlConnectionUtil;
 
 @Dao
-public class MySQLBookDao implements BookDao {
+public class MySqlBookDao implements BookDao {
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
 
-        try (Connection connection = MySQLConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     sql, PreparedStatement.RETURN_GENERATED_KEYS)
+        try (Connection connection = MySqlConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        sql, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             statement.setObject(1, book.title());
             statement.setObject(2, book.price());
@@ -47,8 +46,8 @@ public class MySQLBookDao implements BookDao {
     public Optional<Book> findById(long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
 
-        try (Connection connection = MySQLConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)
+        try (Connection connection = MySqlConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             statement.setObject(1, id);
 
@@ -68,8 +67,8 @@ public class MySQLBookDao implements BookDao {
         String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
 
-        try (Connection connection = MySQLConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)
+        try (Connection connection = MySqlConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -77,7 +76,6 @@ public class MySQLBookDao implements BookDao {
             }
 
             return books;
-
 
         } catch (SQLException e) {
             throw new DataProcessingException("Cannot connect to the database via JDBC.", e);
@@ -88,8 +86,8 @@ public class MySQLBookDao implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
 
-        try (Connection connection = MySQLConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)
+        try (Connection connection = MySqlConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             statement.setObject(1, book.title());
             statement.setObject(2, book.price());
@@ -111,8 +109,8 @@ public class MySQLBookDao implements BookDao {
     public boolean deleteById(long id) {
         String sql = "DELETE FROM books WHERE id = ?";
 
-        try (Connection connection = MySQLConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)
+        try (Connection connection = MySqlConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             statement.setObject(1, id);
 
