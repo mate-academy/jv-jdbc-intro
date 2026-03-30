@@ -1,7 +1,7 @@
 CREATE DATABASE library;
 USE library;
 CREATE TABLE books (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id bigint PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL
 );

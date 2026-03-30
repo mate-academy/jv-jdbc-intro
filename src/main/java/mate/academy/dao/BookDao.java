@@ -12,8 +12,10 @@ public interface BookDao {
 
     Optional<Book> findById(Long id);
 
-    Book create(Book book) throws SQLException;
+    Book create(Book book);
 
     boolean deleteById(Long id);
+
+    Book update(Book book);
 
 }

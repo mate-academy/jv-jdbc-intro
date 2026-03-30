@@ -16,13 +16,11 @@ public class Main {
         System.out.println("КНИГА З ID 1:");
         bookDao.findById(1L).ifPresent(System.out::println);
         System.out.println("ДОДАВАННЯ НОВОЇ КНИГИ В БАЗУ");
-        try {
-            bookDao.create(new Book(null, "REDHOOD",new BigDecimal("48.90")));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        bookDao.create(new Book(null, "REDHOOD",new BigDecimal("48.90")));
         System.out.println("ВИДАЛЕННЯ З ID 2:");
         bookDao.deleteById(2L);
+        System.out.println("ОНОВЛЕННЯ ДАНИХ");
+        bookDao.update(new Book(1L, "UPDATEDBOOK",new BigDecimal("108.90")));
         System.out.println("ФІНАЛЬНИЙ РЕЗУЛЬТАТ");
         bookDao.findAll().forEach(System.out::println);
     }
