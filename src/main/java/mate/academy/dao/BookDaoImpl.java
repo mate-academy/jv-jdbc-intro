@@ -1,5 +1,6 @@
 package mate.academy.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -111,8 +112,8 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book getBook(ResultSet resultSet) throws SQLException {
-        return new Book(resultSet.getLong("id"),
-                resultSet.getString("title"),
-                resultSet.getBigDecimal("price"));
+        return new Book(resultSet.getObject("id", Long.class),
+                resultSet.getObject("title", String.class),
+                resultSet.getObject("price", BigDecimal.class));
     }
 }
