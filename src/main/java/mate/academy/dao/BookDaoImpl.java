@@ -43,15 +43,15 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT id, title, price FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setLong(1, id);
 
-                try (ResultSet resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return Optional.of(getBook(resultSet));
                 }
-                }
+            }
 
         } catch (SQLException e) {
             throw new DataProcessingException(
