@@ -67,7 +67,7 @@ public class BookDaoImpl implements BookDao {
                 list.add(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not find any book", e);
+            throw new DataProcessingException("Could not retrieve books from the database", e);
         }
         return list;
     }
@@ -108,7 +108,7 @@ public class BookDaoImpl implements BookDao {
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not to update the book", e);
+            throw new DataProcessingException("Can not update book: " + book, e);
         }
 
         return book;
