@@ -20,7 +20,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                        Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.executeUpdate();
@@ -30,7 +30,8 @@ public class BookDaoImpl implements BookDao {
                 book.setId(resultSet.getObject("id", Long.class));
                 return book;
             } else {
-                throw new DataProcessingException("Can not create book - no generated keys returned",
+                throw new DataProcessingException("Can not create book "
+                        + "- no generated keys returned",
                         null);
             }
         } catch (SQLException e) {
@@ -46,11 +47,11 @@ public class BookDaoImpl implements BookDao {
 
             statement.setLong(1, id);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+                try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return Optional.of(getBook(resultSet));
                 }
-            }
+                }
 
         } catch (SQLException e) {
             throw new DataProcessingException(
@@ -65,7 +66,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
 
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 books.add(getBook(resultSet));
@@ -77,10 +78,10 @@ public class BookDaoImpl implements BookDao {
         return books;
     }
 
-    public Book update (Book book) {
+    public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
@@ -89,7 +90,8 @@ public class BookDaoImpl implements BookDao {
                 return book;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not update book with " + book.getId()
+            throw new DataProcessingException("Can not update book with "
+                    + book.getId()
                     + "id ",e);
         }
         return null;
@@ -98,12 +100,13 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-               PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can not delete book with " + id + "id ",e);
+            throw new DataProcessingException("Can not delete book with "
+                    + id + "id ",e);
         }
     }
 

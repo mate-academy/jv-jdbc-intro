@@ -1,7 +1,6 @@
 package mate.academy;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
