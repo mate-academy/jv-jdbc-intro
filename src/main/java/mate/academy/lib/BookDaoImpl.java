@@ -26,13 +26,13 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet keys = statement.getGeneratedKeys();
             if (keys.next()) {
-                book.setId(keys.getLong(1));
+                book.setId(keys.getObject(1, Long.class));
             }
 
             return book;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't insert book"
+            throw new DataProcessingException("Can't insert book "
                     + book, e);
         }
     }
@@ -96,7 +96,7 @@ public class BookDaoImpl implements BookDao {
             return book;
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book"
+            throw new DataProcessingException("Can't update book "
                     + book, e);
         }
     }
