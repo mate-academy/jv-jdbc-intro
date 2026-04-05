@@ -1,32 +1,31 @@
 package mate.academy;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Properties;
+import java.math.BigDecimal;
+import java.util.Optional;
+import mate.academy.dao.BookDao;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
 
 public class Main {
-    public static void main(String[] args) {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Properties dbProporties = new Properties();
-            dbProporties.put("user", "root");
-            dbProporties.put("password", "12345");
-            Connection connection =
-                    DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test", dbProporties);
-            String sql = "SELECT * FROM car WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, 1L);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
+    private static final Injector injector = Injector.getInstance("mate.academy");
 
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't load MSQL file", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't create connection", e);
-        }
+    public static void main(String[] args) {
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+
+        Book book = new Book(null, "The witcher", new BigDecimal("50.00"));
+        bookDao.create(book);
+        System.out.println("Book " + book + " has been added.");
+
+        Optional<Book> foundBook = bookDao.findById(book.getId());
+        foundBook.ifPresent(b -> System.out.println("Found: " + b));
+
+        book.setTitle("The witcher 2");
+        bookDao.update(book);
+        System.out.println("Updated: " + bookDao.findById(book.getId()).get());
+
+        System.out.println("All books: " + bookDao.findAll());
+
+        boolean isDeleted = bookDao.deleteById(book.getId());
+        System.out.println("Has been deleted? " + isDeleted);
     }
 }
