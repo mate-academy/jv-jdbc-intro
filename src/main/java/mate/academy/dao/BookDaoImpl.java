@@ -100,7 +100,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            if (statement.executeUpdate() > 1) {
+            if (statement.executeUpdate() > 0) {
                 return true;
             }
         } catch (SQLException ex) {
