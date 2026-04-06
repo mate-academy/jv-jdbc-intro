@@ -18,7 +18,7 @@ import mate.academy.models.DataProcessingException;
 @Dao
 public class BookDaoImpl implements BookDao {
     private static final int MIN_ROWS = 1;
-    private static final int ZERO_ROWS = 1;
+    private static final int ZERO_ROWS = 0;
 
     @Override
     public Book create(Book book) {
@@ -34,7 +34,7 @@ public class BookDaoImpl implements BookDao {
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                Long id = generatedKeys.getLong(1);
+                Long id = generatedKeys.getObject(1, Long.class);
                 book.setId(id);
                 return book;
             }
@@ -53,12 +53,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                String title = resultSet.getString(2);
-                BigDecimal price = resultSet.getBigDecimal(3);
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = getNewBook(resultSet);
                 return Optional.of(book);
             }
         } catch (SQLException e) {
@@ -75,14 +70,7 @@ public class BookDaoImpl implements BookDao {
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Long id = resultSet.getLong(1);
-                String title = resultSet.getString(2);
-                BigDecimal price = resultSet.getBigDecimal(3);
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
+                Book book = getNewBook(resultSet);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -92,7 +80,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Book updateBook(Book book) {
+    public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -121,5 +109,16 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can not to delete book by id: " + id, e);
         }
+    }
+
+    private Book getNewBook(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getObject(1, Long.class);
+        String title = resultSet.getString(2);
+        BigDecimal price = resultSet.getBigDecimal(3);
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setPrice(price);
+        return book;
     }
 }

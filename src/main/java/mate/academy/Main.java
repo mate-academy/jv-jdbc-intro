@@ -28,7 +28,7 @@ public class Main {
         List<Book> books = bookDao.findAll();
         System.out.println(books);
         book1.setPrice(BigDecimal.valueOf(140));
-        bookDao.updateBook(book1);
+        bookDao.update(book1);
         bookDao.deleteById(1L);
     }
 }
