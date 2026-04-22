@@ -44,14 +44,13 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Optional<Book> findById(Long id) {
 
-
         String sql = "SELECT * FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)){
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()){
-                if (resultSet.next()){
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
                     Book book = new Book(resultSet.getLong("id"),
                             resultSet.getString("title"),
                             resultSet.getBigDecimal("price"));
