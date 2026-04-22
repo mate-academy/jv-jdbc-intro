@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,7 +36,8 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cant create new record when book title = " + book.getTitle(), e);
+            throw new DataProcessingException("Cant create new record when book title = "
+                    + book.getTitle(), e);
         }
         return book;
     }
@@ -57,7 +57,8 @@ public class BookDaoImpl implements BookDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cant find record by choosed id, id = " + id, e);
+            throw new DataProcessingException("Cant find record by choosed id, id = "
+                    + id, e);
         }
         return Optional.empty();
     }
@@ -68,8 +69,8 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
 
         try (Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();) {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery();) {
             while (resultSet.next()) {
                 Book book = parseBook(resultSet);
 
@@ -91,11 +92,13 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException("Cant find rows to change when book id = " + book.getId());
+                throw new DataProcessingException("Cant find rows to change when book id = "
+                        + book.getId());
             }
 
         } catch (SQLException e) {
-            throw new DataProcessingException("Cant update record when book id = " + book.getId(), e);
+            throw new DataProcessingException("Cant update record when book id = "
+                    + book.getId(), e);
         }
         return book;
     }
@@ -111,12 +114,13 @@ public class BookDaoImpl implements BookDao {
                 return true;
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Cant delete record by id, id = " + id, e);
+            throw new DataProcessingException("Cant delete record by id, id = "
+                    + id, e);
         }
         return false;
     }
 
-    private Book parseBook (ResultSet rs) {
+    private Book parseBook(ResultSet rs) {
         Book book;
         try {
             book = new Book(rs.getObject("id", Long.class),
