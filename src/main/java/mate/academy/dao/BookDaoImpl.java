@@ -114,10 +114,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
-                return false;
-            }
-            return true;
+            return affectedRows > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find book with id: " + id, e);
         }
@@ -128,7 +125,7 @@ public class BookDaoImpl implements BookDao {
 
         try {
             book.setPrice(rs.getBigDecimal("price"));
-            book.setId(rs.getLong("id"));
+            book.setId(rs.getObject("id", Long.class));
             book.setTitle(rs.getString("title"));
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create book", e);
