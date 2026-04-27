@@ -1,5 +1,5 @@
 CREATE TABLE books(
-    id int PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title varchar(255),
     price float
 )
