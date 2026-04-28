@@ -10,12 +10,29 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        Book book = new Book();
-        book.setTitle("Gandon");
-        book.setPrice(BigDecimal.valueOf(123));
+        // C
+        Book book1 = new Book();
+        book1.setTitle("Gandon");
+        book1.setPrice(BigDecimal.valueOf(123));
+        System.out.println(bookDao.create(book1));
 
-        // initialize field values using setters or constructor
-        bookDao.create(book);
-        // test other methods from BookDao
+        Book book2 = new Book();
+        book2.setTitle("Gandon2");
+        book2.setPrice(BigDecimal.valueOf(123));
+        System.out.println(bookDao.create(book2));
+
+        // R
+        System.out.println(bookDao.findById(2L));
+        System.out.println(bookDao.findAll());
+
+        // U
+        Book book3 = new Book();
+        book3.setId(10L);
+        book3.setTitle("Gandon10Update");
+        book3.setPrice(BigDecimal.valueOf(123));
+        System.out.println(bookDao.update(book3));
+
+        // D
+        System.out.println(bookDao.deleteById(4L));
     }
 }
