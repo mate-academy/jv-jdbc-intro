@@ -27,12 +27,13 @@ public class BookDaoImpl implements BookDao {
             int affectedRow = preparedStatement.executeUpdate();
             if (affectedRow < 1) {
                 throw new DataProcessingException(
-                        "Expected to insert at leas one row, but inserted one rows.");
+                        "Expected to insert at least one row, but inserted one rows.");
             }
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
-                book.setId(id);
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    Long id = generatedKeys.getObject(1, Long.class);
+                    book.setId(id);
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't add new book: " + book, e);

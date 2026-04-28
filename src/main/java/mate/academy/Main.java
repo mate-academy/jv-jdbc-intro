@@ -11,12 +11,12 @@ public class Main {
     private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+        final BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         System.out.println("---1. Тест Create---");
         Book book = new Book();
         book.setTitle("Spawn");
-        Book savedBook = bookDao.create(book);
         book.setPrice(BigDecimal.valueOf(500.50));
+        Book savedBook = bookDao.create(book);
         System.out.println("Create book " + savedBook);
         System.out.println("\n--- 2. Тест FINDBYID ---");
         Optional<Book> foundBook = bookDao.findById(savedBook.getId());
