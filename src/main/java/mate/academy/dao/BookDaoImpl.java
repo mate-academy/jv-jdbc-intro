@@ -35,7 +35,7 @@ public class BookDaoImpl implements BookDao {
         }
 
         if (book.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Book Price is null");
+            throw new RuntimeException("Book Price can not be negative");
         }
 
         String sql = "INSERT INTO books (title,price) VALUES (?,?)";
@@ -50,7 +50,7 @@ public class BookDaoImpl implements BookDao {
 
             if (affectedRows < 1) {
                 throw new DataProcessingException("Expected to insert at least 1 row, "
-                        + "but actually got 0 rows were inserted.", new RuntimeException());
+                        + "but actually got 0 rows were inserted.", null);
             }
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -122,7 +122,7 @@ public class BookDaoImpl implements BookDao {
 
             if (affectedRows == 0) {
                 throw new DataProcessingException(
-                        "Book with id " + book.getId() + " not found", new RuntimeException());
+                        "Book with id " + book.getId() + " not found", null);
             }
 
             return book;

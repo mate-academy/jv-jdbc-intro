@@ -27,7 +27,7 @@ public class Main {
 
         // U
         Book book3 = new Book();
-        book3.setId(10L);
+        book3.setId(1L);
         book3.setTitle("Gandon10Update");
         book3.setPrice(BigDecimal.valueOf(123));
         System.out.println(bookDao.update(book3));
