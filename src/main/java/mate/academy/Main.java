@@ -8,9 +8,11 @@ import mate.academy.model.Book;
 public class Main {
     public static void main(String[] args) {
         BookDao bookDao = new BookDaoImpl();
-        Book book = new Book();
-        book.setTitle("Artem");
-        book.setPrice(BigDecimal.valueOf(12313.321));
-        System.out.println(bookDao.create(book));
+        Book b = new Book();
+        b.setId(1L);
+        b.setPrice(BigDecimal.valueOf(323));
+        b.setTitle("Gandon");
+        System.out.println(bookDao.update(b));
+        System.out.println(bookDao.deleteById(1L));
     }
 }

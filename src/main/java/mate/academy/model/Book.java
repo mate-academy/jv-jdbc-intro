@@ -10,4 +10,7 @@ public class Book {
     private Long id;
     private String title;
     private BigDecimal price;
+
+    public void setS(String title) {
+    }
 }
