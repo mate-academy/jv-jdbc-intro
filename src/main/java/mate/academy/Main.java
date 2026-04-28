@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-        // C
+        //  C
         Book book1 = new Book();
         book1.setTitle("Gandon");
         book1.setPrice(BigDecimal.valueOf(123));
