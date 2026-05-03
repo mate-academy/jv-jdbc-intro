@@ -66,8 +66,6 @@ public class BookDaoImpl implements BookDao {
                 while (resultSet.next()) {
                     books.add(parseBookFromResultSet(resultSet));
                 }
-            } catch (SQLException e) {
-                throw new DataProcessingException("Can`t find any books" + e);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("No books found", e);
