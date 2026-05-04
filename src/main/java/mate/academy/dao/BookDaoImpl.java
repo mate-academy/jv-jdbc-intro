@@ -1,6 +1,5 @@
 package mate.academy.dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,25 +17,6 @@ import mate.academy.util.ConnectionUtil;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        if (book == null) {
-            throw new RuntimeException("Book is null.");
-        }
-
-        if (book.getTitle() == null) {
-            throw new RuntimeException("Book Title is null");
-        }
-
-        if (book.getTitle().isEmpty()) {
-            throw new RuntimeException("Book Title is empty");
-        }
-
-        if (book.getPrice() == null) {
-            throw new RuntimeException("Book Price is null");
-        }
-
-        if (book.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Book Price can not be negative");
-        }
 
         String sql = "INSERT INTO books (title,price) VALUES (?,?)";
         try (Connection connection = ConnectionUtil.getConnection();
