@@ -83,15 +83,14 @@ public class BookDaoImpl implements BookDao {
         List<Book> books = new ArrayList<>();
 
         try (Connection connection = getConnection();
-                        PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = statement.executeQuery();
-
+                        PreparedStatement statement = connection.prepareStatement(sql);
+                                    ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 books.add(mapRow(resultSet));
             }
             return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get all books", e);
+            throw new DataProcessingException("Can't get all books: " + books, e);
         }
     }
 
