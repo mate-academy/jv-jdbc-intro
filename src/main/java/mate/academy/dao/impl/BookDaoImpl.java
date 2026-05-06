@@ -52,11 +52,7 @@ public class BookDaoImpl implements BookDao {
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
 
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                return Optional.of(book);
+                return Optional.of(parseBookFromResultSet(resultSet));
             }
             return Optional.empty();
         } catch (SQLException e) {
@@ -73,15 +69,7 @@ public class BookDaoImpl implements BookDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                BigDecimal price = resultSet.getBigDecimal("price");
-                Long id = resultSet.getLong("id");
-
-                Book book = new Book();
-                book.setId(id);
-                book.setTitle(title);
-                book.setPrice(price);
-                books.add(book);
+                books.add(parseBookFromResultSet(resultSet));
             }
             return books;
         } catch (SQLException e) {
@@ -93,8 +81,7 @@ public class BookDaoImpl implements BookDao {
     public Book update(Book book) {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql,
-                        Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -122,5 +109,13 @@ public class BookDaoImpl implements BookDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete book by id: " + id, e);
         }
+    }
+
+    private Book parseBookFromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }
