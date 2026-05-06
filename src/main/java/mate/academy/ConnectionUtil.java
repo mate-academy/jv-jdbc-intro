@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionUtil {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/test?serverTimezone=UTC";
     public static final Properties DB_PROPERTIES;
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test?serverTimezone=UTC";
 
     static {
         DB_PROPERTIES = new Properties();

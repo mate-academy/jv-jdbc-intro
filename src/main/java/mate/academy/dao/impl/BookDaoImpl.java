@@ -22,14 +22,14 @@ public class BookDaoImpl implements BookDao {
         String sql = "INSERT INTO books (title, price) VALUES (?,?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                        Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new DataProcessingException ("Expected to insert at least one row, " +
-                        "but inserted 0", null);
+                throw new DataProcessingException("Expected to insert at least one row, "
+                        + "but inserted 0", null);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -94,7 +94,7 @@ public class BookDaoImpl implements BookDao {
         String sql = "UPDATE books SET title = ?, price = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                        Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -115,7 +115,7 @@ public class BookDaoImpl implements BookDao {
     public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
 
             return statement.executeUpdate() > 0;
