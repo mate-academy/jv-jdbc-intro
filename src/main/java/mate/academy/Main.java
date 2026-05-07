@@ -23,10 +23,9 @@ public class Main {
         bookDao.create(book1);
         bookDao.create(book2);
         bookDao.create(book3);
-        System.out.println(bookDao.delete(2L));
+        System.out.println(bookDao.deleteById(2L));
         System.out.println(bookDao.update(book4));
         System.out.println(bookDao.findById(3L));
-        System.out.println(bookDao.update(book4));
         System.out.println(bookDao.findAll());
     }
 }

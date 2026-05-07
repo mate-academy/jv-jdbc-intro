@@ -33,6 +33,7 @@ public class BookDaoImpl implements BookDao {
             }
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
             Long id = generatedKeys.getObject(1, Long.class);
             book.setId(id);
 
@@ -104,7 +105,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean delete(Long id) {
+    public boolean deleteById(Long id) {
         String sql = "DELETE FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
