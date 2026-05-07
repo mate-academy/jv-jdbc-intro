@@ -3,17 +3,16 @@ package mate.academy.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mate.academy.dao.BookDao;
-import mate.academy.exception.DataProcessingException;
-import mate.academy.model.Book;
-import mate.academy.util.ConnectionUtil;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import mate.academy.dao.BookDao;
+import mate.academy.exception.DataProcessingException;
+import mate.academy.model.Book;
+import mate.academy.util.ConnectionUtil;
 
 public class BookDaoImpl implements BookDao {
     @Override
@@ -65,7 +64,8 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException(
                     "Can't find book by id" + id, e);
         }
-    };
+    }
+    ;
 
     @Override
     public List<Book> findAll() {
@@ -86,7 +86,8 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException(
                     "Can't get all books", e);
         }
-    };
+    }
+    ;
 
     @Override
     public Book update(Book book) {
@@ -108,7 +109,8 @@ public class BookDaoImpl implements BookDao {
             throw new DataProcessingException(
                     "Can't update book", e);
         }
-    };
+    }
+    ;
 
     @Override
     public boolean deleteById(Long id) {
