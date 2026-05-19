@@ -17,7 +17,7 @@ import mate.academy.util.ConnectionUtil;
 public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
-        String sql = "INSERT INTO books (title, price) values (?, ?)";
+        String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
 
         try (PreparedStatement preparedStatement = ConnectionUtil
                 .getConnection()
@@ -44,12 +44,12 @@ public class BookDaoImpl implements BookDao {
                     return book;
                 }
             }
+
+            throw new DataProcessingException("The book wasn't added. Book:" + book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create new book. Book: "
                     + book, e);
         }
-
-        return null;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = preparedStatement.executeUpdate();
 
-            if (affectedRows < 0) {
+            if (affectedRows < 1) {
                 throw new DataProcessingException("Failed to update book, "
                         + "no rows affected. Book: " + book);
             }

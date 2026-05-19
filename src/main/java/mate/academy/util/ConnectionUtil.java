@@ -11,7 +11,7 @@ public class ConnectionUtil {
     private static final Properties properties;
 
     static {
-        url = "jdbc:mysql://localhost:3306/book_store";
+        url = "jdbc:mysql://localhost:3306/book_store?serverTimezone=UTC";
         properties = new Properties();
         properties.put("user", "root");
         properties.put("password", "root1234");
