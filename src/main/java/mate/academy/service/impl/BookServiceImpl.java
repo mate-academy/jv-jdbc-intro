@@ -1,13 +1,10 @@
 package mate.academy.service.impl;
 
+import java.util.List;
+import java.util.Optional;
 import mate.academy.dao.BookDao;
 import mate.academy.model.Book;
 import mate.academy.service.BookService;
-
-import java.sql.*;
-import java.util.List;
-import java.util.Optional;
-
 
 public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
