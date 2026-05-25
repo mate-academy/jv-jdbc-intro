@@ -17,7 +17,8 @@ public class ConnectionUtil {
         }
     }
 
-    private ConnectionUtil() {}
+    private ConnectionUtil() {
+    }
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
