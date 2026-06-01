@@ -1,15 +1,15 @@
 package mate.academy;
 
-import mate.academy.lib.Dao;
-import mate.academy.lib.ConnectionUtil;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import mate.academy.lib.ConnectionUtil;
+import mate.academy.lib.Dao;
 
 @Dao
 public class BookDaoImpl implements BookDao {
@@ -27,8 +27,8 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     CREATE_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        CREATE_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
@@ -44,10 +44,10 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Optional<Book> findbyId(Long id) {
+    public Optional<Book> findById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(FIND_BOOK_BY_ID_QUERY)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(FIND_BOOK_BY_ID_QUERY)) {
             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -63,16 +63,13 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(FIND_ALL_BOOKS_QUERY)) {
-
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(FIND_ALL_BOOKS_QUERY)) {
             List<Book> books = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
-
             while (resultSet.next()) {
                 books.add(parseBook(resultSet));
             }
-
             return books;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all books from DB", e);
@@ -82,12 +79,11 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book update(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(UPDATE_BOOK_QUERY)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(UPDATE_BOOK_QUERY)) {
             preparedStatement.setString(1, book.getTitle());
             preparedStatement.setBigDecimal(2, book.getPrice());
             preparedStatement.setLong(3, book.getId());
-
             preparedStatement.executeUpdate();
             return book;
         } catch (SQLException e) {
@@ -98,10 +94,9 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(DELETE_BOOK_BY_ID_QUERY)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(DELETE_BOOK_BY_ID_QUERY)) {
             preparedStatement.setLong(1, id);
-
             int updatedRows = preparedStatement.executeUpdate();
             return updatedRows > 0;
         } catch (SQLException e) {
