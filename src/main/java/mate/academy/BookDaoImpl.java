@@ -19,6 +19,8 @@ public class BookDaoImpl implements BookDao {
             "SELECT * FROM books WHERE id = ?";
     private static final String FIND_ALL_BOOKS_QUERY =
             "SELECT * FROM books";
+    private static final String UPDATE_BOOK_QUERY =
+            "UPDATE books SET title = ?, price = ? WHERE id = ?";
 
     @Override
     public Book create(Book book) {
@@ -77,7 +79,18 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book update(Book book) {
-        return null;
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(UPDATE_BOOK_QUERY)) {
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.setLong(3, book.getId());
+
+            preparedStatement.executeUpdate();
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't update a book " + book, e);
+        }
     }
 
     @Override
