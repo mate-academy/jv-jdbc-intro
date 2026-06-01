@@ -3,6 +3,7 @@ package mate.academy;
 import mate.academy.lib.Dao;
 import mate.academy.lib.ConnectionUtil;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,8 @@ public class BookDaoImpl implements BookDao {
             "INSERT INTO books (title, price) VALUES (?, ?)";
     private static final String FIND_BOOK_BY_ID_QUERY =
             "SELECT * FROM books WHERE id = ?";
+    private static final String FIND_ALL_BOOKS_QUERY =
+            "SELECT * FROM books";
 
     @Override
     public Book create(Book book) {
@@ -55,7 +58,21 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> findAll() {
-        return List.of();
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(FIND_ALL_BOOKS_QUERY)) {
+
+            List<Book> books = new ArrayList<>();
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                books.add(parseBook(resultSet));
+            }
+
+            return books;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't get all books from DB", e);
+        }
     }
 
     @Override
