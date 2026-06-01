@@ -21,6 +21,8 @@ public class BookDaoImpl implements BookDao {
             "SELECT * FROM books";
     private static final String UPDATE_BOOK_QUERY =
             "UPDATE books SET title = ?, price = ? WHERE id = ?";
+    private static final String DELETE_BOOK_BY_ID_QUERY =
+            "DELETE FROM books WHERE id = ?";
 
     @Override
     public Book create(Book book) {
@@ -95,7 +97,16 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean deleteById(Long id) {
-        return false;
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(DELETE_BOOK_BY_ID_QUERY)) {
+            preparedStatement.setLong(1, id);
+
+            int updatedRows = preparedStatement.executeUpdate();
+            return updatedRows > 0;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't delete book by id " + id, e);
+        }
     }
 
     private Book parseBook(ResultSet resultSet) throws SQLException {
