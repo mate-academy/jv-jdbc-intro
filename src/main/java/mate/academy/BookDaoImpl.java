@@ -14,12 +14,22 @@ import java.sql.Statement;
 public class BookDaoImpl implements BookDao {
     private static final String CREATE_BOOK_QUERY =
             "INSERT INTO books (title, price) VALUES (?, ?)";
+    private static final String FIND_BOOK_BY_ID_QUERY =
+            "SELECT * FROM books WHERE id = ?";
 
     @Override
     public Book create(Book book) {
         try (Connection connection = ConnectionUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
                      CREATE_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setBigDecimal(2, book.getPrice());
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                book.setId(generatedKeys.getObject(1, Long.class));
+            }
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create a book " + book, e);
@@ -28,7 +38,19 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<Book> findbyId(Long id) {
-        return Optional.empty();
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(FIND_BOOK_BY_ID_QUERY)) {
+            preparedStatement.setLong(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(parseBook(resultSet));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't find book by id " + id, e);
+        }
     }
 
     @Override
@@ -44,5 +66,13 @@ public class BookDaoImpl implements BookDao {
     @Override
     public boolean deleteById(Long id) {
         return false;
+    }
+
+    private Book parseBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
     }
 }
