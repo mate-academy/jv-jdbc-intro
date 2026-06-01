@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +20,9 @@ public class BookDaoImpl implements BookDao {
         String query = "INSERT INTO books (title, price) VALUES (?, ?)";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(query)) {
+                PreparedStatement statement =
+                        connection.prepareStatement(
+                             query, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -47,7 +47,8 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement =
+                        connection.prepareStatement(query)) {
 
             statement.setLong(1, id);
 
@@ -69,7 +70,8 @@ public class BookDaoImpl implements BookDao {
         String query = "SELECT * FROM books";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement =
+                        connection.prepareStatement(query)) {
 
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
@@ -90,7 +92,8 @@ public class BookDaoImpl implements BookDao {
         String query = "UPDATE books SET title = ?, price = ? WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement =
+                        connection.prepareStatement(query)) {
 
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
@@ -110,7 +113,8 @@ public class BookDaoImpl implements BookDao {
         String query = "DELETE FROM books WHERE id = ?";
 
         try (Connection connection = ConnectionUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement =
+                        connection.prepareStatement(query)) {
 
             statement.setLong(1, id);
 
