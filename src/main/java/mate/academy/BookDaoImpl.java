@@ -1,6 +1,7 @@
 package mate.academy;
 
 import mate.academy.lib.Dao;
+import mate.academy.lib.ConnectionUtil;
 import java.util.List;
 import java.util.Optional;
 import java.sql.Connection;
@@ -16,7 +17,13 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book create(Book book) {
-        return null;
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     CREATE_BOOK_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+            return book;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't create a book " + book, e);
+        }
     }
 
     @Override
