@@ -1,5 +1,7 @@
 # Task description
 
+`mvn -DskipTests=false clean package`
+
 Your task is to create a Book entity class and BookDao repository interface, and it's implementation.
 
 Here are the steps you need to do in this HW:
