@@ -1,4 +1,4 @@
-package mate.academy.lib;
+package mate.academy.lib.injector;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
