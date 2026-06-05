@@ -1,4 +1,4 @@
-package mate.academy.lib;
+package mate.academy.lib.injector;
 
 import java.io.File;
 import java.io.IOException;
