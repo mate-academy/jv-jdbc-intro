@@ -1,5 +1,6 @@
 package mate.academy.lib.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +30,7 @@ public class BookDaoImpl implements BookDao {
             
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
-                book.setId(resultSet.getLong(1));
+                book.setId(resultSet.getObject("id", Long.class));
                 return book;
             }
             
@@ -89,7 +90,7 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
             
             if (affectedRows == 0) {
-                throw new RuntimeException("Book with id: " + book.getId() + " does not exist");
+                throw new DataProcessingException("No rows were affected during update", null);
             }
             return book;
         } catch (SQLException e) {
@@ -108,16 +109,16 @@ public class BookDaoImpl implements BookDao {
             return affectedRows > 0;
             
         } catch (SQLException e) {
-            throw new RuntimeException("Can't delete book with id: " + id, e);
+            throw new DataProcessingException("Can't delete book with id: " + id, e);
         }
     }
     
     private Book getBookFromResultSet(ResultSet resultSet) {
         Book book = new Book();
         try {
-            book.setId(resultSet.getLong("id"));
+            book.setId(resultSet.getObject("id", Long.class));
             book.setTitle(resultSet.getString("title"));
-            book.setPrice(resultSet.getBigDecimal("price"));
+            book.setPrice(resultSet.getObject("price", BigDecimal.class));
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't extract book from ResultSet", e);
