@@ -1,4 +1,4 @@
-package mate.academy.lib;
+package mate.academy;
 
 import java.io.InputStream;
 import java.util.Properties;

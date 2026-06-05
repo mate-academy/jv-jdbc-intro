@@ -1,8 +1,8 @@
 package mate.academy;
 
 import java.math.BigDecimal;
-import mate.academy.lib.injector.Injector;
 import mate.academy.lib.dao.BookDao;
+import mate.academy.lib.injector.Injector;
 import mate.academy.lib.model.Book;
 
 public class Main {
