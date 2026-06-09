@@ -64,10 +64,7 @@ public class BookDaoImpl implements BookDao {
                     DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test?" +
                             "user=root&password=");
         } catch (SQLException ex) {
-            // handle any errors
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            throw new RuntimeException(ex);
         }
         return conn;
     }
