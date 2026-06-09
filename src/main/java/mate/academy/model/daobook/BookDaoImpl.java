@@ -57,7 +57,6 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Connection getConnection() {
-        String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/test";
         Connection conn = null;
         try {
             conn =
