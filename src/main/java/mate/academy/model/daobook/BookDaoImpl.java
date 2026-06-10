@@ -57,14 +57,11 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Connection getConnection() {
-        Connection conn = null;
         try {
-            conn =
-                    DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test?" +
-                            "user=root&password=");
+            return DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/test?user=root&password=");
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-        return conn;
     }
 }
