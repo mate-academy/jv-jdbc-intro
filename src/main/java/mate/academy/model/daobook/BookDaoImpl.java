@@ -19,7 +19,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public Book create(Book book) {
         try(Connection connection = getConnection()) {
-            try (PreparedStatement preparedStatement = getConnection().prepareStatement(CREATE_BOOK_SQL, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE_BOOK_SQL, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, book.getTitle());
                 preparedStatement.setString(2, book.getAuthor());
                 preparedStatement.setString(3, book.getIsbn());
