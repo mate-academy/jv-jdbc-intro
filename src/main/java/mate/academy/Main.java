@@ -27,11 +27,11 @@ public class Main {
         System.out.println("UPDATED: " + updatedBook);
 
         // FIND BY ID
-        bookDao.findById(book.getId())
+        bookDao.findById(updatedBook.getId())
                 .ifPresent(el -> System.out.println("FOUND BY ID: " + el));
 
         // DELETE
-        boolean deleted = bookDao.deleteById(book.getId());
+        boolean deleted = bookDao.deleteById(updatedBook.getId());
         System.out.println("DELETED: " + (deleted));
     }
 }

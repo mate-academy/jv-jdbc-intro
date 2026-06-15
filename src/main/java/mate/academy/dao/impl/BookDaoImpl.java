@@ -62,7 +62,7 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(slqQuery)) {
             preparedStatement.setLong(1, id);
-            preparedStatement.execute();
+            preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
             if (resultSet.next()) {
                 return Optional.of(Book.getBookFromResultSet(resultSet));
@@ -78,7 +78,7 @@ public class BookDaoImpl implements BookDao {
         String slqQuery = String.format("SELECT * FROM %s", TABLE_NAME);
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(slqQuery)) {
-            preparedStatement.execute(slqQuery);
+            preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
@@ -86,7 +86,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Exception while getting all books", e);
         }
     }
 

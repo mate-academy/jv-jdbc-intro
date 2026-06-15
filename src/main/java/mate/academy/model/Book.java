@@ -17,7 +17,7 @@ public class Book {
 
         try {
             Book book = new Book();
-            book.setId(resultSet.getLong("id"));
+            book.setId(resultSet.getObject("id", Long.class));
             book.setTitle(resultSet.getString("title"));
             book.setPrice(resultSet.getObject("price", BigDecimal.class));
 
