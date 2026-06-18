@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
@@ -38,7 +37,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't add a new record", e);
+            throw new RuntimeException("Can't add a new record", e);
         }
         return book;
     }
@@ -106,7 +105,7 @@ public class BookDaoImpl implements BookDao {
             }
 
             return this.findById(book.getId()).orElseThrow(
-                    () -> new RuntimeException("Book not found"));
+                    () -> new DataProcessingException("Book not found"));
 
         } catch (SQLException e) {
             throw new DataProcessingException(e);
