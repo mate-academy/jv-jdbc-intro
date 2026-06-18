@@ -6,7 +6,7 @@ import mate.academy.model.Book;
 
 //according to CRUD;
 public interface BookDao {
-    Book save(Book book);
+    Book create(Book book);
 
     Optional<Book> findById(Long id);
 

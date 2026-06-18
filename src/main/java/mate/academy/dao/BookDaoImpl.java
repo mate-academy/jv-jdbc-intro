@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import mate.academy.exceptions.DataProcessingException;
 import mate.academy.lib.Dao;
 import mate.academy.model.Book;
 import mate.academy.utils.ConnectionUtil;
@@ -16,7 +18,7 @@ import mate.academy.utils.ConnectionUtil;
 @Dao
 public class BookDaoImpl implements BookDao {
     @Override
-    public Book save(Book book) {
+    public Book create(Book book) {
         String sql = "INSERT INTO books(title, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement
@@ -26,7 +28,7 @@ public class BookDaoImpl implements BookDao {
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected at least one "
+                throw new DataProcessingException("Expected at least one "
                         + "row inserted, but inserted 0 rows");
             }
 
@@ -36,7 +38,7 @@ public class BookDaoImpl implements BookDao {
                 book.setId(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't add a new record", e);
+            throw new DataProcessingException("Can't add a new record", e);
         }
         return book;
     }
@@ -50,7 +52,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Long idObject = resultSet.getLong("id");
+                long idObject = resultSet.getLong("id");
                 String title = resultSet.getObject("title", String.class);
                 BigDecimal price = resultSet.getObject("price", BigDecimal.class);
                 Book book = new Book();
@@ -61,7 +63,7 @@ public class BookDaoImpl implements BookDao {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot connect to DB", e);
+            throw new DataProcessingException("Cannot connect to DB", e);
         }
     }
 
@@ -73,7 +75,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
             List<Book> books = new ArrayList<>();
             while (resultSet.next()) {
-                Long idObject = resultSet.getLong("id");
+                long idObject = resultSet.getLong("id");
                 String title = resultSet.getObject("title", String.class);
                 BigDecimal price = resultSet.getObject("price", BigDecimal.class);
                 Book book = new Book();
@@ -84,7 +86,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException("cannot connect to db", e);
+            throw new DataProcessingException("cannot connect to db", e);
         }
     }
 
@@ -100,14 +102,14 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows < 1) {
-                throw new RuntimeException("Expected to update at least 1 row, but updated 0");
+                throw new DataProcessingException("Expected to update at least 1 row, but updated 0");
             }
 
             return this.findById(book.getId()).orElseThrow(
                     () -> new RuntimeException("Book not found"));
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(e);
         }
 
     }
@@ -121,7 +123,7 @@ public class BookDaoImpl implements BookDao {
             return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot connect to the db", e);
+            throw new DataProcessingException("Cannot connect to the db", e);
         }
     }
 
