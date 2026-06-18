@@ -101,14 +101,15 @@ public class BookDaoImpl implements BookDao {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows < 1) {
-                throw new DataProcessingException("Expected to update at least 1 row, but updated 0");
+                throw new DataProcessingException("Expected to update at "
+                        + "least 1 row, but updated 0");
             }
 
             return this.findById(book.getId()).orElseThrow(
                     () -> new DataProcessingException("Book not found"));
 
         } catch (SQLException e) {
-            throw new DataProcessingException(e);
+            throw new DataProcessingException("Cannot connect to DB", e);
         }
 
     }
