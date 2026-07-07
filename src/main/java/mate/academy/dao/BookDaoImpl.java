@@ -38,6 +38,14 @@ public class BookDaoImpl implements BookDao {
         return book;
     }
 
+    private Book parseBook(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.setId(resultSet.getObject("id", Long.class));
+        book.setTitle(resultSet.getString("title"));
+        book.setPrice(resultSet.getBigDecimal("price"));
+        return book;
+    }
+
     @Override
     public Optional<Book> findById(Long id) {
         String sql = "SELECT id, title, price FROM books WHERE id = ?";
@@ -49,11 +57,7 @@ public class BookDaoImpl implements BookDao {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                return Optional.of(book);
+                return Optional.of(parseBook(resultSet));
             }
             return Optional.empty();
 
@@ -66,24 +70,19 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-
         String sql = "SELECT id, title, price FROM books";
 
         try (Connection connection = Util.getConnection();
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setId(resultSet.getLong("id"));
-                book.setTitle(resultSet.getString("title"));
-                book.setPrice(resultSet.getBigDecimal("price"));
-                books.add(book);
+                books.add(parseBook(resultSet));
             }
-            return books;
 
+            return books;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find any book: ", e);
+            throw new DataProcessingException("Can't retrieve all books", e);
         }
     }
 
