@@ -19,7 +19,7 @@ public class ConnectionUtil {
             Properties dbProperties = new Properties();
             dbProperties.put("user","root");
             dbProperties.put("password","movazot7a8");
-            String url = "jdbc:mysql://localhost:3307/library_db";
+            String url = "jdbc:mysql://localhost:3307/books?serverTimezone=UTC";
             return DriverManager.getConnection(url, dbProperties);
         } catch (SQLException e) {
             throw new RuntimeException("Can't establish connection",e);
