@@ -27,7 +27,6 @@ public class BookDaoImpl implements BookDao {
         ) {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
-
             statement.executeUpdate();
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -51,7 +50,6 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
 
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
                 return Optional.of(parseBook(resultSet));
             }
@@ -68,9 +66,9 @@ public class BookDaoImpl implements BookDao {
 
         try (
                 Connection connection = ConnectionUtil.getConnection();
-                Statement statement = connection.createStatement()
+                PreparedStatement statement = connection.prepareStatement(query)
         ) {
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
                 books.add(parseBook(resultSet));
@@ -93,11 +91,12 @@ public class BookDaoImpl implements BookDao {
             statement.setString(1, book.getTitle());
             statement.setBigDecimal(2, book.getPrice());
             statement.setLong(3, book.getId());
-
             statement.executeUpdate();
+
             return book;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update book: " + book, e);
+            throw new DataProcessingException("Can't update book with id: "
+                    + book.getId(), e);
         }
     }
 
@@ -112,13 +111,14 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't delete book by id: " + id, e);
+            throw new DataProcessingException("Can't delete book by id: "
+                    + id, e);
         }
     }
 
     private Book parseBook(ResultSet resultSet) throws SQLException {
         Book book = new Book();
-        book.setId(resultSet.getLong("id"));
+        book.setId(resultSet.getObject("id", Long.class));
         book.setTitle(resultSet.getString("title"));
         book.setPrice(resultSet.getBigDecimal("price"));
         return book;
