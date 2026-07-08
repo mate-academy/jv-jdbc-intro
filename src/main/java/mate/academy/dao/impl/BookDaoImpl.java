@@ -32,7 +32,7 @@ public class BookDaoImpl implements BookDao {
             }
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't create book" + e);
+            throw new DataProcessingException("Can't create book",e);
         }
     }
 
@@ -64,7 +64,7 @@ public class BookDaoImpl implements BookDao {
             }
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException("Can not get all books",e);
         }
     }
 
