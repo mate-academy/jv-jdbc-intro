@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import mate.academy.exception.DataProcessingException;
 
 public class ConnectionUtil {
-    private static final String URL = "jdbc:mysql://localhost:3306/mysql?serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/book_store?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "Acid-33134";
 
@@ -20,7 +20,14 @@ public class ConnectionUtil {
 
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            try (java.sql.Statement statement = connection.createStatement()) {
+                statement.execute("CREATE TABLE IF NOT EXISTS books ("
+                        + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
+                        + "title VARCHAR(255) NOT NULL, "
+                        + "price DECIMAL(10, 2) NOT NULL);");
+            }
+            return connection;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't establish connection to DB", e);
         }
