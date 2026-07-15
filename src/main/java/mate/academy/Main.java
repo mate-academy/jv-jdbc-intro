@@ -8,8 +8,10 @@ import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
 public class Main {
+
+    private static final Injector injector = Injector.getInstance("mate.academy");
+
     public static void main(String[] args) {
-        final Injector injector = Injector.getInstance("mate.academy");
         BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         Book book = new Book();
         book.setTitle("Romeo and Juliet");
