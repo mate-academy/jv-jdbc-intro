@@ -28,16 +28,14 @@ public class Main {
 
         System.out.println(bookDao.findAll());
 
-        /*
-        System.out.println(bookDao.deleteById(3L));
-        System.out.println(bookDao.findById(2L));
+        System.out.println(bookDao.deleteById(25L));
+        System.out.println(bookDao.findById(26L));
 
         secondBook = new Book();
         secondBook.setTitle("updated Book");
         secondBook.setPrice(BigDecimal.valueOf(999.999));
-        secondBook.setId(2L);
+        secondBook.setId(26L);
 
         System.out.println(bookDao.update(secondBook));
-        */
     }
 }
