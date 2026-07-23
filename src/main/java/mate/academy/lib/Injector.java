@@ -22,27 +22,27 @@ public class Injector {
         }
     }
 
-    public static Injector getInstance(String mainPackageName) { // перевірка чи існує інжектор (в мапі) для даного пакета,
+    public static Injector getInstance(String mainPackageName) {
         if (injectors.containsKey(mainPackageName)) {
             return injectors.get(mainPackageName);
         }
-        Injector injector = new Injector(mainPackageName); // якщо ні - під капотом створ новий інжектор
-        injectors.put(mainPackageName, injector);          // і дод в мапу
-        return injector;                                   // щоб для одного пакета створювався один інжектор
+        Injector injector = new Injector(mainPackageName);
+        injectors.put(mainPackageName, injector);
+        return injector;
     }
 
     public Object getInstance(Class<?> certainInterface) {
-        Class<?> clazz = findClassExtendingInterface(certainInterface); // коли знайшли імплементацію (метод нижче)
-        return createInstance(clazz);  // робимо обєкт знайденого класу-імплементації (метод ще нижче)
+        Class<?> clazz = findClassExtendingInterface(certainInterface);
+        return createInstance(clazz);
     }
 
-    private Class<?> findClassExtendingInterface(Class<?> certainInterface) {  // BookDao.class
-        for (Class<?> clazz : classes) {     // проходимось по масиву усіх наяв класів в пакеті
-            Class<?>[] interfaces = clazz.getInterfaces();  // в кожного з них (Book, BookDao, BookDaoImpl...) берем інтерфейси що наслідуються цим класом і робим масив з цих інтерфейсів
-            for (Class<?> singleInterface : interfaces) {  // по списку інтерф (класа BookDaoImpl) пробіг
-                if (singleInterface.equals(certainInterface)    // і порівн з BookDao.class
-                        && clazz.isAnnotationPresent(Dao.class)) {  // і чи цей клас (BookDaoImpl) з якого ми власне витягували інтерфейси має аннотацію @Dao
-                    return clazz;  // повернення знайденого класу-імплементації BookDaoImpl
+    private Class<?> findClassExtendingInterface(Class<?> certainInterface) {
+        for (Class<?> clazz : classes) {
+            Class<?>[] interfaces = clazz.getInterfaces();
+            for (Class<?> singleInterface : interfaces) {
+                if (singleInterface.equals(certainInterface)
+                        && clazz.isAnnotationPresent(Dao.class)) {
+                    return clazz;
                 }
             }
         }
@@ -51,7 +51,7 @@ public class Injector {
                 + " interface and has valid annotation (Dao or Service)");
     }
 
-    private Object createInstance(Class<?> clazz) {  // робимо обєкт класу-імплементації (за допомогою класів Reflection API)
+    private Object createInstance(Class<?> clazz) {
         Object newInstance;
         try {
             Constructor<?> classConstructor = clazz.getConstructor();
@@ -71,7 +71,7 @@ public class Injector {
      * @throws ClassNotFoundException if the class cannot be located
      * @throws IOException            if I/O errors occur
      */
-    private static List<Class<?>> getClasses(String packageName)  // використовується в приватному конструкторі вище
+    private static List<Class<?>> getClasses(String packageName)
             throws IOException, ClassNotFoundException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {

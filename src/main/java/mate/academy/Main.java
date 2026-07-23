@@ -1,18 +1,14 @@
 package mate.academy;
 
+import java.math.BigDecimal;
 import mate.academy.dao.BookDao;
 import mate.academy.lib.Injector;
 import mate.academy.model.Book;
 
-import java.math.BigDecimal;
-
 public class Main {
-    private static final Injector injector = Injector.getInstance("mate.academy"); // перевірка
-    // чи існує інжектор для даного пакета, якщо ні - під капотом створ новий інжектор і дод в мапу
+    private static final Injector injector = Injector.getInstance("mate.academy");
 
     public static void main(String[] args) {
-        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
-
         Book firstBook = new Book();
         firstBook.setTitle("First Book");
         firstBook.setPrice(BigDecimal.valueOf(50.90));
@@ -25,6 +21,7 @@ public class Main {
         thirdBook.setTitle("Third Book");
         thirdBook.setPrice(BigDecimal.valueOf(34.99));
 
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
         bookDao.create(firstBook);
         bookDao.create(secondBook);
         bookDao.create(thirdBook);
