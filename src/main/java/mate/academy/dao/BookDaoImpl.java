@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.DataProcessingException;
 import mate.academy.model.Book;
 
 public class BookDaoImpl implements BookDao {
@@ -37,7 +38,8 @@ public class BookDaoImpl implements BookDao {
 
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(
+                    "Can't create book", e);
         }
     }
 
@@ -63,7 +65,8 @@ public class BookDaoImpl implements BookDao {
 
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(
+                    "Can't create book", e);
         }
     }
 
@@ -89,7 +92,8 @@ public class BookDaoImpl implements BookDao {
 
             return books;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(
+                    "Can't create book", e);
         }
     }
 
@@ -114,7 +118,8 @@ public class BookDaoImpl implements BookDao {
 
             return book;
         } catch (SQLException e) {
-            throw new RuntimeException("Can't update book", e);
+            throw new DataProcessingException(
+                    "Can't update book", e);
         }
     }
 
@@ -130,7 +135,8 @@ public class BookDaoImpl implements BookDao {
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataProcessingException(
+                    "Can't create book", e);
         }
     }
 }
