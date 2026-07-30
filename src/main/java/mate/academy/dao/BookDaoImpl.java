@@ -66,7 +66,7 @@ public class BookDaoImpl implements BookDao {
             return Optional.empty();
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can't create book", e);
+                    "Can't find book by id " + id, e);
         }
     }
 
@@ -93,7 +93,7 @@ public class BookDaoImpl implements BookDao {
             return books;
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can't create book", e);
+                    "Can't get all books", e);
         }
     }
 
@@ -119,7 +119,7 @@ public class BookDaoImpl implements BookDao {
             return book;
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can't update book", e);
+                    "Can't update book with id " + book.getId(), e);
         }
     }
 
@@ -136,7 +136,7 @@ public class BookDaoImpl implements BookDao {
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException(
-                    "Can't create book", e);
+                    "Can't delete book with id " + id, e);
         }
     }
 }
