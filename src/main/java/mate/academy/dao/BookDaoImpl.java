@@ -29,10 +29,11 @@ public class BookDaoImpl implements BookDao {
                 throw new DataProcessingException(
                         "Expected to insert at least one row, but inserted 0 rows.");
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Long id = generatedKeys.getObject(1, Long.class);
-                book.setId(id);
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    Long id = generatedKeys.getObject(1, Long.class);
+                    book.setId(id);
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not add new book: " + book, e);
@@ -46,10 +47,11 @@ public class BookDaoImpl implements BookDao {
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                Book book = createBookFromResultSet(resultSet);
-                return Optional.of(book);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Book book = createBookFromResultSet(resultSet);
+                    return Optional.of(book);
+                }
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can not find the book with id: " + id, e);
@@ -62,8 +64,8 @@ public class BookDaoImpl implements BookDao {
         String sql = "SELECT * FROM books";
         List<Book> books = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = statement.executeQuery();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Book book = createBookFromResultSet(resultSet);
                 books.add(book);
