@@ -1,0 +1,9 @@
+CREATE SCHEMA IF NOT EXISTS book_store;
+USE book_store;
+
+CREATE TABLE IF NOT EXISTS books (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL(19, 2) NOT NULL,
+    PRIMARY KEY (id)
+);
