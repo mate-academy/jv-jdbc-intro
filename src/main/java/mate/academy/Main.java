@@ -1,7 +1,32 @@
 package mate.academy;
 
-public class Main {
-    public static void main(String[] args) {
+import java.math.BigDecimal;
+import mate.academy.dao.BookDao;
+import mate.academy.lib.Injector;
+import mate.academy.model.Book;
 
+public class Main {
+    private static final Injector injector =
+            Injector.getInstance("mate.academy");
+
+    public static void main(String[] args) {
+        BookDao bookDao = (BookDao) injector.getInstance(BookDao.class);
+
+        Book book = new Book();
+        book.setTitle("Java");
+        book.setPrice(new BigDecimal("500.00"));
+
+        bookDao.create(book);
+        System.out.println(book);
+
+        System.out.println(bookDao.findById(book.getId()));
+
+        System.out.println(bookDao.findAll());
+
+        book.setTitle("Java Advanced");
+        book.setPrice(new BigDecimal("700.00"));
+        bookDao.update(book);
+
+        System.out.println(bookDao.deleteById(book.getId()));
     }
 }
