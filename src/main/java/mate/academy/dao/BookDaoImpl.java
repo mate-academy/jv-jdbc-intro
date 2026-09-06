@@ -51,11 +51,12 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                Long bookId = resultSet.getObject("id", Long.class);
                 String title = resultSet.getString("title");
                 BigDecimal price = resultSet.getBigDecimal("price");
 
                 Book book = new Book();
-                book.setId(id);
+                book.setId(bookId);
                 book.setTitle(title);
                 book.setPrice(price);
                 return Optional.of(book);
