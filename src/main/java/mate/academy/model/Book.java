@@ -23,11 +23,11 @@ public class Book {
         this.title = title;
     }
 
-    public BigDecimal  getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal  price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
