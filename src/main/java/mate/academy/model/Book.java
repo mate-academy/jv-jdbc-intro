@@ -1,7 +1,6 @@
 package mate.academy.model;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Book {
     private long id;
@@ -34,10 +33,10 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                '}';
+        return "Book{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", price=" + price
+                + '}';
     }
 }
