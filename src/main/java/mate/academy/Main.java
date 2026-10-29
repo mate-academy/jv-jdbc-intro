@@ -17,14 +17,15 @@ public class Main {
         prince.setTitle("Little Prince");
         prince.setPrice(new BigDecimal("19.99"));
         Book princeCreated = bookDao.create(prince);
-        Optional<Book> bookFindById = bookDao.findById(1L);
+        Long createdId = princeCreated.getId();
+        Optional<Book> bookFindById = bookDao.findById(createdId);
         List<Book> findAll = bookDao.findAll();
 
         Book bookNew = new Book();
-        bookNew.setId(1L);
+        bookNew.setId(createdId);
         bookNew.setTitle("Alchemist");
         bookNew.setPrice(new BigDecimal("17.80"));
         Book bookUpdate = bookDao.update(bookNew);
-        boolean deleteById = bookDao.deleteById(1L);
+        boolean deleteById = bookDao.deleteById(createdId);
     }
 }
